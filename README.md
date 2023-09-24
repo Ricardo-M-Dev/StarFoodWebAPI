@@ -50,7 +50,7 @@ Para começar a usar o projeto StarFood, siga estas etapas:
 1. Clone o repositório para o seu ambiente de desenvolvimento local.
 
 ```shell
-   git clone https://github.com/seu-usuario/seu-repositorio.git
+   git clone https://github.com/Ricardo-M-Dev/StarFoodWebAPI.git
 ```
 
 2. Banco de Dados

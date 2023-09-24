@@ -1,0 +1,7 @@
+C:\Dev\Projects\StarsFoodAPI\obj\Release\net7.0\StarsFoodAPI.csproj.AssemblyReference.cache
+C:\Dev\Projects\StarsFoodAPI\obj\Release\net7.0\StarsFoodAPI.GeneratedMSBuildEditorConfig.editorconfig
+C:\Dev\Projects\StarsFoodAPI\obj\Release\net7.0\StarsFoodAPI.AssemblyInfoInputs.cache
+C:\Dev\Projects\StarsFoodAPI\obj\Release\net7.0\StarsFoodAPI.AssemblyInfo.cs
+C:\Dev\Projects\StarsFoodAPI\obj\Release\net7.0\StarsFoodAPI.csproj.CoreCompileInputs.cache
+C:\Dev\Projects\StarsFoodAPI\obj\Release\net7.0\StarsFoodAPI.MvcApplicationPartsAssemblyInfo.cs
+C:\Dev\Projects\StarsFoodAPI\obj\Release\net7.0\StarsFoodAPI.MvcApplicationPartsAssemblyInfo.cache

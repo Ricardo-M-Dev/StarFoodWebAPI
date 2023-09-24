@@ -1,0 +1,48 @@
+﻿using System.ComponentModel;
+
+namespace StarFood.Domain.Entities
+{
+    public class Dishes
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public int ProductTypeId { get; set; }
+        public int CategoryId { get; set; }
+        public int RestaurantId { get; set; }
+        [DefaultValue(false)]
+        public bool IsAvailable { get; set; }
+
+        public Restaurants Restaurant { get; set; }
+        public ProductTypes Type { get; set; }
+        public Categories Category { get; set; }
+        public List<DishesProductVariations> DishesProductVariations { get; set; } = new List<DishesProductVariations>();
+
+        public Dishes() { }
+
+        public Dishes(int id, string name, string description, int typeId, int categoryId, int restaurantId, bool isAvailable = true)
+        {
+            Id = id;
+            Name = name;
+            Description = description;
+            ProductTypeId = typeId;
+            CategoryId = categoryId;
+            RestaurantId = restaurantId;
+            IsAvailable = isAvailable;
+        }
+
+        public void Update(string name, string description, int typeId, int categoryId, bool isAvailable)
+        {
+            Name = name;
+            Description = description;
+            ProductTypeId = typeId;
+            CategoryId = categoryId;
+            IsAvailable = isAvailable;
+        }
+
+        public void SetAvailability(bool isAvailable)
+        {
+            IsAvailable = isAvailable;
+        }
+    }
+}

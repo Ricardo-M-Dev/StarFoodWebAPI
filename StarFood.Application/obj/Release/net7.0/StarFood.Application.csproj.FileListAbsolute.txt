@@ -1,0 +1,11 @@
+C:\Dev\Projects\StarsFoodAPI\StarFood.Application\bin\Release\net7.0\StarFood.Application.deps.json
+C:\Dev\Projects\StarsFoodAPI\StarFood.Application\bin\Release\net7.0\StarFood.Application.dll
+C:\Dev\Projects\StarsFoodAPI\StarFood.Application\bin\Release\net7.0\StarFood.Application.pdb
+C:\Dev\Projects\StarsFoodAPI\StarFood.Application\obj\Release\net7.0\StarFood.Application.GeneratedMSBuildEditorConfig.editorconfig
+C:\Dev\Projects\StarsFoodAPI\StarFood.Application\obj\Release\net7.0\StarFood.Application.AssemblyInfoInputs.cache
+C:\Dev\Projects\StarsFoodAPI\StarFood.Application\obj\Release\net7.0\StarFood.Application.AssemblyInfo.cs
+C:\Dev\Projects\StarsFoodAPI\StarFood.Application\obj\Release\net7.0\StarFood.Application.csproj.CoreCompileInputs.cache
+C:\Dev\Projects\StarsFoodAPI\StarFood.Application\obj\Release\net7.0\StarFood.Application.dll
+C:\Dev\Projects\StarsFoodAPI\StarFood.Application\obj\Release\net7.0\refint\StarFood.Application.dll
+C:\Dev\Projects\StarsFoodAPI\StarFood.Application\obj\Release\net7.0\StarFood.Application.pdb
+C:\Dev\Projects\StarsFoodAPI\StarFood.Application\obj\Release\net7.0\ref\StarFood.Application.dll

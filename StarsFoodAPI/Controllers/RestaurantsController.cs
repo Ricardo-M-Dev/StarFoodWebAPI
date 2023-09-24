@@ -67,7 +67,7 @@ public class RestaurantsController : ControllerBase
         existingRestaurant.Update(restaurant.Name);
 
         await _restaurantsRepository.UpdateAsync(id, existingRestaurant);
-        return Ok();
+        return Ok(existingRestaurant);
     }
 
     [HttpPut("SetRestaurantAvailability/{id}")]
@@ -85,7 +85,7 @@ public class RestaurantsController : ControllerBase
         }
 
         existingRestaurant.SetAvailability(isAvailable);
-        return Ok();
+        return Ok(existingRestaurant);
     }
 
     [HttpDelete("DeleteRestaurant/{id}")]

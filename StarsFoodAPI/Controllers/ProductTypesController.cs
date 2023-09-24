@@ -69,7 +69,7 @@ public class ProductTypesController : ControllerBase
         existingProductType.Update(productTypes.TypeName);
 
         await _productTypesRepository.UpdateAsync(existingProductType);
-        return Ok();
+        return Ok(existingProductType);
     }
 
     [HttpPut("SetProductTypeAvailability/{id}")]
@@ -87,7 +87,7 @@ public class ProductTypesController : ControllerBase
         }
 
         existingProductType.SetAvailability(isAvailable);
-        return Ok();
+        return Ok(existingProductType);
     }
 
     [HttpDelete("DeleteProductType/{id}")]

@@ -94,7 +94,7 @@ namespace StarsFoodAPI.Controllers
             existingVariation.Update(variation.DishesId, variation.ProductVariationId);
 
             await _dishesProductVariationsRepository.UpdateAsync(id, existingVariation);
-            return Ok();
+            return Ok(existingVariation);
         }
 
         [HttpDelete("DeleteDishVariation/{id}")]

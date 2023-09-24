@@ -68,7 +68,7 @@ public class ProductVariationsController : ControllerBase
         existingVariation.Update(variation.Description, variation.Value);
 
         await _productVariationsRepository.UpdateAsync(id, existingVariation);
-        return Ok();
+        return Ok(existingVariation);
     }
 
     [HttpPut("SetVariationAvailability/{id}")]
@@ -86,7 +86,7 @@ public class ProductVariationsController : ControllerBase
         }
 
         existingVariation.SetAvailability(isAvailable);
-        return Ok();
+        return Ok(existingVariation);
     }
 
     [HttpDelete("DeleteVariation/{id}")]

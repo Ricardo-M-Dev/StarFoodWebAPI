@@ -71,7 +71,7 @@ public class DishesController : ControllerBase
         existingDish.Update(dish.Name, dish.Description, dish.ProductTypeId, dish.CategoryId, dish.IsAvailable);
 
         await _dishesRepository.UpdateAsync(id, existingDish);
-        return Ok();
+        return Ok(existingDish);
     }
 
     [HttpPut("SetDishAvailability/{id}")]
@@ -89,7 +89,7 @@ public class DishesController : ControllerBase
         }
 
         existingDish.SetAvailability(isAvailable);
-        return Ok();
+        return Ok(existingDish);
     }
 
     [HttpDelete("DeleteDish/{id}")]

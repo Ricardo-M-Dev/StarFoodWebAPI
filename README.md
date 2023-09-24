@@ -77,8 +77,6 @@ Em seguida, execute o comando para criar o banco com as entidades previamente co
 Update-Database
 ```
 
-2.1 Docker:
-
 Se você preferir usar Docker, você pode executar um contêiner MySQL facilmente. Primeiro, certifique-se de ter o Docker instalado em sua máquina. Em seguida, execute o seguinte comando para iniciar um contêiner MySQL:
 
 ```shell

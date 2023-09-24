@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using StarFood.Application.Interfaces;
-using StarFood.Application.Models;
+using StarFood.Domain.Commands;
 using StarFood.Domain.Entities;
 
 [Route("api")]
@@ -8,10 +8,14 @@ using StarFood.Domain.Entities;
 public class DishesController : ControllerBase
 {
     private readonly IDishesRepository _dishesRepository;
+    private readonly ICommandHandler<CreateDishCommand, Dishes> _createDishCommandHandler;
+    private readonly ICommandHandler<UpdateDishCommand, Dishes> _updateDishCommandHandler;
 
-    public DishesController(IDishesRepository dishesRepository, ICategoriesRepository categoryRepository)
+    public DishesController(IDishesRepository dishesRepository, ICommandHandler<CreateDishCommand, Dishes> createDishCommandHandler, ICommandHandler<UpdateDishCommand, Dishes> updateDishCommandHandler)
     {
         _dishesRepository = dishesRepository;
+        _createDishCommandHandler = createDishCommandHandler;
+        _updateDishCommandHandler = updateDishCommandHandler;
     }
 
     [HttpGet("GetAllDishes")]
@@ -34,47 +38,51 @@ public class DishesController : ControllerBase
     }
 
     [HttpPost("CreateDish")]
-    public async Task<IActionResult> CreateDish([FromBody] DishesModel dishModel)
+    public async Task<IActionResult> CreateDish([FromBody] CreateDishCommand createDishCommand)
     {
-        if (!ModelState.IsValid)
+        try
         {
-            return BadRequest(ModelState);
+            var newDish = await _createDishCommandHandler.HandleAsync(createDishCommand);
+
+            if (newDish != null)
+            {
+                return Ok(newDish);
+            }
+            else
+            {
+                return BadRequest();
+            }
         }
-
-        var newDish = new Dishes
+        catch (Exception ex)
         {
-            Name = dishModel.Name,
-            Description = dishModel.Description,
-            ProductTypeId = dishModel.ProductTypeId,
-            CategoryId = dishModel.CategoryId,
-            RestaurantId = dishModel.RestaurantId,
-        };
-
-        await _dishesRepository.CreateAsync(newDish);
-        return Ok(newDish);
+            return StatusCode(StatusCodes.Status406NotAcceptable, ex.Message);
+        }
     }
 
-    [HttpPut("UpdateDish/{id}")]
-    public async Task<IActionResult> UpdateDish(int id, [FromBody] Dishes dish)
+    [HttpPatch("UpdateDish/{id}")]
+    public async Task<IActionResult> UpdateDish(int id, [FromBody] UpdateDishCommand updateDishCommand)
     {
-        if (!ModelState.IsValid)
+        try
         {
-            return BadRequest(ModelState);
-        }
+            var updatedDish = await _updateDishCommandHandler.HandleAsync(updateDishCommand);
 
-        var existingDish = await _dishesRepository.GetByIdAsync(id);
-        if (existingDish == null)
+            if (updatedDish != null)
+            {
+                return Ok(updatedDish);
+            }
+            else
+            {
+                return BadRequest();
+            }
+        }
+        catch (Exception ex)
         {
-            return NotFound();
+
+            return StatusCode(StatusCodes.Status406NotAcceptable, ex.Message);
         }
-
-        existingDish.Update(dish.Name, dish.Description, dish.ProductTypeId, dish.CategoryId, dish.IsAvailable);
-
-        await _dishesRepository.UpdateAsync(id, existingDish);
-        return Ok(existingDish);
     }
 
-    [HttpPut("SetDishAvailability/{id}")]
+    [HttpPatch("SetDishAvailability/{id}")]
     public async Task<IActionResult> SetAvailability(int id, bool isAvailable)
     {
         if (!ModelState.IsValid)

@@ -1,6 +1,9 @@
 
 using Microsoft.EntityFrameworkCore;
+using StarFood.Application.CommandHandlers;
 using StarFood.Application.Interfaces;
+using StarFood.Domain.Commands;
+using StarFood.Domain.Entities;
 using StarFood.Domain.Repositories;
 using StarFood.Infrastructure.Data;
 using StarFood.Infrastructure.Data.Repositories;
@@ -26,6 +29,9 @@ builder.Services.AddScoped<ICategoriesRepository, CategoriesRepository>();
 builder.Services.AddScoped<IProductTypesRepository, ProductTypesRepository>();
 builder.Services.AddScoped<IDishesProductVariationsRepository, DishesProductVariationsRepository>();
 builder.Services.AddScoped<IProductVariationsRepository, ProductVariationsRepository>();
+
+builder.Services.AddScoped<ICommandHandler<CreateDishCommand, Dishes>, CreateDishCommandHandler>();
+builder.Services.AddScoped<ICommandHandler<CreateCategoryCommand, Categories>, CreateCategoryCommandHandler>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();

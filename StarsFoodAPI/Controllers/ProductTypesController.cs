@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using StarFood.Application.Interfaces;
 using StarFood.Application.Models;
+using StarFood.Domain.Commands;
 using StarFood.Domain.Entities;
 using StarFood.Domain.Repositories;
 
@@ -9,10 +10,12 @@ using StarFood.Domain.Repositories;
 public class ProductTypesController : ControllerBase
 {
     private readonly IProductTypesRepository _productTypesRepository;
+    private readonly ICommandHandler<CreateProductTypeCommand, ProductTypes> _createProductTypeCommandHandler;
 
-    public ProductTypesController(IProductTypesRepository productTypesRepository)
+    public ProductTypesController(IProductTypesRepository productTypesRepository, ICommandHandler<CreateProductTypeCommand, ProductTypes> createProductTypeCommandHandler)
     {
         _productTypesRepository = productTypesRepository;
+        _createProductTypeCommandHandler = createProductTypeCommandHandler;
     }
 
     [HttpGet("GetAllProductTypes")]
@@ -35,21 +38,26 @@ public class ProductTypesController : ControllerBase
     }
 
     [HttpPost("CreateProductType")]
-    public async Task<IActionResult> CreateProductType([FromBody] ProductTypesModel productTypesModel)
+    public async Task<IActionResult> CreateProductType([FromBody] CreateProductTypeCommand createProductTypeCommand)
     {
-        if (!ModelState.IsValid)
+        try
         {
-            return BadRequest(ModelState);
+            var newProductType = await _createProductTypeCommandHandler.HandleAsync(createProductTypeCommand);
+
+            if (newProductType != null)
+            {
+                return Ok(newProductType);
+            }
+            else
+            {
+                return BadRequest();
+            }
         }
-
-        var newProductType = new ProductTypes
+        catch (Exception ex)
         {
-            TypeName = productTypesModel.Name,
-            RestaurantId = productTypesModel.RestaurantId
-        };
 
-        await _productTypesRepository.CreateAsync(newProductType);
-        return Ok(newProductType);
+            return StatusCode(StatusCodes.Status406NotAcceptable, ex.Message);
+        }
     }
 
     [HttpPut("UpdateProductType/{id}")]

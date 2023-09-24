@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using StarFood.Application.Interfaces;
 using StarFood.Application.Models;
+using StarFood.Domain.Commands;
 using StarFood.Domain.Entities;
 
 [Route("api")]
@@ -8,10 +9,12 @@ using StarFood.Domain.Entities;
 public class CategoriesController : ControllerBase
 {
     private readonly ICategoriesRepository _categoriesRepository;
+    private readonly ICommandHandler<CreateCategoryCommand, Categories> _createCategoryCommandHandler;
     
-    public CategoriesController(ICategoriesRepository categoriesRepository)
+    public CategoriesController(ICategoriesRepository categoriesRepository, ICommandHandler<CreateCategoryCommand, Categories> createCategoryCOmmandHandler)
     {
         _categoriesRepository = categoriesRepository;
+        _createCategoryCommandHandler = createCategoryCOmmandHandler;
     }
 
     [HttpGet("GetAllCategories")]
@@ -34,21 +37,25 @@ public class CategoriesController : ControllerBase
     }
 
     [HttpPost("CreateCategory")]
-    public async Task<IActionResult> CreateCategory([FromBody] CategoriesModel categoryModel)
+    public async Task<IActionResult> CreateCategory([FromBody] CreateCategoryCommand createCategoryCommand)
     {
-        if (!ModelState.IsValid)
+        try
         {
-            return BadRequest(ModelState);
-        }
+            var newCategory = await _createCategoryCommandHandler.HandleAsync(createCategoryCommand);
 
-        var newCategory = new Categories
+            if (newCategory != null)
+            {
+                return Ok(newCategory);
+            }
+            else
+            {
+                return BadRequest();
+            }
+        }
+        catch (Exception ex)
         {
-            CategoryName = categoryModel.Name,
-            RestaurantId = categoryModel.RestaurantId
-        };
-        
-        await _categoriesRepository.CreateAsync(newCategory);
-        return Ok(newCategory);
+            return StatusCode(StatusCodes.Status406NotAcceptable, ex.Message);
+        }
     }
 
     [HttpPut("UpdateCategory/{id}")]

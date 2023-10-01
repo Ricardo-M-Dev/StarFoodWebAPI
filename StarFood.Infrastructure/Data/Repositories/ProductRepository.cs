@@ -15,44 +15,44 @@ namespace StarFood.Infrastructure.Data.Repositories
 
         public async Task<List<Products>> GetAllAsync(int restaurantId)
         {
-            return await _context.Productes
+            return await _context.Products
                 .Where(d => d.RestaurantId == restaurantId)
                 .ToListAsync();
         }
 
         public async Task<Products> GetByIdAsync(int id)
         {
-            return await _context.Productes.FindAsync(id);
+            return await _context.Products.FindAsync(id);
         }
 
         public async Task<List<Products>> GetByType(int productTypeId)
         {
-            return await _context.Productes
+            return await _context.Products
                 .Where(d => d.ProductTypeId == productTypeId)
                 .ToListAsync();
         }
         public async Task<List<Products>> GetByCategory(int categoryId)
         {
-            return await _context.Productes
+            return await _context.Products
                 .Where(d => d.CategoryId == categoryId)
                 .ToListAsync();
         }
 
         public async Task CreateAsync(Products product)
         {
-            _context.Productes.Add(product);
+            _context.Products.Add(product);
             await _context.SaveChangesAsync();
         }
 
         public async Task UpdateAsync(int Id, Products updateProduct)
         {
-            _context.Productes.Update(updateProduct);
+            _context.Products.Update(updateProduct);
             await _context.SaveChangesAsync();
         }
 
         public async Task ChangeAvailability(int productId, bool isAvailable)
         {
-            var product = _context.Productes.Find(productId);
+            var product = _context.Products.Find(productId);
 
             if (product != null)
             {
@@ -70,7 +70,7 @@ namespace StarFood.Infrastructure.Data.Repositories
             var product = await GetByIdAsync(id);
             if (product != null)
             {
-                _context.Productes.Remove(product);
+                _context.Products.Remove(product);
                 await _context.SaveChangesAsync();
             }
         }

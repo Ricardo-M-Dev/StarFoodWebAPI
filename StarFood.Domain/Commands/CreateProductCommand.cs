@@ -2,8 +2,9 @@
 {
     public class CreateProductCommand
     {
-        public string Name { get; set; }
-        public string Description { get; set; }
+        public int Id { get; private set; }
+        public string Name { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
         public int ProductTypeId { get; set; }
         public int CategoryId { get; set; }
         public int RestaurantId { get; set; }

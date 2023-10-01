@@ -29,5 +29,10 @@ namespace StarFood.Application.CommandHandlers
             await _categoryRepository.CreateAsync(newCategory);
             return newCategory;
         }
+
+        public Task<List<ProductCategories>> HandleAsyncList(List<CreateProductCategoryCommand> commandList)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

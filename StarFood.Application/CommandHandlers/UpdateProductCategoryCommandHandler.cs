@@ -33,5 +33,10 @@ namespace StarFood.Application.CommandHandlers
             await _categoryRepository.UpdateAsync(command.Id, updatedCategory);
             return updatedCategory;
         }
+
+        public Task<List<ProductCategories>> HandleAsyncList(List<UpdateProductCategoryCommand> commandList)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using StarFood.Application.Models;
+using StarFood.Domain.Commands;
 using StarFood.Domain.Entities;
 using StarFood.Domain.Repositories;
 
@@ -15,7 +15,7 @@ public class VariationsController : ControllerBase
     }
 
     [HttpGet("GetAllVariations")]
-    public async Task<IActionResult> GetAllVariations(int restaurantId)
+    public async Task<IActionResult> GetAllVariations(string restaurantId)
     {
         var variations = await _productVariationsRepository.GetAllAsync(restaurantId);
         return Ok(variations);
@@ -34,21 +34,25 @@ public class VariationsController : ControllerBase
     }
 
     [HttpPost("CreateVariation")]
-    public async Task<IActionResult> CreateVariation([FromBody] ProductVariationsModel variationModel)
+    public async Task<IActionResult> CreateVariation([FromBody] CreateVariationCommand variationCommand)
     {
-        if (!ModelState.IsValid)
-        {
-            return BadRequest(ModelState);
-        }
-
         var newVariation = new Variations
         {
-            Description = variationModel.Description,
-            RestaurantId = variationModel.RestaurantId
+            Description = variationCommand.Description,
+            Value = variationCommand.Value,
+            RestaurantId = variationCommand.RestaurantId,
         };
 
-        await _productVariationsRepository.CreateAsync(newVariation);
-        return Ok(newVariation);
+        if (newVariation != null)
+        {
+            await _productVariationsRepository.CreateAsync(newVariation);
+            return Ok(newVariation);
+        }
+        else
+        {
+            return BadRequest();
+        }
+
     }
 
     [HttpPut("UpdateVariation/{id}")]

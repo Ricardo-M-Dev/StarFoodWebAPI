@@ -49,7 +49,7 @@ namespace StarFood.Infrastructure.Data.Repositories
 
         public async Task ChangeAvailability(int id, bool isAvailable)
         {
-            var productType = _context.Productes.Find(id);
+            var productType = _context.Products.Find(id);
 
             if (productType != null)
             {

@@ -1,6 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using StarFood.Application.Interfaces;
-using StarFood.Application.Models;
 using StarFood.Domain.Entities;
 using StarFood.Domain.Repositories;
 
@@ -8,24 +6,24 @@ namespace StarsFoodAPI.Controllers
 {
     public class ProductVariationsController : ControllerBase
     {
-        private readonly IProductVariationsRepository _productesProductVariationsRepository;
+        private readonly IProductVariationsRepository _productVariationsRepository;
 
-        public ProductVariationsController(IProductVariationsRepository productesProductVariationsRepository)
+        public ProductVariationsController(IProductVariationsRepository productVariationsRepository)
         {
-            _productesProductVariationsRepository = productesProductVariationsRepository;
+            _productVariationsRepository = productVariationsRepository;
         }
 
-        [HttpGet("GetAllProductesVariations")]
+        [HttpGet("GetAllProductsVariations")]
         public async Task<IActionResult> GetAllProductVariations(int restaurantId)
         {
-            var productVariation = await _productesProductVariationsRepository.GetAllAsync(restaurantId);
+            var productVariation = await _productVariationsRepository.GetAllAsync(restaurantId);
             return Ok(productVariation);
         }
 
         [HttpGet("GetProductVariation/{id}")]
         public async Task<IActionResult> GetProductVariation(int id)
         {
-            var productVariation = await _productesProductVariationsRepository.GetByIdAsync(id);
+            var productVariation = await _productVariationsRepository.GetByIdAsync(id);
             if (productVariation == null)
             {
                 return NotFound();
@@ -37,7 +35,7 @@ namespace StarsFoodAPI.Controllers
         [HttpGet("GetProductVariationByProductId/{id}")]
         public async Task<IActionResult> GetProductVariationByProductId(int productId)
         {
-            var productVariation = await _productesProductVariationsRepository.GetByProductId(productId);
+            var productVariation = await _productVariationsRepository.GetByProductId(productId);
             if (productVariation == null)
             {
                 return NotFound();
@@ -49,7 +47,7 @@ namespace StarsFoodAPI.Controllers
         [HttpGet("GetProductVariationByVariationId/{id}")]
         public async Task<IActionResult> GetProductVariationByVariationId(int productVariationId)
         {
-            var productVariation = await _productesProductVariationsRepository.GetByVariationId(productVariationId);
+            var productVariation = await _productVariationsRepository.GetByVariationId(productVariationId);
             if (productVariation == null)
             {
                 return NotFound();
@@ -58,24 +56,24 @@ namespace StarsFoodAPI.Controllers
             return Ok(productVariation);
         }
 
-        [HttpPost("CreateProductVariation")]
-        public async Task<IActionResult> CreateProductVariation([FromBody] ProductesProductVariationsModel productesVariationsModel)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+        //[HttpPost("CreateProductVariation")]
+        //public async Task<IActionResult> CreateProductVariation([FromBody] ProductsProductVariationsModel productsVariationsModel)
+        //{
+        //    if (!ModelState.IsValid)
+        //    {
+        //        return BadRequest(ModelState);
+        //    }
 
-            var newProductVariation = new ProductVariations
-            {
-                ProductId = productesVariationsModel.ProductId,
-                VariationId = productesVariationsModel.VariationId,
-                RestaurantId = productesVariationsModel.RestaurantId
-            };
+        //    var newProductVariation = new ProductVariations
+        //    {
+        //        ProductId = productsVariationsModel.ProductId,
+        //        VariationId = productsVariationsModel.VariationId,
+        //        RestaurantId = productsVariationsModel.RestaurantId
+        //    };
 
-            await _productesProductVariationsRepository.CreateAsync(newProductVariation);
-            return Ok(newProductVariation);
-        }
+        //    await _productVariationsRepository.CreateAsync(newProductVariation);
+        //    return Ok(newProductVariation);
+        //}
 
         [HttpPut("UpdateProductVariation/{id}")]
         public async Task<IActionResult> UpdateProductVariation(int id, [FromBody] ProductVariations variation)
@@ -85,7 +83,7 @@ namespace StarsFoodAPI.Controllers
                 return BadRequest(ModelState);
             }
 
-            var existingVariation = await _productesProductVariationsRepository.GetByIdAsync(id);
+            var existingVariation = await _productVariationsRepository.GetByIdAsync(id);
             if (existingVariation == null)
             {
                 return NotFound();
@@ -93,20 +91,20 @@ namespace StarsFoodAPI.Controllers
 
             existingVariation.Update(variation.ProductId, variation.VariationId);
 
-            await _productesProductVariationsRepository.UpdateAsync(id, existingVariation);
+            await _productVariationsRepository.UpdateAsync(id, existingVariation);
             return Ok(existingVariation);
         }
 
         [HttpDelete("DeleteProductVariation/{id}")]
         public async Task<IActionResult> DeleteProductVariation(int id)
         {
-            var category = await _productesProductVariationsRepository.GetByIdAsync(id);
+            var category = await _productVariationsRepository.GetByIdAsync(id);
             if (category == null)
             {
                 return NotFound();
             }
 
-            await _productesProductVariationsRepository.DeleteAsync(id);
+            await _productVariationsRepository.DeleteAsync(id);
             return Ok();
         }
     }

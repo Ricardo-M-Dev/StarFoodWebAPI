@@ -26,5 +26,25 @@ namespace StarFood.Application.CommandHandlers
             await _productVariationsRepository.CreateAsync(newProductVariation);
             return newProductVariation;
         }
+
+        public async Task<List<ProductVariations>> HandleAsyncList(List<CreateProductVariationCommand> productVariationList)
+        {
+            var newProductVariation = new ProductVariations();
+            var newProductVariationList = new List<ProductVariations>();
+
+            foreach (var productVariation in productVariationList)
+            {
+                newProductVariation = new ProductVariations
+                {
+                    ProductId = productVariation.ProductId,
+                    VariationId = productVariation.VariationId,
+                };
+
+                await _productVariationsRepository.CreateAsync(newProductVariation);
+                newProductVariationList.Add(newProductVariation);
+            }
+
+            return newProductVariationList;
+        }
     }
 }

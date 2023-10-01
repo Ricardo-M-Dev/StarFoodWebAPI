@@ -13,27 +13,27 @@ namespace StarFood.Infrastructure.Data.Repositories
             _context = context;
         }
 
-        public async Task<List<Variations>> GetAllAsync(int restaurantId)
+        public async Task<List<Variations>> GetAllAsync(string restaurantId)
         {
-            return await _context.ProductVariations
+            return await _context.Variations
                 .Where(pv => pv.RestaurantId == restaurantId)
                 .ToListAsync();
         }
 
         public async Task<Variations> GetByIdAsync(int id)
         {
-            return await _context.ProductVariations.FindAsync(id);
+            return await _context.Variations.FindAsync(id);
         }
 
         public async Task CreateAsync(Variations productVariation)
         {
-            _context.ProductVariations.Add(productVariation);
+            _context.Variations.Add(productVariation);
             await _context.SaveChangesAsync();
         }
 
         public async Task UpdateAsync(int id, Variations productVariation)
         {
-            _context.ProductVariations.Update(productVariation);
+            _context.Variations.Update(productVariation);
             await _context.SaveChangesAsync();
         }
 
@@ -42,14 +42,14 @@ namespace StarFood.Infrastructure.Data.Repositories
             var productVariation = await GetByIdAsync(id);
             if (productVariation != null)
             {
-                _context.ProductVariations.Remove(productVariation);
+                _context.Variations.Remove(productVariation);
                 await _context.SaveChangesAsync();
             }
         }
 
         public async Task ChangeAvailability(int id, bool isAvailable)
         {
-            var productVariation = _context.Productes.Find(id);
+            var productVariation = _context.Products.Find(id);
 
             if (productVariation != null)
             {

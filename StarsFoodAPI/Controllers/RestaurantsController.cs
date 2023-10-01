@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using StarFood.Application.Models;
+using StarFood.Domain.Commands;
 using StarFood.Domain.Entities;
 using StarFood.Domain.Repositories;
 
@@ -34,41 +34,37 @@ public class RestaurantsController : ControllerBase
     }
 
     [HttpPost("CreateRestaurant")]
-    public async Task<IActionResult> CreateRestaurant([FromBody] RestaurantModel restaurantModel)
+    public async Task<IActionResult> CreateRestaurant(string restaurantId, [FromBody] CreateRestaurantCommand createRestaurantCommand)
     {
-        if (!ModelState.IsValid)
-        {
-            return BadRequest(ModelState);
-        }
-
         var newRestaurant = new Restaurants
         {
-            Name = restaurantModel.Name,
+            RestaurantId = restaurantId,
+            Name = createRestaurantCommand.Name,
         };
 
         await _restaurantsRepository.CreateAsync(newRestaurant);
         return Ok(newRestaurant);
     }
 
-    [HttpPut("UpdateRestaurant/{id}")]
-    public async Task<IActionResult> UpdateRestaurant(int id, [FromBody] Restaurants restaurant)
-    {
-        if (!ModelState.IsValid)
-        {
-            return BadRequest(ModelState);
-        }
+    //[HttpPut("UpdateRestaurant/{id}")]
+    //public async Task<IActionResult> UpdateRestaurant(string restaurantId, [FromBody] Restaurants restaurant)
+    //{
+    //    if (!ModelState.IsValid)
+    //    {
+    //        return BadRequest(ModelState);
+    //    }
 
-        var existingRestaurant = await _restaurantsRepository.GetByIdAsync(id);
-        if (existingRestaurant == null)
-        {
-            return NotFound();
-        }
+    //    var existingRestaurant = await _restaurantsRepository.GetByIdAsync(restaurantId);
+    //    if (existingRestaurant == null)
+    //    {
+    //        return NotFound();
+    //    }
 
-        existingRestaurant.Update(restaurant.Name);
+    //    existingRestaurant.Update(restaurant.Name);
 
-        await _restaurantsRepository.UpdateAsync(id, existingRestaurant);
-        return Ok(existingRestaurant);
-    }
+    //    await _restaurantsRepository.UpdateAsync(id, existingRestaurant);
+    //    return Ok(existingRestaurant);
+    //}
 
     [HttpPut("SetRestaurantAvailability/{id}")]
     public async Task<IActionResult> SetAvailability(int id, bool isAvailable)

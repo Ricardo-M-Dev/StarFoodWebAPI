@@ -60,7 +60,18 @@ namespace StarFood.Application.CommandHandlers
             };
 
             await _productRepository.CreateAsync(newProduct);
+
             return newProduct;
+        }
+
+        public Task<Products> HandleAsyncList(List<CreateProductCommand> commandList)
+        {
+            throw new NotImplementedException();
+        }
+
+        Task<List<Products>> ICommandHandler<CreateProductCommand, Products>.HandleAsyncList(List<CreateProductCommand> commandList)
+        {
+            throw new NotImplementedException();
         }
     }
 }

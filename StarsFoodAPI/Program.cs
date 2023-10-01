@@ -31,7 +31,13 @@ builder.Services.AddScoped<IProductVariationsRepository, ProductVariationsReposi
 builder.Services.AddScoped<IVariationsRepository, VariationsRepository>();
 
 builder.Services.AddScoped<ICommandHandler<CreateProductCommand, Products>, CreateProductCommandHandler>();
+builder.Services.AddScoped<ICommandHandler<UpdateProductCommand, Products>, UpdateProductCommandHandler>();
+builder.Services.AddScoped<ICommandHandler<CreateProductTypeCommand, ProductTypes>, CreateProductTypeCommandHandler>();
+builder.Services.AddScoped<ICommandHandler<UpdateProductTypeCommand, ProductTypes>, UpdateProductTypeCommandHandler>();
 builder.Services.AddScoped<ICommandHandler<CreateProductCategoryCommand, ProductCategories>, CreateProductCategoryCommandHandler>();
+builder.Services.AddScoped<ICommandHandler<UpdateProductCategoryCommand, ProductCategories>, UpdateProductCategoryCommandHandler>();
+builder.Services.AddScoped<ICommandHandler<CreateVariationCommand, Variations>, CreateVariationCommandHandler>();
+builder.Services.AddScoped<ICommandHandler<UpdateVariationCommand, Variations>, UpdateVariationCommandHandler>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();

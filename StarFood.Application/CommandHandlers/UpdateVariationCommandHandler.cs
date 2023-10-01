@@ -30,5 +30,10 @@ namespace StarFood.Application.CommandHandlers
             await _variationRepository.UpdateAsync(command.Id, updateVariation);
             return updateVariation;
         }
+
+        public Task<List<Variations>> HandleAsyncList(List<UpdateVariationCommand> commandList)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

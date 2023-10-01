@@ -2,6 +2,8 @@
 using StarFood.Domain.Commands;
 using StarFood.Domain.Entities;
 using StarFood.Domain.Repositories;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Model;
 
 namespace StarFood.Application.CommandHandlers
 {
@@ -14,21 +16,34 @@ namespace StarFood.Application.CommandHandlers
             _variationRepository = variationRepository;
         }
 
-        public async Task<Variations> HandleAsync(CreateVariationCommand command)
+        public Task<Variations> HandleAsync(CreateVariationCommand command)
         {
-            if (string.IsNullOrEmpty(command.Description))
+            throw new NotImplementedException();
+        }
+
+        public async Task<List<Variations>> HandleAsyncList(List<CreateVariationCommand> variationList)
+        {
+            var newVariation = new Variations();
+            var newVariationsList = new List<Variations>();
+
+            foreach (var variation in variationList)
             {
-                throw new ArgumentException("O nome da variação é obrigatório.");
+                if (string.IsNullOrEmpty(variation.Description))
+                {
+                    throw new ArgumentException("O nome da variação é obrigatório.");
+                }
+
+                newVariation = new Variations
+                {
+                    Description = variation.Description,
+                    Value = variation.Value,
+                };
+
+                await _variationRepository.CreateAsync(newVariation);
+                newVariationsList.Add(newVariation);
             }
 
-            var newVariation = new Variations
-            {
-                Description = command.Description,
-                Value = command.Value,
-            };
-
-            await _variationRepository.CreateAsync(newVariation);
-            return newVariation;
+            return newVariationsList;
         }
     }
 }

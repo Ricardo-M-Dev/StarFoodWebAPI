@@ -15,45 +15,45 @@ namespace StarFood.Infrastructure.Data.Repositories
 
         public async Task<List<ProductVariations>> GetAllAsync(int restaurantId)
         {
-            return await _context.ProductesProductVariations
+            return await _context.ProductVariations
                 .Where(dp => dp.RestaurantId == restaurantId)
                 .ToListAsync();
         }
 
         public async Task<ProductVariations> GetByIdAsync(int id)
         {
-            return await _context.ProductesProductVariations.FindAsync(id);
+            return await _context.ProductVariations.FindAsync(id);
         }
 
         public async Task<List<ProductVariations>> GetByProductId(int productId)
         {
-            return await _context.ProductesProductVariations
+            return await _context.ProductVariations
                 .Where(dp => dp.ProductId == productId)
                 .ToListAsync();
         }
 
         public async Task<List<ProductVariations>> GetByVariationId(int productVariationId)
         {
-            return await _context.ProductesProductVariations
+            return await _context.ProductVariations
                 .Where(dp => dp.VariationId == productVariationId)
                 .ToListAsync();
         }
 
-        public async Task CreateAsync(ProductVariations productesProductVariations)
+        public async Task CreateAsync(ProductVariations productVariations)
         {
-            _context.ProductesProductVariations.Add(productesProductVariations);
+            _context.ProductVariations.Add(productVariations);
             await _context.SaveChangesAsync();
         }
 
-        public async Task UpdateAsync(int id, ProductVariations productesProductVariations)
+        public async Task UpdateAsync(int id, ProductVariations productVariations)
         {
-            _context.ProductesProductVariations.Update(productesProductVariations);
+            _context.ProductVariations.Update(productVariations);
             await _context.SaveChangesAsync();
         }
 
         public async Task ChangeAvailability(int id, bool isAvailable)
         {
-            var productProductVariation = _context.Productes.Find(id);
+            var productProductVariation = _context.Products.Find(id);
 
             if (productProductVariation != null)
             {
@@ -71,7 +71,7 @@ namespace StarFood.Infrastructure.Data.Repositories
             var productProductVariation = await GetByIdAsync(id);
             if (productProductVariation != null)
             {
-                _context.ProductesProductVariations.Remove(productProductVariation);
+                _context.ProductVariations.Remove(productProductVariation);
                 await _context.SaveChangesAsync();
             }
         }

@@ -2,11 +2,6 @@
 using StarFood.Domain.Commands;
 using StarFood.Domain.Entities;
 using StarFood.Domain.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace StarFood.Application.CommandHandlers
 {
@@ -31,7 +26,7 @@ namespace StarFood.Application.CommandHandlers
                 TypeName = command.TypeName
             };
 
-            await _productTypeRrepository.UpdateAsync(updateProductType);
+            await _productTypeRrepository.UpdateAsync(command.Id, updateProductType);
             return updateProductType;
         }
     }

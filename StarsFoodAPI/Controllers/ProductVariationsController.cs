@@ -1,104 +1,113 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using StarFood.Application.Interfaces;
 using StarFood.Application.Models;
 using StarFood.Domain.Entities;
 using StarFood.Domain.Repositories;
 
-[Route("api")]
-[ApiController]
-public class ProductVariationsController : ControllerBase
+namespace StarsFoodAPI.Controllers
 {
-    private readonly IProductVariationsRepository _productVariationsRepository;
-
-    public ProductVariationsController(IProductVariationsRepository productVariationsRepository)
+    public class ProductVariationsController : ControllerBase
     {
-        _productVariationsRepository = productVariationsRepository;
-    }
+        private readonly IProductVariationsRepository _productesProductVariationsRepository;
 
-    [HttpGet("GetAllVariations")]
-    public async Task<IActionResult> GetAllVariations(int restaurantId)
-    {
-        var variations = await _productVariationsRepository.GetAllAsync(restaurantId);
-        return Ok(variations);
-    }
-
-    [HttpGet("GetVariation/{id}")]
-    public async Task<IActionResult> GetVariationById(int id)
-    {
-        var variation = await _productVariationsRepository.GetByIdAsync(id);
-        if (variation == null)
+        public ProductVariationsController(IProductVariationsRepository productesProductVariationsRepository)
         {
-            return NotFound();
+            _productesProductVariationsRepository = productesProductVariationsRepository;
         }
 
-        return Ok(variation);
-    }
-
-    [HttpPost("CreateVariation")]
-    public async Task<IActionResult> CreateVariation([FromBody] ProductVariationsModel variationModel)
-    {
-        if (!ModelState.IsValid)
+        [HttpGet("GetAllProductesVariations")]
+        public async Task<IActionResult> GetAllProductVariations(int restaurantId)
         {
-            return BadRequest(ModelState);
+            var productVariation = await _productesProductVariationsRepository.GetAllAsync(restaurantId);
+            return Ok(productVariation);
         }
 
-        var newVariation = new ProductVariations
+        [HttpGet("GetProductVariation/{id}")]
+        public async Task<IActionResult> GetProductVariation(int id)
         {
-            Description = variationModel.Description,
-            RestaurantId = variationModel.RestaurantId
-        };
+            var productVariation = await _productesProductVariationsRepository.GetByIdAsync(id);
+            if (productVariation == null)
+            {
+                return NotFound();
+            }
 
-        await _productVariationsRepository.CreateAsync(newVariation);
-        return Ok(newVariation);
-    }
-
-    [HttpPut("UpdateVariation/{id}")]
-    public async Task<IActionResult> UpdateVariation(int id, [FromBody] ProductVariations variation)
-    {
-        if (!ModelState.IsValid)
-        {
-            return BadRequest(ModelState);
+            return Ok(productVariation);
         }
 
-        var existingVariation = await _productVariationsRepository.GetByIdAsync(id);
-        if (existingVariation == null)
+        [HttpGet("GetProductVariationByProductId/{id}")]
+        public async Task<IActionResult> GetProductVariationByProductId(int productId)
         {
-            return NotFound();
+            var productVariation = await _productesProductVariationsRepository.GetByProductId(productId);
+            if (productVariation == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(productVariation);
         }
 
-        existingVariation.Update(variation.Description, variation.Value);
-
-        await _productVariationsRepository.UpdateAsync(id, existingVariation);
-        return Ok(existingVariation);
-    }
-
-    [HttpPut("SetVariationAvailability/{id}")]
-    public async Task<IActionResult> SetAvailability(int id, bool isAvailable)
-    {
-        if (!ModelState.IsValid)
+        [HttpGet("GetProductVariationByVariationId/{id}")]
+        public async Task<IActionResult> GetProductVariationByVariationId(int productVariationId)
         {
-            return BadRequest(ModelState);
+            var productVariation = await _productesProductVariationsRepository.GetByVariationId(productVariationId);
+            if (productVariation == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(productVariation);
         }
 
-        var existingVariation = await _productVariationsRepository.GetByIdAsync(id);
-        if (existingVariation == null)
+        [HttpPost("CreateProductVariation")]
+        public async Task<IActionResult> CreateProductVariation([FromBody] ProductesProductVariationsModel productesVariationsModel)
         {
-            return NotFound();
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var newProductVariation = new ProductVariations
+            {
+                ProductesId = productesVariationsModel.ProductId,
+                VariationId = productesVariationsModel.VariationId,
+                RestaurantId = productesVariationsModel.RestaurantId
+            };
+
+            await _productesProductVariationsRepository.CreateAsync(newProductVariation);
+            return Ok(newProductVariation);
         }
 
-        existingVariation.SetAvailability(isAvailable);
-        return Ok(existingVariation);
-    }
-
-    [HttpDelete("DeleteVariation/{id}")]
-    public async Task<IActionResult> DeleteVariation(int id)
-    {
-        var variation = await _productVariationsRepository.GetByIdAsync(id);
-        if (variation == null)
+        [HttpPut("UpdateProductVariation/{id}")]
+        public async Task<IActionResult> UpdateProductVariation(int id, [FromBody] ProductVariations variation)
         {
-            return NotFound();
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var existingVariation = await _productesProductVariationsRepository.GetByIdAsync(id);
+            if (existingVariation == null)
+            {
+                return NotFound();
+            }
+
+            existingVariation.Update(variation.ProductesId, variation.VariationId);
+
+            await _productesProductVariationsRepository.UpdateAsync(id, existingVariation);
+            return Ok(existingVariation);
         }
 
-        await _productVariationsRepository.DeleteAsync(id);
-        return Ok();
+        [HttpDelete("DeleteProductVariation/{id}")]
+        public async Task<IActionResult> DeleteProductVariation(int id)
+        {
+            var category = await _productesProductVariationsRepository.GetByIdAsync(id);
+            if (category == null)
+            {
+                return NotFound();
+            }
+
+            await _productesProductVariationsRepository.DeleteAsync(id);
+            return Ok();
+        }
     }
 }

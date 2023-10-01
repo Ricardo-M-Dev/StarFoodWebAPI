@@ -45,7 +45,7 @@ namespace StarFood.Infrastructure.Migrations
                     b.ToTable("Categories");
                 });
 
-            modelBuilder.Entity("StarFood.Domain.Entities.Dishes", b =>
+            modelBuilder.Entity("StarFood.Domain.Entities.Productes", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -79,15 +79,15 @@ namespace StarFood.Infrastructure.Migrations
 
                     b.HasIndex("RestaurantId");
 
-                    b.ToTable("Dishes");
+                    b.ToTable("Productes");
                 });
 
-            modelBuilder.Entity("StarFood.Domain.Entities.DishesProductVariations", b =>
+            modelBuilder.Entity("StarFood.Domain.Entities.ProductesProductVariations", b =>
                 {
-                    b.Property<int>("DishesId")
+                    b.Property<int>("ProductesId")
                         .HasColumnType("int");
 
-                    b.Property<int>("ProductVariationId")
+                    b.Property<int>("VariationId")
                         .HasColumnType("int");
 
                     b.Property<int>("Id")
@@ -96,13 +96,13 @@ namespace StarFood.Infrastructure.Migrations
                     b.Property<int>("RestaurantId")
                         .HasColumnType("int");
 
-                    b.HasKey("DishesId", "ProductVariationId");
+                    b.HasKey("ProductesId", "VariationId");
 
-                    b.HasIndex("ProductVariationId");
+                    b.HasIndex("VariationId");
 
                     b.HasIndex("RestaurantId");
 
-                    b.ToTable("DishesProductVariations");
+                    b.ToTable("ProductesProductVariations");
                 });
 
             modelBuilder.Entity("StarFood.Domain.Entities.ProductTypes", b =>
@@ -185,7 +185,7 @@ namespace StarFood.Infrastructure.Migrations
                     b.Navigation("Restaurant");
                 });
 
-            modelBuilder.Entity("StarFood.Domain.Entities.Dishes", b =>
+            modelBuilder.Entity("StarFood.Domain.Entities.Productes", b =>
                 {
                     b.HasOne("StarFood.Domain.Entities.Categories", "Category")
                         .WithMany()
@@ -212,17 +212,17 @@ namespace StarFood.Infrastructure.Migrations
                     b.Navigation("Type");
                 });
 
-            modelBuilder.Entity("StarFood.Domain.Entities.DishesProductVariations", b =>
+            modelBuilder.Entity("StarFood.Domain.Entities.ProductesProductVariations", b =>
                 {
-                    b.HasOne("StarFood.Domain.Entities.Dishes", "Dishes")
-                        .WithMany("DishesProductVariations")
-                        .HasForeignKey("DishesId")
+                    b.HasOne("StarFood.Domain.Entities.Productes", "Productes")
+                        .WithMany("ProductesProductVariations")
+                        .HasForeignKey("ProductesId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("StarFood.Domain.Entities.ProductVariations", "ProductVariation")
-                        .WithMany("DishesProductVariations")
-                        .HasForeignKey("ProductVariationId")
+                        .WithMany("ProductesProductVariations")
+                        .HasForeignKey("VariationId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -232,7 +232,7 @@ namespace StarFood.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Dishes");
+                    b.Navigation("Productes");
 
                     b.Navigation("ProductVariation");
 
@@ -261,14 +261,14 @@ namespace StarFood.Infrastructure.Migrations
                     b.Navigation("Restaurant");
                 });
 
-            modelBuilder.Entity("StarFood.Domain.Entities.Dishes", b =>
+            modelBuilder.Entity("StarFood.Domain.Entities.Productes", b =>
                 {
-                    b.Navigation("DishesProductVariations");
+                    b.Navigation("ProductesProductVariations");
                 });
 
             modelBuilder.Entity("StarFood.Domain.Entities.ProductVariations", b =>
                 {
-                    b.Navigation("DishesProductVariations");
+                    b.Navigation("ProductesProductVariations");
                 });
 #pragma warning restore 612, 618
         }

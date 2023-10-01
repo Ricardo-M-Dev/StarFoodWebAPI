@@ -1,8 +1,6 @@
-﻿using StarFood.Domain.Entities;
-
-namespace StarFood.Domain.Commands
+﻿namespace StarFood.Domain.Commands
 {
-    public class CreateDishCommand
+    public class CreateProductCommand
     {
         public string Name { get; set; }
         public string Description { get; set; }

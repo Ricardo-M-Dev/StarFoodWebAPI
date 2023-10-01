@@ -24,14 +24,14 @@ builder.Services.AddDbContext<StarFoodDbContext>(options =>
 });
 
 builder.Services.AddScoped<IRestaurantsRepository, RestaurantsRepository>();
-builder.Services.AddScoped<IDishesRepository, DishesRepository>();
-builder.Services.AddScoped<ICategoriesRepository, CategoriesRepository>();
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<IProductCategoriesRepository, ProductCategoriesRepository>();
 builder.Services.AddScoped<IProductTypesRepository, ProductTypesRepository>();
-builder.Services.AddScoped<IDishesProductVariationsRepository, DishesProductVariationsRepository>();
 builder.Services.AddScoped<IProductVariationsRepository, ProductVariationsRepository>();
+builder.Services.AddScoped<IVariationsRepository, VariationsRepository>();
 
-builder.Services.AddScoped<ICommandHandler<CreateDishCommand, Dishes>, CreateDishCommandHandler>();
-builder.Services.AddScoped<ICommandHandler<CreateCategoryCommand, Categories>, CreateCategoryCommandHandler>();
+builder.Services.AddScoped<ICommandHandler<CreateProductCommand, Products>, CreateProductCommandHandler>();
+builder.Services.AddScoped<ICommandHandler<CreateProductCategoryCommand, ProductCategories>, CreateProductCategoryCommandHandler>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();

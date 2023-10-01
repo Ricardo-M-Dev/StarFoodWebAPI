@@ -101,7 +101,7 @@ namespace StarFood.Infrastructure.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "Dishes",
+                name: "Productes",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -117,21 +117,21 @@ namespace StarFood.Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Dishes", x => x.Id);
+                    table.PrimaryKey("PK_Productes", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Dishes_Categories_CategoryId",
+                        name: "FK_Productes_Categories_CategoryId",
                         column: x => x.CategoryId,
                         principalTable: "Categories",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Dishes_ProductTypes_ProductTypeId",
+                        name: "FK_Productes_ProductTypes_ProductTypeId",
                         column: x => x.ProductTypeId,
                         principalTable: "ProductTypes",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Dishes_Restaurants_RestaurantId",
+                        name: "FK_Productes_Restaurants_RestaurantId",
                         column: x => x.RestaurantId,
                         principalTable: "Restaurants",
                         principalColumn: "Id",
@@ -140,31 +140,31 @@ namespace StarFood.Infrastructure.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "DishesProductVariations",
+                name: "ProductesProductVariations",
                 columns: table => new
                 {
-                    DishesId = table.Column<int>(type: "int", nullable: false),
-                    ProductVariationId = table.Column<int>(type: "int", nullable: false),
+                    ProductesId = table.Column<int>(type: "int", nullable: false),
+                    VariationId = table.Column<int>(type: "int", nullable: false),
                     Id = table.Column<int>(type: "int", nullable: false),
                     RestaurantId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_DishesProductVariations", x => new { x.DishesId, x.ProductVariationId });
+                    table.PrimaryKey("PK_ProductesProductVariations", x => new { x.ProductesId, x.VariationId });
                     table.ForeignKey(
-                        name: "FK_DishesProductVariations_Dishes_DishesId",
-                        column: x => x.DishesId,
-                        principalTable: "Dishes",
+                        name: "FK_ProductesProductVariations_Productes_ProductesId",
+                        column: x => x.ProductesId,
+                        principalTable: "Productes",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_DishesProductVariations_ProductVariations_ProductVariationId",
-                        column: x => x.ProductVariationId,
+                        name: "FK_ProductesProductVariations_ProductVariations_VariationId",
+                        column: x => x.VariationId,
                         principalTable: "ProductVariations",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_DishesProductVariations_Restaurants_RestaurantId",
+                        name: "FK_ProductesProductVariations_Restaurants_RestaurantId",
                         column: x => x.RestaurantId,
                         principalTable: "Restaurants",
                         principalColumn: "Id",
@@ -179,28 +179,28 @@ namespace StarFood.Infrastructure.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Dishes_CategoryId",
-                table: "Dishes",
+                name: "IX_Productes_CategoryId",
+                table: "Productes",
                 column: "CategoryId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Dishes_ProductTypeId",
-                table: "Dishes",
+                name: "IX_Productes_ProductTypeId",
+                table: "Productes",
                 column: "ProductTypeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Dishes_RestaurantId",
-                table: "Dishes",
+                name: "IX_Productes_RestaurantId",
+                table: "Productes",
                 column: "RestaurantId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_DishesProductVariations_ProductVariationId",
-                table: "DishesProductVariations",
-                column: "ProductVariationId");
+                name: "IX_ProductesProductVariations_VariationId",
+                table: "ProductesProductVariations",
+                column: "VariationId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_DishesProductVariations_RestaurantId",
-                table: "DishesProductVariations",
+                name: "IX_ProductesProductVariations_RestaurantId",
+                table: "ProductesProductVariations",
                 column: "RestaurantId");
 
             migrationBuilder.CreateIndex(
@@ -220,10 +220,10 @@ namespace StarFood.Infrastructure.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "DishesProductVariations");
+                name: "ProductesProductVariations");
 
             migrationBuilder.DropTable(
-                name: "Dishes");
+                name: "Productes");
 
             migrationBuilder.DropTable(
                 name: "ProductVariations");

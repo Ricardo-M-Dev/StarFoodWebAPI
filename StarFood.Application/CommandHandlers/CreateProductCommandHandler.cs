@@ -5,20 +5,20 @@ using StarFood.Domain.Repositories;
 
 namespace StarFood.Application.CommandHandlers
 {
-    public class CreateDishCommandHandler : ICommandHandler<CreateDishCommand, Dishes>
+    public class CreateProductCommandHandler : ICommandHandler<CreateProductCommand, Products>
     {
-        private readonly IDishesRepository _dishRepository;
+        private readonly IProductRepository _productRepository;
         private readonly IProductTypesRepository _productTypeRepository;
-        private readonly ICategoriesRepository _categoryRepository;
+        private readonly IProductCategoriesRepository _categoryRepository;
 
-        public CreateDishCommandHandler(IDishesRepository dishRepository, IProductTypesRepository productTypeRepository, ICategoriesRepository categoryRepository)
+        public CreateProductCommandHandler(IProductRepository productRepository, IProductTypesRepository productTypeRepository, IProductCategoriesRepository categoryRepository)
         {
-            _dishRepository = dishRepository;
+            _productRepository = productRepository;
             _productTypeRepository = productTypeRepository;
             _categoryRepository = categoryRepository;
         }
 
-        public async Task<Dishes> HandleAsync(CreateDishCommand command)
+        public async Task<Products> HandleAsync(CreateProductCommand command)
         {
             if (string.IsNullOrEmpty(command.Name))
             {
@@ -50,7 +50,7 @@ namespace StarFood.Application.CommandHandlers
                 throw new ArgumentException("Categoria não encontrada.");
             }
 
-            var newDish = new Dishes
+            var newProduct = new Products
             {
                 Name = command.Name,
                 Description = command.Description,
@@ -59,8 +59,8 @@ namespace StarFood.Application.CommandHandlers
                 RestaurantId = command.RestaurantId,
             };
 
-            await _dishRepository.CreateAsync(newDish);
-            return newDish;
+            await _productRepository.CreateAsync(newProduct);
+            return newProduct;
         }
     }
 }

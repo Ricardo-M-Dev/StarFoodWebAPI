@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace StarFood.Domain.Commands
+﻿namespace StarFood.Domain.Commands
 {
-    public class UpdateDishCommand
+    public class UpdateProductCommand
     {
         public int Id { get; set; }
         public string Name { get; set; }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace StarFood.Domain.Commands
 {
-    public class UpdateCategoryCommand
+    public class UpdateProductCategoryCommand
     {
         public int Id { get; set; }
         public string CategoryName { get; set; }

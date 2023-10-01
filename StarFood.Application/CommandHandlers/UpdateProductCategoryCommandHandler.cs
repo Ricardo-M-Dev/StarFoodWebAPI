@@ -9,23 +9,23 @@ using System.Threading.Tasks;
 
 namespace StarFood.Application.CommandHandlers
 {
-    public class UpdateCategoryCommandHandler : ICommandHandler<UpdateCategoryCommand, Categories>
+    public class UpdateProductCategoryCommandHandler : ICommandHandler<UpdateProductCategoryCommand, ProductCategories>
     {
-        private readonly ICategoriesRepository _categoryRepository;
+        private readonly IProductCategoriesRepository _categoryRepository;
 
-        public UpdateCategoryCommandHandler(ICategoriesRepository categoryRepository)
+        public UpdateProductCategoryCommandHandler(IProductCategoriesRepository categoryRepository)
         {
             _categoryRepository = categoryRepository;
         }
 
-        public async Task<Categories> HandleAsync(UpdateCategoryCommand command)
+        public async Task<ProductCategories> HandleAsync(UpdateProductCategoryCommand command)
         {
             if (string.IsNullOrEmpty(command.CategoryName))
             {
                 throw new ArgumentException("O nome da categoria é obrigatório.");
             }
 
-            var updatedCategory = new Categories
+            var updatedCategory = new ProductCategories
             {
                 CategoryName = command.CategoryName
             };

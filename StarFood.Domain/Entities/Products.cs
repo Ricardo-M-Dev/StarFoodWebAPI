@@ -2,7 +2,7 @@
 
 namespace StarFood.Domain.Entities
 {
-    public class Dishes
+    public class Products
     {
         public int Id { get; set; }
         public string Name { get; set; }
@@ -15,12 +15,12 @@ namespace StarFood.Domain.Entities
 
         public Restaurants Restaurant { get; set; }
         public ProductTypes Type { get; set; }
-        public Categories Category { get; set; }
-        public List<DishesProductVariations> DishesProductVariations { get; set; } = new List<DishesProductVariations>();
+        public ProductCategories Category { get; set; }
+        public List<ProductVariations> ProductesProductVariations { get; set; } = new List<ProductVariations>();
 
-        public Dishes() { }
+        public Products() { }
 
-        public Dishes(int id, string name, string description, int typeId, int categoryId, int restaurantId, bool isAvailable = true)
+        public Products(int id, string name, string description, int typeId, int categoryId, int restaurantId, bool isAvailable = true)
         {
             Id = id;
             Name = name;

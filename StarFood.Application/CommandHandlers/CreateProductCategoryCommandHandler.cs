@@ -4,23 +4,23 @@ using StarFood.Domain.Entities;
 
 namespace StarFood.Application.CommandHandlers
 {
-    public class CreateCategoryCommandHandler : ICommandHandler<CreateCategoryCommand, Categories>
+    public class CreateProductCategoryCommandHandler : ICommandHandler<CreateProductCategoryCommand, ProductCategories>
     {
-        private readonly ICategoriesRepository _categoryRepository;
+        private readonly IProductCategoriesRepository _categoryRepository;
 
-        public CreateCategoryCommandHandler(ICategoriesRepository categoryRepository)
+        public CreateProductCategoryCommandHandler(IProductCategoriesRepository categoryRepository)
         {
             _categoryRepository = categoryRepository;
         }
 
-        public async Task<Categories> HandleAsync(CreateCategoryCommand command)
+        public async Task<ProductCategories> HandleAsync(CreateProductCategoryCommand command)
         {
             if (string.IsNullOrEmpty(command.CategoryName))
             {
                 throw new ArgumentException("O nome da categoria é obrigatório.");
             }
 
-            var newCategory = new Categories
+            var newCategory = new ProductCategories
             {
                 CategoryName = command.CategoryName,
                 RestaurantId = command.RestaurantId,

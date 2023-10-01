@@ -31,7 +31,7 @@ namespace StarFood.Infrastructure.Data.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task UpdateAsync(ProductTypes productType)
+        public async Task UpdateAsync(int Id, ProductTypes productType)
         {
             _context.ProductTypes.Update(productType);
             await _context.SaveChangesAsync();
@@ -49,7 +49,7 @@ namespace StarFood.Infrastructure.Data.Repositories
 
         public async Task ChangeAvailability(int id, bool isAvailable)
         {
-            var productType = _context.Dishes.Find(id);
+            var productType = _context.Productes.Find(id);
 
             if (productType != null)
             {

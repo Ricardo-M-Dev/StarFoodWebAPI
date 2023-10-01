@@ -5,20 +5,20 @@ using StarFood.Domain.Repositories;
 
 namespace StarFood.Application.CommandHandlers
 {
-    public class UpdateDishCommandHandler : ICommandHandler<UpdateDishCommand, Dishes>
+    public class UpdateProductCommandHandler : ICommandHandler<UpdateProductCommand, Products>
     {
-        private readonly IDishesRepository _dishRepository;
+        private readonly IProductRepository _productRepository;
         private readonly IProductTypesRepository _productTypeRepository;
-        private readonly ICategoriesRepository _categoryRepository;
+        private readonly IProductCategoriesRepository _categoryRepository;
 
-        public UpdateDishCommandHandler(IDishesRepository dishRepository, IProductTypesRepository productTypeRepository, ICategoriesRepository categoryRepository)
+        public UpdateProductCommandHandler(IProductRepository productRepository, IProductTypesRepository productTypeRepository, IProductCategoriesRepository categoryRepository)
         {
-            _dishRepository = dishRepository;
+            _productRepository = productRepository;
             _productTypeRepository = productTypeRepository;
             _categoryRepository = categoryRepository;
         }
 
-        public async Task<Dishes> HandleAsync(UpdateDishCommand command)
+        public async Task<Products> HandleAsync(UpdateProductCommand command)
         {
             if (string.IsNullOrEmpty(command.Name))
             {
@@ -50,7 +50,7 @@ namespace StarFood.Application.CommandHandlers
                 throw new ArgumentException("Categoria não encontrada.");
             }
 
-            var updatedDish = new Dishes
+            var updatedProduct = new Products
             {
                 Name = command.Name,
                 Description = command.Description,
@@ -58,8 +58,8 @@ namespace StarFood.Application.CommandHandlers
                 CategoryId = command.CategoryId,
             };
 
-            await _dishRepository.UpdateAsync(command.Id, updatedDish);
-            return updatedDish;
+            await _productRepository.UpdateAsync(command.Id, updatedProduct);
+            return updatedProduct;
         }
     }
 }

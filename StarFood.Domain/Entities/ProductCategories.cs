@@ -1,6 +1,6 @@
 ﻿namespace StarFood.Domain.Entities
 {
-    public class Categories
+    public class ProductCategories
     {
         public int Id { get; set; }
         public string CategoryName { get; set; }
@@ -9,9 +9,9 @@
 
         public Restaurants Restaurant { get; set; }
 
-        public Categories() { }
+        public ProductCategories() { }
 
-        public Categories(int id, string categoryName, int restaurantId)
+        public ProductCategories(int id, string categoryName, int restaurantId)
         {
             Id = id;
             CategoryName = categoryName;

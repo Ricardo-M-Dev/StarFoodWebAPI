@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace StarFood.Application.Models
 {
-    public class DishesProductVariationsModel
+    public class ProductesProductVariationsModel
     {
-        public int DishId { get; set; }
+        public int ProductId { get; set; }
         public int VariationId { get; set; }
         public int RestaurantId { get; set; }
     }

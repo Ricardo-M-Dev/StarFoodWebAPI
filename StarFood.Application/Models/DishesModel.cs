@@ -1,6 +1,6 @@
 ﻿namespace StarFood.Application.Models
 {
-    public class DishesModel
+    public class ProductesModel
     {
         public string Name { get; set; }
         public string Description { get; set; }

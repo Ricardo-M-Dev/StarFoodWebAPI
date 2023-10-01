@@ -6,12 +6,12 @@ using StarFood.Domain.Entities;
 
 [Route("api")]
 [ApiController]
-public class CategoriesController : ControllerBase
+public class ProductCategoriesController : ControllerBase
 {
-    private readonly ICategoriesRepository _categoriesRepository;
-    private readonly ICommandHandler<CreateCategoryCommand, Categories> _createCategoryCommandHandler;
+    private readonly IProductCategoriesRepository _categoriesRepository;
+    private readonly ICommandHandler<CreateProductCategoryCommand, ProductCategories> _createCategoryCommandHandler;
     
-    public CategoriesController(ICategoriesRepository categoriesRepository, ICommandHandler<CreateCategoryCommand, Categories> createCategoryCOmmandHandler)
+    public ProductCategoriesController(IProductCategoriesRepository categoriesRepository, ICommandHandler<CreateProductCategoryCommand, ProductCategories> createCategoryCOmmandHandler)
     {
         _categoriesRepository = categoriesRepository;
         _createCategoryCommandHandler = createCategoryCOmmandHandler;
@@ -37,7 +37,7 @@ public class CategoriesController : ControllerBase
     }
 
     [HttpPost("CreateCategory")]
-    public async Task<IActionResult> CreateCategory([FromBody] CreateCategoryCommand createCategoryCommand)
+    public async Task<IActionResult> CreateCategory([FromBody] CreateProductCategoryCommand createCategoryCommand)
     {
         try
         {
@@ -59,7 +59,7 @@ public class CategoriesController : ControllerBase
     }
 
     [HttpPut("UpdateCategory/{id}")]
-    public async Task<IActionResult> UpdateCategory(int id, [FromBody] Categories category)
+    public async Task<IActionResult> UpdateCategory(int id, [FromBody] ProductCategories category)
     {
         if (!ModelState.IsValid)
         {

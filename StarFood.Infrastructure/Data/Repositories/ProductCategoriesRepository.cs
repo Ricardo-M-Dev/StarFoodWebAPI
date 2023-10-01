@@ -4,34 +4,34 @@ using StarFood.Domain.Entities;
 
 namespace StarFood.Infrastructure.Data.Repositories
 {
-    public class CategoriesRepository : ICategoriesRepository
+    public class ProductCategoriesRepository : IProductCategoriesRepository
     {
         private readonly StarFoodDbContext _context;
 
-        public CategoriesRepository(StarFoodDbContext context)
+        public ProductCategoriesRepository(StarFoodDbContext context)
         {
             _context = context;
         }
 
-        public async Task<List<Categories>> GetAllAsync(int restaurantId)
+        public async Task<List<ProductCategories>> GetAllAsync(int restaurantId)
         {
             return await _context.Categories
                 .Where(c => c.RestaurantId == restaurantId)
                 .ToListAsync();
         }
 
-        public async Task<Categories> GetByIdAsync(int Id)
+        public async Task<ProductCategories> GetByIdAsync(int Id)
         {
             return await _context.Categories.FindAsync(Id);
         }
 
-        public async Task CreateAsync(Categories category)
+        public async Task CreateAsync(ProductCategories category)
         {
             _context.Categories.Add(category);
             await _context.SaveChangesAsync();
         }
 
-        public async Task UpdateAsync(int id, Categories category)
+        public async Task UpdateAsync(int id, ProductCategories category)
         {
             _context.Categories.Update(category);
             await _context.SaveChangesAsync();
@@ -49,7 +49,7 @@ namespace StarFood.Infrastructure.Data.Repositories
 
         public async Task ChangeAvailability(int id, bool isAvailable)
         {
-            var category = _context.Dishes.Find(id);
+            var category = _context.Productes.Find(id);
 
             if (category != null)
             {

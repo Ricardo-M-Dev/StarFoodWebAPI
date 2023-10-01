@@ -68,7 +68,7 @@ namespace StarsFoodAPI.Controllers
 
             var newProductVariation = new ProductVariations
             {
-                ProductesId = productesVariationsModel.ProductId,
+                ProductId = productesVariationsModel.ProductId,
                 VariationId = productesVariationsModel.VariationId,
                 RestaurantId = productesVariationsModel.RestaurantId
             };
@@ -91,7 +91,7 @@ namespace StarsFoodAPI.Controllers
                 return NotFound();
             }
 
-            existingVariation.Update(variation.ProductesId, variation.VariationId);
+            existingVariation.Update(variation.ProductId, variation.VariationId);
 
             await _productesProductVariationsRepository.UpdateAsync(id, existingVariation);
             return Ok(existingVariation);

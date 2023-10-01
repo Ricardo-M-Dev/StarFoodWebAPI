@@ -28,7 +28,7 @@ namespace StarFood.Infrastructure.Data.Repositories
         public async Task<List<ProductVariations>> GetByProductId(int productId)
         {
             return await _context.ProductesProductVariations
-                .Where(dp => dp.ProductesId == productId)
+                .Where(dp => dp.ProductId == productId)
                 .ToListAsync();
         }
 

@@ -76,7 +76,7 @@ public class ProductTypesController : ControllerBase
 
         existingProductType.Update(productTypes.TypeName);
 
-        await _productTypesRepository.UpdateAsync(existingProductType);
+        await _productTypesRepository.UpdateAsync(id, existingProductType);
         return Ok(existingProductType);
     }
 

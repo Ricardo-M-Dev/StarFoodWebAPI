@@ -2,6 +2,7 @@
 using StarFood.Application.Interfaces;
 using StarFood.Domain.Commands;
 using StarFood.Domain.Entities;
+using StarsFoodAPI.Services.HttpContext;
 
 [Route("api")]
 [ApiController]
@@ -17,8 +18,10 @@ public class ProductCategoriesController : ControllerBase
     }
 
     [HttpGet("GetAllCategories")]
-    public async Task<IActionResult> GetAllCategories(int restaurantId)
+    public async Task<IActionResult> GetAllCategories([FromServices] AuthenticatedContext auth)
     {
+        var restaurantId = auth.RestaurantId;
+
         var categories = await _categoriesRepository.GetAllAsync(restaurantId);
         return Ok(categories);
     }

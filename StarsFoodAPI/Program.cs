@@ -7,6 +7,7 @@ using StarFood.Domain.Entities;
 using StarFood.Domain.Repositories;
 using StarFood.Infrastructure.Data;
 using StarFood.Infrastructure.Data.Repositories;
+using StarsFoodAPI.Services.HttpContext;
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = new ConfigurationBuilder()
@@ -38,6 +39,9 @@ builder.Services.AddScoped<ICommandHandler<CreateProductCategoryCommand, Product
 builder.Services.AddScoped<ICommandHandler<UpdateProductCategoryCommand, ProductCategories>, UpdateProductCategoryCommandHandler>();
 builder.Services.AddScoped<ICommandHandler<CreateVariationCommand, Variations>, CreateVariationCommandHandler>();
 builder.Services.AddScoped<ICommandHandler<UpdateVariationCommand, Variations>, UpdateVariationCommandHandler>();
+
+builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+builder.Services.AddScoped<AuthenticatedContext>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();

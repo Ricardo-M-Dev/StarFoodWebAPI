@@ -8,7 +8,6 @@ namespace StarFood.Domain.Commands
 {
     public class CreateProductCategoryCommand
     {
-        public string CategoryName { get; set; }
-        public int RestaurantId { get; set; }
+        public string CategoryName { get; set; } = string.Empty;
     }
 }

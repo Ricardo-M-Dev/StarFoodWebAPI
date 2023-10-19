@@ -4,7 +4,7 @@ namespace StarFood.Domain.Repositories
 {
     public interface IVariationsRepository
     {
-        Task<List<Variations>> GetAllAsync(string restaurantId);
+        Task<List<Variations>> GetAllAsync(int restaurantId);
         Task<Variations> GetByIdAsync(int id);
         Task CreateAsync(Variations productVariations);
         Task UpdateAsync(int id, Variations productVariations);

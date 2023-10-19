@@ -8,17 +8,15 @@ namespace StarFood.Application.CommandHandlers
     public class UpdateProductCommandHandler : ICommandHandler<UpdateProductCommand, Products>
     {
         private readonly IProductRepository _productRepository;
-        private readonly IProductTypesRepository _productTypeRepository;
         private readonly IProductCategoriesRepository _categoryRepository;
 
-        public UpdateProductCommandHandler(IProductRepository productRepository, IProductTypesRepository productTypeRepository, IProductCategoriesRepository categoryRepository)
+        public UpdateProductCommandHandler(IProductRepository productRepository, IProductCategoriesRepository categoryRepository)
         {
             _productRepository = productRepository;
-            _productTypeRepository = productTypeRepository;
             _categoryRepository = categoryRepository;
         }
 
-        public async Task<Products> HandleAsync(UpdateProductCommand command)
+        public async Task<Products> HandleAsync(UpdateProductCommand command, int restaurantId)
         {
             if (string.IsNullOrEmpty(command.Name))
             {
@@ -35,17 +33,12 @@ namespace StarFood.Application.CommandHandlers
                 throw new ArgumentException("O tipo de produto é obrigatório.");
             }
 
-            if (_productTypeRepository.GetByIdAsync(command.ProductTypeId) == null)
-            {
-                throw new ArgumentException("Tipo de produto não encontrado.");
-            }
-
             if (command.CategoryId == 0)
             {
                 throw new ArgumentException("A categoria é obrigatória.");
             }
 
-            if (_categoryRepository.GetByIdAsync(command.CategoryId) == null)
+            if (_categoryRepository.GetByIdAsync(command.CategoryId, restaurantId) == null)
             {
                 throw new ArgumentException("Categoria não encontrada.");
             }
@@ -64,6 +57,11 @@ namespace StarFood.Application.CommandHandlers
         }
 
         public Task<List<Products>> HandleAsyncList(List<UpdateProductCommand> commandList)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<List<Products>> HandleAsyncList(List<UpdateProductCommand> commandList, int restaurantId)
         {
             throw new NotImplementedException();
         }

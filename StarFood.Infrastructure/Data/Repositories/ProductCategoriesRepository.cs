@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using StarFood.Application.Interfaces;
+using StarFood.Domain.Commands;
 using StarFood.Domain.Entities;
 
 namespace StarFood.Infrastructure.Data.Repositories
@@ -20,9 +21,11 @@ namespace StarFood.Infrastructure.Data.Repositories
                 .ToListAsync();
         }
 
-        public async Task<ProductCategories> GetByIdAsync(int Id)
+        public async Task<ProductCategories> GetByIdAsync(int id, int restaurantId)
         {
-            return await _context.Categories.FindAsync(Id);
+            return await _context.Categories
+                .Where(c => c.Id == id && c.RestaurantId == restaurantId)
+                .FirstOrDefaultAsync();
         }
 
         public async Task CreateAsync(ProductCategories category)
@@ -31,34 +34,27 @@ namespace StarFood.Infrastructure.Data.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task UpdateAsync(int id, ProductCategories category)
+        public async Task UpdateAsync(ProductCategories category)
         {
-            _context.Categories.Update(category);
+            var existingCategory = _context.Categories.Local.FirstOrDefault(c => c.Id == category.Id);
+            if (existingCategory != null)
+            {
+                _context.Categories.Update(existingCategory);
+            }
+            else
+            {
+                _context.Categories.Update(category);
+            }
             await _context.SaveChangesAsync();
         }
 
-        public async Task DeleteAsync(int Id)
+        public async Task DeleteAsync(int Id, int restaurantId)
         {
-            var category = await GetByIdAsync(Id);
+            var category = await GetByIdAsync(Id, restaurantId);
             if (category != null)
             {
                 _context.Categories.Remove(category);
                 await _context.SaveChangesAsync();
-            }
-        }
-
-        public async Task ChangeAvailability(int id, bool isAvailable)
-        {
-            var category = _context.Products.Find(id);
-
-            if (category != null)
-            {
-                category.SetAvailability(isAvailable);
-                await _context.SaveChangesAsync();
-            }
-            else
-            {
-                throw new Exception("Categoria não encontrada");
             }
         }
     }

@@ -5,6 +5,7 @@ using StarFood.Domain.Commands;
 using StarFood.Domain.Entities;
 using StarFood.Domain.Repositories;
 using StarFood.Infrastructure.Data.Repositories;
+using StarsFoodAPI.Services.HttpContext;
 using System.Runtime.InteropServices;
 
 [Route("api")]
@@ -40,10 +41,18 @@ public class ProductsController : ControllerBase
     }
 
     [HttpGet("GetAllProducts")]
-    public async Task<IActionResult> GetAllProducts(int restaurantId)
+    public async Task<IActionResult> GetAllProducts([FromServices] AuthenticatedContext auth)
     {
-        var products = await _productsRepository.GetAllAsync(restaurantId);
-        return Ok(products);
+        try
+        {
+            var restaurantId = auth.RestaurantId;
+            var products = await _productsRepository.GetAllAsync(restaurantId);
+            return Ok(products);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(StatusCodes.Status400BadRequest, ex.Message);
+        }
     }
 
     [HttpGet("GetProduct/{id}")]
@@ -59,17 +68,20 @@ public class ProductsController : ControllerBase
     }
 
     [HttpPost("CreateProduct")]
-    public async Task<IActionResult> CreateProduct([FromBody] CreateProductModel createProductModel)
+    public async Task<IActionResult> CreateProduct(
+        [FromServices] AuthenticatedContext auth,
+        [FromBody] CreateProductModel createProductModel)
     {
         try
         {
-            var newProduct = await _createProductCommandHandler.HandleAsync(createProductModel.ProductCommand);
+            var restaurantId = auth.RestaurantId;
+            var newProduct = await _createProductCommandHandler.HandleAsync(createProductModel.ProductCommand, restaurantId);
 
             if (newProduct != null)
             {
                 List<CreateProductVariationCommand> productVariationList = new List<CreateProductVariationCommand>();
 
-                var variations = await _createVariationCommandHandler.HandleAsyncList(createProductModel.VariationCommand);
+                var variations = await _createVariationCommandHandler.HandleAsyncList(createProductModel.VariationCommand, restaurantId);
                 if (variations != null)
                 {
                     foreach (var variation in variations)
@@ -82,7 +94,7 @@ public class ProductsController : ControllerBase
 
                     if (productVariationList != null)
                     {
-                        await _createProductVariationCommandHandler.HandleAsyncList(productVariationList);
+                        await _createProductVariationCommandHandler.HandleAsyncList(productVariationList, restaurantId);
                     }
                 }
             }
@@ -100,11 +112,14 @@ public class ProductsController : ControllerBase
     }
 
     [HttpPatch("UpdateProduct/{id}")]
-    public async Task<IActionResult> UpdateProduct(string restaurantId, [FromBody] UpdateProductModel updateProductModel)
+    public async Task<IActionResult> UpdateProduct(
+        [FromServices] AuthenticatedContext auth,
+        [FromBody] UpdateProductModel updateProductModel)
     {
         try
         {
-            var updatedProduct = await _updateProductCommandHandler.HandleAsync(updateProductModel.ProductCommand);
+            var restaurantId = auth.RestaurantId;
+            var updatedProduct = await _updateProductCommandHandler.HandleAsync(updateProductModel.ProductCommand, restaurantId);
 
             if (updatedProduct != null)
             {

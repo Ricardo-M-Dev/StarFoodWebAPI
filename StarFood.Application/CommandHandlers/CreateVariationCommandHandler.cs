@@ -16,7 +16,7 @@ namespace StarFood.Application.CommandHandlers
             _variationRepository = variationRepository;
         }
 
-        public Task<Variations> HandleAsync(CreateVariationCommand command)
+        public Task<Variations> HandleAsync(CreateVariationCommand command, int restaurantId)
         {
             throw new NotImplementedException();
         }
@@ -44,6 +44,11 @@ namespace StarFood.Application.CommandHandlers
             }
 
             return newVariationsList;
+        }
+
+        public Task<List<Variations>> HandleAsyncList(List<CreateVariationCommand> commandList, int restaurantId)
+        {
+            throw new NotImplementedException();
         }
     }
 }

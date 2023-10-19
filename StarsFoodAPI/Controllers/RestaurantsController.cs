@@ -34,11 +34,11 @@ public class RestaurantsController : ControllerBase
     }
 
     [HttpPost("CreateRestaurant")]
-    public async Task<IActionResult> CreateRestaurant(string restaurantId, [FromBody] CreateRestaurantCommand createRestaurantCommand)
+    public async Task<IActionResult> CreateRestaurant(int restaurantId, [FromBody] CreateRestaurantCommand createRestaurantCommand)
     {
         var newRestaurant = new Restaurants
         {
-            RestaurantId = restaurantId,
+            Id = restaurantId,
             Name = createRestaurantCommand.Name,
         };
 

@@ -27,6 +27,11 @@ namespace StarFood.Application.CommandHandlers
             return newProductVariation;
         }
 
+        public Task<ProductVariations> HandleAsync(CreateProductVariationCommand command, int restaurantId)
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task<List<ProductVariations>> HandleAsyncList(List<CreateProductVariationCommand> productVariationList)
         {
             var newProductVariation = new ProductVariations();
@@ -45,6 +50,11 @@ namespace StarFood.Application.CommandHandlers
             }
 
             return newProductVariationList;
+        }
+
+        public Task<List<ProductVariations>> HandleAsyncList(List<CreateProductVariationCommand> commandList, int restaurantId)
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -97,8 +97,8 @@ C:\Dev\Projects\StarsFoodAPI\StarFood.Tests\obj\Debug\net7.0\refint\StarFood.Tes
 C:\Dev\Projects\StarsFoodAPI\StarFood.Tests\obj\Debug\net7.0\StarFood.Tests.pdb
 C:\Dev\Projects\StarsFoodAPI\StarFood.Tests\obj\Debug\net7.0\StarFood.Tests.genruntimeconfig.cache
 C:\Dev\Projects\StarsFoodAPI\StarFood.Tests\obj\Debug\net7.0\ref\StarFood.Tests.dll
-C:\Dev\Projects\StarFoodWebAPI\StarFood.Tests\bin\Debug\net7.0\testhost.exe
 C:\Dev\Projects\StarFoodWebAPI\StarFood.Tests\bin\Debug\net7.0\testhost.dll
+C:\Dev\Projects\StarFoodWebAPI\StarFood.Tests\bin\Debug\net7.0\testhost.exe
 C:\Dev\Projects\StarFoodWebAPI\StarFood.Tests\bin\Debug\net7.0\xunit.runner.visualstudio.dotnetcore.testadapter.dll
 C:\Dev\Projects\StarFoodWebAPI\StarFood.Tests\bin\Debug\net7.0\xunit.runner.reporters.netcoreapp10.dll
 C:\Dev\Projects\StarFoodWebAPI\StarFood.Tests\bin\Debug\net7.0\xunit.runner.utility.netcoreapp10.dll

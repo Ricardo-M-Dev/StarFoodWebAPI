@@ -13,7 +13,7 @@ namespace StarFood.Application.CommandHandlers
             _categoryRepository = categoryRepository;
         }
 
-        public async Task<ProductCategories> HandleAsync(CreateProductCategoryCommand command)
+        public async Task<ProductCategories> HandleAsync(CreateProductCategoryCommand command, int restaurantId)
         {
             if (string.IsNullOrEmpty(command.CategoryName))
             {
@@ -23,14 +23,14 @@ namespace StarFood.Application.CommandHandlers
             var newCategory = new ProductCategories
             {
                 CategoryName = command.CategoryName,
-                RestaurantId = command.RestaurantId,
+                RestaurantId = restaurantId,
             };
 
             await _categoryRepository.CreateAsync(newCategory);
             return newCategory;
         }
 
-        public Task<List<ProductCategories>> HandleAsyncList(List<CreateProductCategoryCommand> commandList)
+        public Task<List<ProductCategories>> HandleAsyncList(List<CreateProductCategoryCommand> commandList, int restaurantId)
         {
             throw new NotImplementedException();
         }

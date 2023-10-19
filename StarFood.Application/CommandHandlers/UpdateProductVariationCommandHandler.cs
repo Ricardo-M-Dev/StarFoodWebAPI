@@ -26,7 +26,12 @@ namespace StarFood.Application.CommandHandlers
             return updatedProductVariation;
         }
 
-        public Task<List<ProductVariations>> HandleAsyncList(List<UpdateProductVariationCommand> commandList)
+        public Task<ProductVariations> HandleAsync(UpdateProductVariationCommand command, int restaurantId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<List<ProductVariations>> HandleAsyncList(List<UpdateProductVariationCommand> commandList, int restaurantId)
         {
             throw new NotImplementedException();
         }

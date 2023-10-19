@@ -15,7 +15,7 @@ public class VariationsController : ControllerBase
     }
 
     [HttpGet("GetAllVariations")]
-    public async Task<IActionResult> GetAllVariations(string restaurantId)
+    public async Task<IActionResult> GetAllVariations(int restaurantId)
     {
         var variations = await _productVariationsRepository.GetAllAsync(restaurantId);
         return Ok(variations);

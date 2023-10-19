@@ -13,7 +13,7 @@ namespace StarFood.Infrastructure.Data.Repositories
             _context = context;
         }
 
-        public async Task<List<Variations>> GetAllAsync(string restaurantId)
+        public async Task<List<Variations>> GetAllAsync(int restaurantId)
         {
             return await _context.Variations
                 .Where(pv => pv.RestaurantId == restaurantId)

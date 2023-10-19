@@ -14,7 +14,6 @@ namespace StarFood.Domain.Entities
         public bool IsAvailable { get; set; }
 
         public Restaurants Restaurant { get; set; }
-        public ProductTypes Type { get; set; }
         public ProductCategories Category { get; set; }
         public List<ProductVariations> ProductsProductVariations { get; set; } = new List<ProductVariations>();
 

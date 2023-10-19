@@ -27,14 +27,11 @@ builder.Services.AddDbContext<StarFoodDbContext>(options =>
 builder.Services.AddScoped<IRestaurantsRepository, RestaurantsRepository>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IProductCategoriesRepository, ProductCategoriesRepository>();
-builder.Services.AddScoped<IProductTypesRepository, ProductTypesRepository>();
 builder.Services.AddScoped<IProductVariationsRepository, ProductVariationsRepository>();
 builder.Services.AddScoped<IVariationsRepository, VariationsRepository>();
 
 builder.Services.AddScoped<ICommandHandler<CreateProductCommand, Products>, CreateProductCommandHandler>();
 builder.Services.AddScoped<ICommandHandler<UpdateProductCommand, Products>, UpdateProductCommandHandler>();
-builder.Services.AddScoped<ICommandHandler<CreateProductTypeCommand, ProductTypes>, CreateProductTypeCommandHandler>();
-builder.Services.AddScoped<ICommandHandler<UpdateProductTypeCommand, ProductTypes>, UpdateProductTypeCommandHandler>();
 builder.Services.AddScoped<ICommandHandler<CreateProductCategoryCommand, ProductCategories>, CreateProductCategoryCommandHandler>();
 builder.Services.AddScoped<ICommandHandler<UpdateProductCategoryCommand, ProductCategories>, UpdateProductCategoryCommandHandler>();
 builder.Services.AddScoped<ICommandHandler<CreateVariationCommand, Variations>, CreateVariationCommandHandler>();

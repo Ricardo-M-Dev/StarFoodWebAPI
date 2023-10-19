@@ -3,7 +3,7 @@
     public class CreateRestaurantCommand
     {
         public int Id { get; set; }
-        public string RestaurantId { get; set; } = string.Empty;
+        public int RestaurantId { get; set; }
         public string Name { get; set; } = string.Empty;
     }
 }

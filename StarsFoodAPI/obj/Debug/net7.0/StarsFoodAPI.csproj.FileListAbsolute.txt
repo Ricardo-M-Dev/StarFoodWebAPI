@@ -10,10 +10,8 @@ C:\Dev\Projects\StarFoodWebAPI\StarsFoodAPI\obj\Debug\net7.0\StarsFoodAPI.Genera
 C:\Dev\Projects\StarFoodWebAPI\StarsFoodAPI\obj\Debug\net7.0\StarsFoodAPI.AssemblyInfoInputs.cache
 C:\Dev\Projects\StarFoodWebAPI\StarsFoodAPI\obj\Debug\net7.0\StarsFoodAPI.AssemblyInfo.cs
 C:\Dev\Projects\StarFoodWebAPI\StarsFoodAPI\obj\Debug\net7.0\StarsFoodAPI.csproj.CoreCompileInputs.cache
+C:\Dev\Projects\StarFoodWebAPI\StarsFoodAPI\obj\Debug\net7.0\StarsFoodAPI.MvcApplicationPartsAssemblyInfo.cs
 C:\Dev\Projects\StarFoodWebAPI\StarsFoodAPI\obj\Debug\net7.0\StarsFoodAPI.MvcApplicationPartsAssemblyInfo.cache
-C:\Dev\Projects\StarFoodWebAPI\StarsFoodAPI\obj\Debug\net7.0\StarsFoodAPI.dll
-C:\Dev\Projects\StarFoodWebAPI\StarsFoodAPI\obj\Debug\net7.0\refint\StarsFoodAPI.dll
-C:\Dev\Projects\StarFoodWebAPI\StarsFoodAPI\obj\Debug\net7.0\StarsFoodAPI.pdb
 C:\Dev\Projects\StarFoodWebAPI\StarsFoodAPI\bin\Debug\net7.0\appsettings.Development.json
 C:\Dev\Projects\StarFoodWebAPI\StarsFoodAPI\bin\Debug\net7.0\appsettings.json
 C:\Dev\Projects\StarFoodWebAPI\StarsFoodAPI\bin\Debug\net7.0\StarsFoodAPI.exe
@@ -241,5 +239,8 @@ C:\Dev\Projects\StarFoodWebAPI\StarsFoodAPI\obj\Debug\net7.0\staticwebassets.bui
 C:\Dev\Projects\StarFoodWebAPI\StarsFoodAPI\obj\Debug\net7.0\staticwebassets.development.json
 C:\Dev\Projects\StarFoodWebAPI\StarsFoodAPI\obj\Debug\net7.0\scopedcss\bundle\StarsFoodAPI.styles.css
 C:\Dev\Projects\StarFoodWebAPI\StarsFoodAPI\obj\Debug\net7.0\StarsFoodAPI.csproj.CopyComplete
+C:\Dev\Projects\StarFoodWebAPI\StarsFoodAPI\obj\Debug\net7.0\StarsFoodAPI.dll
+C:\Dev\Projects\StarFoodWebAPI\StarsFoodAPI\obj\Debug\net7.0\refint\StarsFoodAPI.dll
+C:\Dev\Projects\StarFoodWebAPI\StarsFoodAPI\obj\Debug\net7.0\StarsFoodAPI.pdb
 C:\Dev\Projects\StarFoodWebAPI\StarsFoodAPI\obj\Debug\net7.0\StarsFoodAPI.genruntimeconfig.cache
 C:\Dev\Projects\StarFoodWebAPI\StarsFoodAPI\obj\Debug\net7.0\ref\StarsFoodAPI.dll

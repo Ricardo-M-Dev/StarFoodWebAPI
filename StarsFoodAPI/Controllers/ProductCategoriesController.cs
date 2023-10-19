@@ -2,48 +2,85 @@
 using StarFood.Application.Interfaces;
 using StarFood.Domain.Commands;
 using StarFood.Domain.Entities;
+using StarFood.Infrastructure.Data.Repositories;
 using StarsFoodAPI.Services.HttpContext;
+using System.Numerics;
 
 [Route("api")]
 [ApiController]
 public class ProductCategoriesController : ControllerBase
 {
-    private readonly IProductCategoriesRepository _categoriesRepository;
+    private readonly IProductCategoriesRepository _productCategoriesRepository;
+    private readonly ICommandHandler<UpdateProductCategoryCommand, ProductCategories> _updateCategoryCommandHandler;
     private readonly ICommandHandler<CreateProductCategoryCommand, ProductCategories> _createCategoryCommandHandler;
     
-    public ProductCategoriesController(IProductCategoriesRepository categoriesRepository, ICommandHandler<CreateProductCategoryCommand, ProductCategories> createCategoryCOmmandHandler)
+    public ProductCategoriesController(
+        IProductCategoriesRepository productCategoriesRepository,
+        ICommandHandler<UpdateProductCategoryCommand, ProductCategories> updateCategoriesRepository, 
+        ICommandHandler<CreateProductCategoryCommand, ProductCategories> createCategoryCommandHandler)
     {
-        _categoriesRepository = categoriesRepository;
-        _createCategoryCommandHandler = createCategoryCOmmandHandler;
+        _productCategoriesRepository = productCategoriesRepository;
+        _updateCategoryCommandHandler = updateCategoriesRepository;
+        _createCategoryCommandHandler = createCategoryCommandHandler;
     }
 
     [HttpGet("GetAllCategories")]
     public async Task<IActionResult> GetAllCategories([FromServices] AuthenticatedContext auth)
     {
-        var restaurantId = auth.RestaurantId;
+        try
+        {
+            var restaurantId = auth.RestaurantId;
+            var categories = await _productCategoriesRepository.GetAllAsync(restaurantId);
 
-        var categories = await _categoriesRepository.GetAllAsync(restaurantId);
-        return Ok(categories);
+            if (categories == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(categories);
+            }
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(StatusCodes.Status400BadRequest, ex.Message);
+        }
     }
 
     [HttpGet("GetCategory/{id}")]
-    public async Task<IActionResult> GetCategoryById(int id)
-    {
-        var category = await _categoriesRepository.GetByIdAsync(id);
-        if (category == null)
-        {
-            return NotFound();
-        }
-
-        return Ok(category);
-    }
-
-    [HttpPost("CreateCategory")]
-    public async Task<IActionResult> CreateCategory([FromBody] CreateProductCategoryCommand createCategoryCommand)
+    public async Task<IActionResult> GetCategoryById(
+        [FromServices] AuthenticatedContext auth,
+        int id)
     {
         try
         {
-            var newCategory = await _createCategoryCommandHandler.HandleAsync(createCategoryCommand);
+            var restaurantId = auth.RestaurantId;
+            var category = await _productCategoriesRepository.GetByIdAsync(id, restaurantId);
+
+            if (category == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(category);
+            }
+        }
+        catch   (Exception ex)
+        {
+            return StatusCode(StatusCodes.Status400BadRequest, ex.Message);
+        }
+    }
+
+    [HttpPost("CreateCategory")]
+    public async Task<IActionResult> CreateCategory(
+        [FromServices] AuthenticatedContext auth,
+        [FromBody] CreateProductCategoryCommand createCategoryCommand)
+    {
+        try
+        {
+            var restaurantId = auth.RestaurantId;
+            var newCategory = await _createCategoryCommandHandler.HandleAsync(createCategoryCommand, restaurantId);
 
             if (newCategory != null)
             {
@@ -51,63 +88,53 @@ public class ProductCategoriesController : ControllerBase
             }
             else
             {
-                return BadRequest();
+                return NotFound();
             }
         }
         catch (Exception ex)
         {
-            return StatusCode(StatusCodes.Status406NotAcceptable, ex.Message);
+            return StatusCode(StatusCodes.Status400BadRequest, ex.Message);
         }
     }
 
     [HttpPut("UpdateCategory/{id}")]
-    public async Task<IActionResult> UpdateCategory(int id, [FromBody] ProductCategories category)
+    public async Task<IActionResult> UpdateCategory(
+        [FromServices] AuthenticatedContext auth,
+        [FromBody] UpdateProductCategoryCommand updateCategoryCommand,
+        int id)
     {
-        if (!ModelState.IsValid)
+        try
         {
-            return BadRequest(ModelState);
-        }
+            var restaurantId = auth.RestaurantId;
+            var existingCategory = await _productCategoriesRepository.GetByIdAsync(id, restaurantId);
 
-        var existingCategory = await _categoriesRepository.GetByIdAsync(id);
-        if (existingCategory == null)
+            if (existingCategory == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                updateCategoryCommand.Id = id;
+                await _updateCategoryCommandHandler.HandleAsync(updateCategoryCommand, restaurantId);
+                return Ok();
+            }
+        }
+        catch (Exception ex)
         {
-            return NotFound();
+            return StatusCode(StatusCodes.Status400BadRequest, ex.Message);
         }
-
-        existingCategory.Update(category.CategoryName);
-
-        await _categoriesRepository.UpdateAsync(id, existingCategory);
-        return Ok();
     }
 
-    [HttpPut("SetCategoryAvailability/{id}")]
-    public async Task<IActionResult> SetAvailability(int id, bool isAvailable)
-    {
-        if (!ModelState.IsValid)
-        {
-            return BadRequest(ModelState);
-        }
+    //[HttpDelete("DeleteCategory/{id}")]
+    //public async Task<IActionResult> DeleteCategory(int id)
+    //{
+    //    var category = await _productCategoriesRepository.GetByIdAsync(id);
+    //    if (category == null)
+    //    {
+    //        return NotFound();
+    //    }
 
-        var existingCategory = await _categoriesRepository.GetByIdAsync(id);
-        if (existingCategory == null)
-        {
-            return NotFound();
-        }
-
-        existingCategory.SetAvailability(isAvailable);
-        return Ok();
-    }
-
-    [HttpDelete("DeleteCategory/{id}")]
-    public async Task<IActionResult> DeleteCategory(int id)
-    {
-        var category = await _categoriesRepository.GetByIdAsync(id);
-        if (category == null)
-        {
-            return NotFound();
-        }
-
-        await _categoriesRepository.DeleteAsync(id);
-        return Ok();
-    }
+    //    await _categoriesRepository.DeleteAsync(id);
+    //    return Ok();
+    //}
 }

@@ -18,7 +18,6 @@ public class ProductsController : ControllerBase
     private readonly ICommandHandler<CreateProductCommand, Products> _createProductCommandHandler;
     private readonly ICommandHandler<UpdateProductCommand, Products> _updateProductCommandHandler;
     private readonly ICommandHandler<CreateVariationCommand, Variations> _createVariationCommandHandler;
-    private readonly ICommandHandler<UpdateVariationCommand, Variations> _updateVariationCommandHandler;
     private readonly ICommandHandler<CreateProductVariationCommand, ProductVariations> _createProductVariationCommandHandler;
 
     public ProductsController(IProductRepository productsRepository, 
@@ -36,7 +35,6 @@ public class ProductsController : ControllerBase
         _createProductCommandHandler = createProductCommandHandler;
         _updateProductCommandHandler = updateProductCommandHandler;
         _createVariationCommandHandler = createVariationsCommandHandler;
-        _updateVariationCommandHandler = updateVariationCommandHandler;
         _createProductVariationCommandHandler = createProductVariationCommandHandler;
     }
 

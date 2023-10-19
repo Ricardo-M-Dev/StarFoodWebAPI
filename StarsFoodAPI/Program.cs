@@ -34,6 +34,9 @@ builder.Services.AddScoped<ICommandHandler<CreateProductCommand, Products>, Crea
 builder.Services.AddScoped<ICommandHandler<UpdateProductCommand, Products>, UpdateProductCommandHandler>();
 builder.Services.AddScoped<ICommandHandler<CreateProductCategoryCommand, ProductCategories>, CreateProductCategoryCommandHandler>();
 builder.Services.AddScoped<ICommandHandler<UpdateProductCategoryCommand, ProductCategories>, UpdateProductCategoryCommandHandler>();
+builder.Services.AddScoped<ICommandHandler<CreateProductVariationCommand, ProductVariations>, CreateProductVariationCommandHandler>();
+builder.Services.AddScoped<ICommandHandler<UpdateProductVariationCommand, ProductVariations>, UpdateProductVariationCommandHandler>();
+builder.Services.AddScoped<ICommandHandler<UpdateProductCategoryCommand, ProductCategories>, UpdateProductCategoryCommandHandler>();
 builder.Services.AddScoped<ICommandHandler<CreateVariationCommand, Variations>, CreateVariationCommandHandler>();
 builder.Services.AddScoped<ICommandHandler<UpdateVariationCommand, Variations>, UpdateVariationCommandHandler>();
 

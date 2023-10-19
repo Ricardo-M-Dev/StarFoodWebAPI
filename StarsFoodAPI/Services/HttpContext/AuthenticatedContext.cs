@@ -19,7 +19,7 @@ namespace StarsFoodAPI.Services.HttpContext
             {
                      string? restaurantId = _accessor.HttpContext.Request.Headers["X-RestaurantId"].ToString();
                      var castInt = int.Parse(restaurantId);
-                     return _context.Restaurants.FirstOrDefault(x => x.Id == castInt).Id;
+                     return _context.Restaurants.FirstOrDefault(x => x.RestaurantId == castInt).Id;
             }
         }
     }

@@ -42,8 +42,8 @@ namespace StarFood.Infrastructure.Data
 
             modelBuilder.Entity<Variations>()
                 .HasOne(pv => pv.Restaurant)
-                .WithOne()
-                .HasForeignKey<Variations>(pv => pv.RestaurantId);
+                .WithMany()
+                .HasForeignKey(pv => pv.RestaurantId);
 
             modelBuilder.Entity<ProductVariations>()
                 .HasOne(dp => dp.Product)

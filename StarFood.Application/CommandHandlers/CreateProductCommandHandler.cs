@@ -47,7 +47,6 @@ namespace StarFood.Application.CommandHandlers
             {
                 Name = command.Name,
                 Description = command.Description,
-                ProductTypeId = command.ProductTypeId,
                 CategoryId = command.CategoryId,
                 RestaurantId = command.RestaurantId,
             };

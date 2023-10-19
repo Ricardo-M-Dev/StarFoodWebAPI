@@ -7,8 +7,10 @@ namespace StarFood.Domain.Entities
         public int Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
-        public int ProductTypeId { get; set; }
         public int CategoryId { get; set; }
+        public string ImgUrl { get; set; }
+        public DateTime CreatedTime { get; set; }
+        public DateTime UpdateTime { get; set; }
         public int RestaurantId { get; set; }
         [DefaultValue(false)]
         public bool IsAvailable { get; set; }
@@ -18,26 +20,6 @@ namespace StarFood.Domain.Entities
         public List<ProductVariations> ProductsProductVariations { get; set; } = new List<ProductVariations>();
 
         public Products() { }
-
-        public Products(int id, string name, string description, int typeId, int categoryId, int restaurantId, bool isAvailable = true)
-        {
-            Id = id;
-            Name = name;
-            Description = description;
-            ProductTypeId = typeId;
-            CategoryId = categoryId;
-            RestaurantId = restaurantId;
-            IsAvailable = isAvailable;
-        }
-
-        public void Update(string name, string description, int typeId, int categoryId, bool isAvailable)
-        {
-            Name = name;
-            Description = description;
-            ProductTypeId = typeId;
-            CategoryId = categoryId;
-            IsAvailable = isAvailable;
-        }
 
         public void SetAvailability(bool isAvailable)
         {

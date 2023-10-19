@@ -11,6 +11,8 @@ namespace StarFood.Domain.Entities
         [Column(TypeName = "decimal(18, 2)")]
         [DefaultValue(0.00)]
         public decimal Value { get; set; }
+        public DateTime CreatedTime { get; set; }
+        public DateTime UpdateTime { get; set; }
         public int RestaurantId { get; set; }
         [DefaultValue(false)]
         public bool IsAvailable { get; set; }

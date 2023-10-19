@@ -25,12 +25,6 @@ namespace StarFood.Infrastructure.Data.Repositories
             return await _context.Products.FindAsync(id);
         }
 
-        public async Task<List<Products>> GetByType(int productTypeId)
-        {
-            return await _context.Products
-                .Where(d => d.ProductTypeId == productTypeId)
-                .ToListAsync();
-        }
         public async Task<List<Products>> GetByCategory(int categoryId)
         {
             return await _context.Products

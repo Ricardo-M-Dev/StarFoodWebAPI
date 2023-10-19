@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using StarFood.Application.Interfaces;
 using StarFood.Domain.Commands;
 using StarFood.Domain.Entities;
+using StarFood.Infrastructure.Data;
 using StarFood.Infrastructure.Data.Repositories;
 using StarsFoodAPI.Services.HttpContext;
 using System.Numerics;
@@ -10,15 +12,18 @@ using System.Numerics;
 [ApiController]
 public class ProductCategoriesController : ControllerBase
 {
+    private readonly StarFoodDbContext _context;
     private readonly IProductCategoriesRepository _productCategoriesRepository;
     private readonly ICommandHandler<UpdateProductCategoryCommand, ProductCategories> _updateCategoryCommandHandler;
     private readonly ICommandHandler<CreateProductCategoryCommand, ProductCategories> _createCategoryCommandHandler;
     
     public ProductCategoriesController(
+        StarFoodDbContext context,
         IProductCategoriesRepository productCategoriesRepository,
         ICommandHandler<UpdateProductCategoryCommand, ProductCategories> updateCategoriesRepository, 
         ICommandHandler<CreateProductCategoryCommand, ProductCategories> createCategoryCommandHandler)
     {
+        _context = context;
         _productCategoriesRepository = productCategoriesRepository;
         _updateCategoryCommandHandler = updateCategoriesRepository;
         _createCategoryCommandHandler = createCategoryCommandHandler;
@@ -106,7 +111,7 @@ public class ProductCategoriesController : ControllerBase
         try
         {
             var restaurantId = auth.RestaurantId;
-            var existingCategory = await _productCategoriesRepository.GetByIdAsync(id, restaurantId);
+            var existingCategory = await _context.Categories.FirstOrDefaultAsync(c => c.Id == id && c.RestaurantId == restaurantId);
 
             if (existingCategory == null)
             {

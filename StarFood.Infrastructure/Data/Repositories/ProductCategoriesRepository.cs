@@ -36,15 +36,7 @@ namespace StarFood.Infrastructure.Data.Repositories
 
         public async Task UpdateAsync(ProductCategories category)
         {
-            var existingCategory = _context.Categories.Local.FirstOrDefault(c => c.Id == category.Id);
-            if (existingCategory != null)
-            {
-                _context.Categories.Update(existingCategory);
-            }
-            else
-            {
-                _context.Categories.Update(category);
-            }
+            _context.Categories.Update(category);
             await _context.SaveChangesAsync();
         }
 

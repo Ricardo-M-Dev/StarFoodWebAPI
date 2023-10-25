@@ -97,17 +97,15 @@ public class ProductsController : ControllerBase
         try
         {
             var restaurantId = auth.RestaurantId;
-            Products updatedProduct = new();
-            var product = _context.Products.FindAsync(updateProductCommand.Id);
+            var updatedProduct = await _updateProductCommandHandler.HandleAsync(updateProductCommand, restaurantId);
 
-            if (product.Result != null)
+            if (updatedProduct != null)
             {
-                updatedProduct = await _updateProductCommandHandler.HandleAsync(updateProductCommand, restaurantId);
                 return Ok(updatedProduct);
             }
             else
             {
-                return NotFound();
+                return BadRequest();
             }
         }
         catch (Exception ex)

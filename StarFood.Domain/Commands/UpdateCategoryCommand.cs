@@ -5,6 +5,7 @@
         public int Id { get; set; }
         public string CategoryName { get; set; } = string.Empty;
         public DateTime UpdateTime { get; set; }
+        public string ImgUrl { get; set; } = string.Empty;
         public int RestaurantId { get; set; }
         public bool IsAvailable { get; set; }
     }

@@ -1,16 +1,19 @@
 ﻿using StarFood.Application.Interfaces;
 using StarFood.Domain.Commands;
 using StarFood.Domain.Entities;
+using StarFood.Infrastructure.Data;
 
 namespace StarFood.Application.CommandHandlers
 {
     public class UpdateProductCommandHandler : ICommandHandler<UpdateProductCommand, Products>
     {
+        private readonly StarFoodDbContext _context;
         private readonly IProductRepository _productRepository;
         private readonly ICategoriesRepository _categoryRepository;
 
-        public UpdateProductCommandHandler(IProductRepository productRepository, ICategoriesRepository categoryRepository)
+        public UpdateProductCommandHandler(StarFoodDbContext context, IProductRepository productRepository, ICategoriesRepository categoryRepository)
         {
+            _context = context;
             _productRepository = productRepository;
             _categoryRepository = categoryRepository;
         }
@@ -37,18 +40,25 @@ namespace StarFood.Application.CommandHandlers
                 throw new ArgumentException("Categoria não encontrada.");
             }
 
-            var updatedProduct = new Products
+            var product = _context.Products.FindAsync(command.Id);
+
+            if (product.Result == null)
             {
-                Name = command.Name,
-                Description = command.Description,
-                CategoryId = command.CategoryId,
-                UpdateTime = DateTime.Now,
-                IsAvailable = command.IsAvailable,
-            };
+                return product.Result;
+            }
+            else
+            {
+                product.Result.Name = command.Name;
+                product.Result.Description = command.Description;
+                product.Result.CategoryId = command.CategoryId;
+                product.Result.ImgUrl = command.ImgUrl;
+                product.Result.UpdateTime = DateTime.Now;
+                product.Result.IsAvailable = command.IsAvailable;
 
-            await _productRepository.UpdateAsync(command.Id, updatedProduct);
+                await _productRepository.UpdateAsync(command.Id, product.Result);
 
-            return updatedProduct;
+                return product.Result;
+            }
         }
 
         public Task<List<Products>> HandleAsyncList(List<UpdateProductCommand> commandList)

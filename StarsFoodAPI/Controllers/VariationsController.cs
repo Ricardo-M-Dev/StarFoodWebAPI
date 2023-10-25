@@ -94,19 +94,16 @@ public class VariationsController : ControllerBase
         try
         {
             var restaurantId = auth.RestaurantId;
-            Variations updateVariation = new();
-            var variation = _context.Variations.FindAsync(updateVariationCommand.Id);
+            var updatedVariation = await _updateVariationCommandHandler.HandleAsync(updateVariationCommand, restaurantId);
 
-            if (variation.Result != null)
+            if (updatedVariation != null)
             {
-                updateVariation = await _updateVariationCommandHandler.HandleAsync(updateVariationCommand, restaurantId);
+                return Ok(updatedVariation);
             }
             else
             {
-                return NotFound();
+                return BadRequest();
             }
-
-            return Ok(updateVariation);
         }
         catch (Exception ex)
         {

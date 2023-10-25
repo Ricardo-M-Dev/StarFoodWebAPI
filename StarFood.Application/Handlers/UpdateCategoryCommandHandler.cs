@@ -1,15 +1,18 @@
 ﻿using StarFood.Application.Interfaces;
 using StarFood.Domain.Commands;
 using StarFood.Domain.Entities;
+using StarFood.Infrastructure.Data;
 
 namespace StarFood.Application.CommandHandlers
 {
     public class UpdateCategoryCommandHandler : ICommandHandler<UpdateCategoryCommand, Categories>
     {
+        private readonly StarFoodDbContext _context;
         private readonly ICategoriesRepository _categoryRepository;
 
-        public UpdateCategoryCommandHandler(ICategoriesRepository categoryRepository)
+        public UpdateCategoryCommandHandler(StarFoodDbContext context, ICategoriesRepository categoryRepository)
         {
+            _context = context;
             _categoryRepository = categoryRepository;
         }
 
@@ -19,18 +22,16 @@ namespace StarFood.Application.CommandHandlers
             {
                 throw new ArgumentException("O nome da categoria é obrigatório.");
             }
-            Categories updatedCategory = new Categories
-            {
-                CategoryName = command.CategoryName,
-                UpdateTime = DateTime.Now,
-                RestaurantId = restaurantId,
-                IsAvailable = command.IsAvailable,
-            };
 
-            updatedCategory.SetId(command.Id);
+            var category = await _context.Categories.FindAsync(command.Id);
 
-            await _categoryRepository.UpdateAsync(updatedCategory);
-            return updatedCategory;
+            category.CategoryName = command.CategoryName;
+            category.UpdateTime = DateTime.Now;
+            category.ImgUrl = command.ImgUrl;
+            category.IsAvailable = command.IsAvailable;
+
+            await _categoryRepository.UpdateAsync(category);
+            return category;
         }
 
         public Task<List<Categories>> HandleAsyncList(List<UpdateCategoryCommand> commandList, int restaurantId)

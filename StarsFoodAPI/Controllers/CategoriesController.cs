@@ -107,22 +107,22 @@ public class CategoriesController : ControllerBase
     [HttpPatch("UpdateCategory/{id}")]
     public async Task<IActionResult> UpdateCategory(
         [FromServices] AuthenticatedContext auth,
-        [FromBody] UpdateCategoryCommand updateCategoryCommand,
-        int id)
+        [FromBody] UpdateCategoryCommand updateCategoryCommand
+        )
     {
         try
         {
             var restaurantId = auth.RestaurantId;
-            var existingCategory = await _context.Categories.FindAsync(id);
 
-            if (existingCategory == null)
+            var updatedCategory = await _updateCategoryCommandHandler.HandleAsync(updateCategoryCommand, restaurantId);
+
+            if (updatedCategory != null)
             {
-                return NotFound();
+                return Ok(updatedCategory);
             }
             else
             {
-                await _updateCategoryCommandHandler.HandleAsync(updateCategoryCommand, restaurantId);
-                return Ok();
+                return BadRequest();
             }
         }
         catch (Exception ex)

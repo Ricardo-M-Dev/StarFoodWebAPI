@@ -25,7 +25,7 @@ namespace StarFood.Application.CommandHandlers
                 throw new ArgumentException("O nome da variação é obrigatório.");
             }
 
-            var variation = _context.Variations.Find(command.Id);
+            Variations? variation = _context.Variations.FindAsync(command.Id).Result;
 
             if (variation == null)
             {
@@ -38,10 +38,10 @@ namespace StarFood.Application.CommandHandlers
                 variation.UpdateTime = DateTime.Now;
                 variation.Value = command.Value;
                 variation.IsAvailable = command.IsAvailable;
-            }
 
-            await _variationRepository.UpdateAsync(command.Id, variation);
-            return variation;
+                await _variationRepository.UpdateAsync(command.Id, variation);
+                return variation;
+            }
         }
 
         public Task<List<Variations>> HandleAsyncList(List<UpdateVariationCommand> commandList, int restaurantId)

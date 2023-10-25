@@ -40,30 +40,24 @@ namespace StarFood.Application.CommandHandlers
                 throw new ArgumentException("Categoria não encontrada.");
             }
 
-            var product = _context.Products.FindAsync(command.Id);
+            Products? product = _context.Products.FindAsync(command.Id).Result;
 
-            if (product.Result == null)
+            if (product == null)
             {
-                return product.Result;
+                return product;
             }
             else
             {
-                product.Result.Name = command.Name;
-                product.Result.Description = command.Description;
-                product.Result.CategoryId = command.CategoryId;
-                product.Result.ImgUrl = command.ImgUrl;
-                product.Result.UpdateTime = DateTime.Now;
-                product.Result.IsAvailable = command.IsAvailable;
+                product.Name = command.Name;
+                product.Description = command.Description;
+                product.CategoryId = command.CategoryId;
+                product.ImgUrl = command.ImgUrl;
+                product.UpdateTime = DateTime.Now;
+                product.IsAvailable = command.IsAvailable;
 
-                await _productRepository.UpdateAsync(command.Id, product.Result);
-
-                return product.Result;
+                await _productRepository.UpdateAsync(command.Id, product);
+                return product;
             }
-        }
-
-        public Task<List<Products>> HandleAsyncList(List<UpdateProductCommand> commandList)
-        {
-            throw new NotImplementedException();
         }
 
         public Task<List<Products>> HandleAsyncList(List<UpdateProductCommand> commandList, int restaurantId)

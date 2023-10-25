@@ -9,11 +9,7 @@
         public DateTime? UpdateTime { get; set; }
         public int RestaurantId { get; set; }
         public bool IsAvailable { get; set; }
-
-        public void SetId(int id)
-        {
-            this.Id = id;
-        }
+        
         public Categories() { }
     }
 }

@@ -23,7 +23,12 @@ namespace StarFood.Application.CommandHandlers
                 throw new ArgumentException("O nome da categoria é obrigatório.");
             }
 
-            var category = await _context.Categories.FindAsync(command.Id);
+            Categories? category = await _context.Categories.FindAsync(command.Id);
+
+            if (category == null) 
+            {
+                return category;
+            }
 
             category.CategoryName = command.CategoryName;
             category.UpdateTime = DateTime.Now;

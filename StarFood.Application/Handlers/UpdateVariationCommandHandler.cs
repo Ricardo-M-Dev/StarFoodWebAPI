@@ -14,7 +14,7 @@ namespace StarFood.Application.CommandHandlers
             _variationRepository = variationRepository;
         }
 
-        public async Task<Variations> HandleAsync(UpdateVariationCommand command)
+        public async Task<Variations> HandleAsync(UpdateVariationCommand command, int restaurantId)
         {
             if (string.IsNullOrEmpty(command.Description))
             {
@@ -29,11 +29,6 @@ namespace StarFood.Application.CommandHandlers
 
             await _variationRepository.UpdateAsync(command.Id, updateVariation);
             return updateVariation;
-        }
-
-        public Task<Variations> HandleAsync(UpdateVariationCommand command, int restaurantId)
-        {
-            throw new NotImplementedException();
         }
 
         public Task<List<Variations>> HandleAsyncList(List<UpdateVariationCommand> commandList, int restaurantId)

@@ -18,14 +18,14 @@ namespace StarFood.Infrastructure.Data.Repositories
             return await _context.Restaurants.ToListAsync();
         }
 
-        public async Task<Restaurants> GetByIdAsync(int id)
+        public async Task<Restaurants> GetByIdAsync(int restaurantId)
         {
-            return await _context.Restaurants.FindAsync(id);
+            return await _context.Restaurants.FindAsync(restaurantId);
         }
 
         public async Task CreateAsync(Restaurants restaurant)
         {
-            _context.Restaurants.Add(restaurant);
+            await _context.Restaurants.AddAsync(restaurant);
             await _context.SaveChangesAsync();
         }
 
@@ -33,17 +33,6 @@ namespace StarFood.Infrastructure.Data.Repositories
         {
             _context.Restaurants.Update(updatedRestaurant);
             await _context.SaveChangesAsync();
-        }
-
-        public async Task ChangeAvailability(int id, bool isAvailable)
-        {
-            var restaurant = _context.Restaurants.Find(id);
-
-            if (restaurant != null)
-            {
-                restaurant.SetAvailability(isAvailable);
-                await _context.SaveChangesAsync();
-            }
         }
 
         public async Task DeleteAsync(int id)

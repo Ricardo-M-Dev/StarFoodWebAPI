@@ -2,8 +2,6 @@
 using StarFood.Domain.Commands;
 using StarFood.Domain.Entities;
 using StarFood.Domain.Repositories;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Model;
 
 namespace StarFood.Application.CommandHandlers
 {
@@ -21,7 +19,7 @@ namespace StarFood.Application.CommandHandlers
             throw new NotImplementedException();
         }
 
-        public async Task<List<Variations>> HandleAsyncList(List<CreateVariationCommand> variationList)
+        public async Task<List<Variations>> HandleAsyncList(List<CreateVariationCommand> variationList, int restaurantId)
         {
             var newVariation = new Variations();
             var newVariationsList = new List<Variations>();
@@ -36,7 +34,10 @@ namespace StarFood.Application.CommandHandlers
                 newVariation = new Variations
                 {
                     Description = variation.Description,
+                    ProductId = variation.ProductId,
                     Value = variation.Value,
+                    CreatedTime = DateTime.Now,
+                    RestaurantId = restaurantId
                 };
 
                 await _variationRepository.CreateAsync(newVariation);
@@ -44,11 +45,6 @@ namespace StarFood.Application.CommandHandlers
             }
 
             return newVariationsList;
-        }
-
-        public Task<List<Variations>> HandleAsyncList(List<CreateVariationCommand> commandList, int restaurantId)
-        {
-            throw new NotImplementedException();
         }
     }
 }

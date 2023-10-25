@@ -6,9 +6,9 @@ namespace StarFood.Domain.Repositories
     {
         Task<List<Variations>> GetAllAsync(int restaurantId);
         Task<Variations> GetByIdAsync(int id);
+        Task<List<Variations>> GetByProductIdAsync(int productId);
         Task CreateAsync(Variations productVariations);
         Task UpdateAsync(int id, Variations productVariations);
-        Task ChangeAvailability(int id, bool isAvailable);
         Task DeleteAsync(int id);
     }
 }

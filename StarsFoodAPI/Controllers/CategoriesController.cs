@@ -10,21 +10,24 @@ using System.Numerics;
 
 [Route("api")]
 [ApiController]
-public class ProductCategoriesController : ControllerBase
+public class CategoriesController : ControllerBase
 {
     private readonly StarFoodDbContext _context;
-    private readonly IProductCategoriesRepository _productCategoriesRepository;
-    private readonly ICommandHandler<UpdateProductCategoryCommand, ProductCategories> _updateCategoryCommandHandler;
-    private readonly ICommandHandler<CreateProductCategoryCommand, ProductCategories> _createCategoryCommandHandler;
+    private readonly IProductRepository _productRepository;
+    private readonly ICategoriesRepository _categoriesRepository;
+    private readonly ICommandHandler<UpdateCategoryCommand, Categories> _updateCategoryCommandHandler;
+    private readonly ICommandHandler<CreateCategoryCommand, Categories> _createCategoryCommandHandler;
     
-    public ProductCategoriesController(
+    public CategoriesController(
         StarFoodDbContext context,
-        IProductCategoriesRepository productCategoriesRepository,
-        ICommandHandler<UpdateProductCategoryCommand, ProductCategories> updateCategoriesRepository, 
-        ICommandHandler<CreateProductCategoryCommand, ProductCategories> createCategoryCommandHandler)
+        IProductRepository productRepository,
+        ICategoriesRepository productCategoriesRepository,
+        ICommandHandler<UpdateCategoryCommand, Categories> updateCategoriesRepository, 
+        ICommandHandler<CreateCategoryCommand, Categories> createCategoryCommandHandler)
     {
         _context = context;
-        _productCategoriesRepository = productCategoriesRepository;
+        _productRepository = productRepository;
+        _categoriesRepository = productCategoriesRepository;
         _updateCategoryCommandHandler = updateCategoriesRepository;
         _createCategoryCommandHandler = createCategoryCommandHandler;
     }
@@ -35,9 +38,9 @@ public class ProductCategoriesController : ControllerBase
         try
         {
             var restaurantId = auth.RestaurantId;
-            var categories = await _productCategoriesRepository.GetAllAsync(restaurantId);
+            var categories = await _categoriesRepository.GetAllAsync(restaurantId);
 
-            if (categories == null)
+            if (categories.Count == 0)
             {
                 return NotFound();
             }
@@ -54,13 +57,12 @@ public class ProductCategoriesController : ControllerBase
 
     [HttpGet("GetCategory/{id}")]
     public async Task<IActionResult> GetCategoryById(
-        [FromServices] AuthenticatedContext auth,
-        int id)
+        [FromServices] AuthenticatedContext auth, int id)
     {
         try
         {
             var restaurantId = auth.RestaurantId;
-            var category = await _productCategoriesRepository.GetByIdAsync(id, restaurantId);
+            var category = await _categoriesRepository.GetByIdAsync(id, restaurantId);
 
             if (category == null)
             {
@@ -80,7 +82,7 @@ public class ProductCategoriesController : ControllerBase
     [HttpPost("CreateCategory")]
     public async Task<IActionResult> CreateCategory(
         [FromServices] AuthenticatedContext auth,
-        [FromBody] CreateProductCategoryCommand createCategoryCommand)
+        [FromBody] CreateCategoryCommand createCategoryCommand)
     {
         try
         {
@@ -102,16 +104,16 @@ public class ProductCategoriesController : ControllerBase
         }
     }
 
-    [HttpPut("UpdateCategory/{id}")]
+    [HttpPatch("UpdateCategory/{id}")]
     public async Task<IActionResult> UpdateCategory(
         [FromServices] AuthenticatedContext auth,
-        [FromBody] UpdateProductCategoryCommand updateCategoryCommand,
+        [FromBody] UpdateCategoryCommand updateCategoryCommand,
         int id)
     {
         try
         {
             var restaurantId = auth.RestaurantId;
-            var existingCategory = await _context.Categories.FirstOrDefaultAsync(c => c.Id == id && c.RestaurantId == restaurantId);
+            var existingCategory = await _context.Categories.FindAsync(id);
 
             if (existingCategory == null)
             {
@@ -119,7 +121,6 @@ public class ProductCategoriesController : ControllerBase
             }
             else
             {
-                updateCategoryCommand.Id = id;
                 await _updateCategoryCommandHandler.HandleAsync(updateCategoryCommand, restaurantId);
                 return Ok();
             }
@@ -130,16 +131,25 @@ public class ProductCategoriesController : ControllerBase
         }
     }
 
-    //[HttpDelete("DeleteCategory/{id}")]
-    //public async Task<IActionResult> DeleteCategory(int id)
-    //{
-    //    var category = await _productCategoriesRepository.GetByIdAsync(id);
-    //    if (category == null)
-    //    {
-    //        return NotFound();
-    //    }
+    [HttpDelete("DeleteCategory/{id}")]
+    public async Task<IActionResult> DeleteCategory([FromServices] AuthenticatedContext auth, int id)
+    {
+        var restaurantId = auth.RestaurantId;
+        var products = await _productRepository.GetByCategoryIdAsync(id);
 
-    //    await _categoriesRepository.DeleteAsync(id);
-    //    return Ok();
-    //}
+        if (products.Count == 0)
+        {
+            return StatusCode(StatusCodes.Status406NotAcceptable);
+        }
+
+        var category = await _categoriesRepository.GetByIdAsync(id, restaurantId);
+
+        if (category == null)
+        {
+            return NotFound();
+        }
+
+        await _categoriesRepository.DeleteAsync(id, restaurantId);
+        return Ok();
+    }
 }

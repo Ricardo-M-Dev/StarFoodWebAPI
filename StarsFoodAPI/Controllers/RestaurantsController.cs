@@ -1,17 +1,26 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using StarFood.Application.Interfaces;
 using StarFood.Domain.Commands;
 using StarFood.Domain.Entities;
 using StarFood.Domain.Repositories;
+using StarsFoodAPI.Services.HttpContext;
 
 [Route("api")]
 [ApiController]
 public class RestaurantsController : ControllerBase
 {
     private readonly IRestaurantsRepository _restaurantsRepository;
+    private readonly ICommandHandler<CreateRestaurantCommand, Restaurants> _createRestaurantCommandHandler;
+    private readonly ICommandHandler<UpdateRestaurantCommand, Restaurants> _updateRestaurantCommandHandler;
 
-    public RestaurantsController(IRestaurantsRepository restaurantsRepository)
+    public RestaurantsController(IRestaurantsRepository restaurantsRepository,
+                                 ICommandHandler<CreateRestaurantCommand, Restaurants> createRestaurantCommandHandler,
+                                 ICommandHandler<UpdateRestaurantCommand, Restaurants> updateRestaurantCommandHandler
+                                 )
     {
         _restaurantsRepository = restaurantsRepository;
+        _createRestaurantCommandHandler = createRestaurantCommandHandler;
+        _updateRestaurantCommandHandler = updateRestaurantCommandHandler;
     }
 
     [HttpGet("GetAllRestaurants")]
@@ -22,9 +31,10 @@ public class RestaurantsController : ControllerBase
     }
 
     [HttpGet("GetRestaurant/{id}")]
-    public async Task<IActionResult> GetRestaurantById(int id)
+    public async Task<IActionResult> GetRestaurantById([FromServices] AuthenticatedContext auth)
     {
-        var restaurant = await _restaurantsRepository.GetByIdAsync(id);
+        var restaurantId = auth.RestaurantId;
+        var restaurant = await _restaurantsRepository.GetByIdAsync(restaurantId);
         if (restaurant == null)
         {
             return NotFound();
@@ -34,66 +44,32 @@ public class RestaurantsController : ControllerBase
     }
 
     [HttpPost("CreateRestaurant")]
-    public async Task<IActionResult> CreateRestaurant(int restaurantId, [FromBody] CreateRestaurantCommand createRestaurantCommand)
+    public async Task<IActionResult> CreateRestaurant([FromBody] CreateRestaurantCommand createRestaurantCommand)
     {
-        var newRestaurant = new Restaurants
-        {
-            Id = restaurantId,
-            Name = createRestaurantCommand.Name,
-        };
-
-        await _restaurantsRepository.CreateAsync(newRestaurant);
+        var restaurantId = createRestaurantCommand.RestaurantId;
+        var newRestaurant = await _createRestaurantCommandHandler.HandleAsync(createRestaurantCommand, restaurantId);
+        
         return Ok(newRestaurant);
     }
 
-    //[HttpPut("UpdateRestaurant/{id}")]
-    //public async Task<IActionResult> UpdateRestaurant(string restaurantId, [FromBody] Restaurants restaurant)
-    //{
-    //    if (!ModelState.IsValid)
-    //    {
-    //        return BadRequest(ModelState);
-    //    }
-
-    //    var existingRestaurant = await _restaurantsRepository.GetByIdAsync(restaurantId);
-    //    if (existingRestaurant == null)
-    //    {
-    //        return NotFound();
-    //    }
-
-    //    existingRestaurant.Update(restaurant.Name);
-
-    //    await _restaurantsRepository.UpdateAsync(id, existingRestaurant);
-    //    return Ok(existingRestaurant);
-    //}
-
-    [HttpPut("SetRestaurantAvailability/{id}")]
-    public async Task<IActionResult> SetAvailability(int id, bool isAvailable)
+    [HttpPut("UpdateRestaurant/{id}")]
+    public async Task<IActionResult> UpdateRestaurant(
+        [FromServices] AuthenticatedContext auth,
+        [FromBody] UpdateRestaurantCommand updateRestaurantCommand)
     {
-        if (!ModelState.IsValid)
+        var restaurantId = auth.RestaurantId;
+        Restaurants updateRestaurant = new();
+        var existingRestaurant = await _restaurantsRepository.GetByIdAsync(restaurantId);
+        if (existingRestaurant != null)
         {
-            return BadRequest(ModelState);
+            updateRestaurant = await _updateRestaurantCommandHandler.HandleAsync(updateRestaurantCommand, restaurantId);
         }
-
-        var existingRestaurant = await _restaurantsRepository.GetByIdAsync(id);
-        if (existingRestaurant == null)
+        else
         {
             return NotFound();
         }
 
-        existingRestaurant.SetAvailability(isAvailable);
-        return Ok(existingRestaurant);
-    }
-
-    [HttpDelete("DeleteRestaurant/{id}")]
-    public async Task<IActionResult> DeleteRestaurant(int id)
-    {
-        var restaurant = await _restaurantsRepository.GetByIdAsync(id);
-        if (restaurant == null)
-        {
-            return NotFound();
-        }
-
-        await _restaurantsRepository.DeleteAsync(id);
-        return Ok();
+        await _updateRestaurantCommandHandler.HandleAsync(updateRestaurantCommand, restaurantId);
+        return Ok(updateRestaurant);
     }
 }

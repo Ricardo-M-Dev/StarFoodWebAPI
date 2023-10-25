@@ -25,9 +25,16 @@ namespace StarFood.Infrastructure.Data.Repositories
             return await _context.Variations.FindAsync(id);
         }
 
+        public async Task<List<Variations>> GetByProductIdAsync(int productId)
+        {
+            return await _context.Variations
+                .Where(v => v.ProductId == productId)
+                .ToListAsync();
+        }
+
         public async Task CreateAsync(Variations productVariation)
         {
-            _context.Variations.Add(productVariation);
+            await _context.Variations.AddAsync(productVariation);
             await _context.SaveChangesAsync();
         }
 
@@ -46,21 +53,5 @@ namespace StarFood.Infrastructure.Data.Repositories
                 await _context.SaveChangesAsync();
             }
         }
-
-        public async Task ChangeAvailability(int id, bool isAvailable)
-        {
-            var productVariation = _context.Products.Find(id);
-
-            if (productVariation != null)
-            {
-                productVariation.SetAvailability(isAvailable);
-                await _context.SaveChangesAsync();
-            }
-            else
-            {
-                throw new Exception("Variação não encontrada");
-            }
-        }
     }
-
 }

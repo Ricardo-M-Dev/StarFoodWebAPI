@@ -26,19 +26,18 @@ builder.Services.AddDbContext<StarFoodDbContext>(options =>
 
 builder.Services.AddScoped<IRestaurantsRepository, RestaurantsRepository>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
-builder.Services.AddScoped<IProductCategoriesRepository, ProductCategoriesRepository>();
-builder.Services.AddScoped<IProductVariationsRepository, ProductVariationsRepository>();
+builder.Services.AddScoped<ICategoriesRepository, CategoriesRepository>();
 builder.Services.AddScoped<IVariationsRepository, VariationsRepository>();
 
 builder.Services.AddScoped<ICommandHandler<CreateProductCommand, Products>, CreateProductCommandHandler>();
 builder.Services.AddScoped<ICommandHandler<UpdateProductCommand, Products>, UpdateProductCommandHandler>();
-builder.Services.AddScoped<ICommandHandler<CreateProductCategoryCommand, ProductCategories>, CreateProductCategoryCommandHandler>();
-builder.Services.AddScoped<ICommandHandler<UpdateProductCategoryCommand, ProductCategories>, UpdateProductCategoryCommandHandler>();
-builder.Services.AddScoped<ICommandHandler<CreateProductVariationCommand, ProductVariations>, CreateProductVariationCommandHandler>();
-builder.Services.AddScoped<ICommandHandler<UpdateProductVariationCommand, ProductVariations>, UpdateProductVariationCommandHandler>();
-builder.Services.AddScoped<ICommandHandler<UpdateProductCategoryCommand, ProductCategories>, UpdateProductCategoryCommandHandler>();
+builder.Services.AddScoped<ICommandHandler<CreateCategoryCommand, Categories>, CreateCategoryCommandHandler>();
+builder.Services.AddScoped<ICommandHandler<UpdateCategoryCommand, Categories>, UpdateCategoryCommandHandler>();
+builder.Services.AddScoped<ICommandHandler<UpdateCategoryCommand, Categories>, UpdateCategoryCommandHandler>();
 builder.Services.AddScoped<ICommandHandler<CreateVariationCommand, Variations>, CreateVariationCommandHandler>();
 builder.Services.AddScoped<ICommandHandler<UpdateVariationCommand, Variations>, UpdateVariationCommandHandler>();
+builder.Services.AddScoped<ICommandHandler<CreateRestaurantCommand, Restaurants>, CreateRestaurantCommandHandler>();
+builder.Services.AddScoped<ICommandHandler<UpdateRestaurantCommand, Restaurants>, UpdateRestaurantCommandHandler>();
 
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 builder.Services.AddScoped<AuthenticatedContext>();

@@ -13,7 +13,6 @@ namespace StarFood.Domain.Repositories
         Task<Restaurants> GetByIdAsync(int id);
         Task CreateAsync(Restaurants restaurant);
         Task UpdateAsync(int id, Restaurants updatedRestaurant);
-        Task ChangeAvailability(int id, bool isAvailable);
         Task DeleteAsync(int id);
     }
 }

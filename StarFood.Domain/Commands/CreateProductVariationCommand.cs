@@ -2,8 +2,7 @@
 {
     public class CreateProductVariationCommand
     {
-        public int ProductId { get; set; }
-        public int VariationId { get; set; }
-        public int RestaurantId { get; set; }
+        public CreateProductCommand createProductCommand {  get; set; }
+        public List<CreateVariationCommand> createVariationCommandList { get; set; }
     }
 }

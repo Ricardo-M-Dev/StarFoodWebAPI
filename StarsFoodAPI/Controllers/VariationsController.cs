@@ -1,96 +1,118 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using StarFood.Application.Interfaces;
 using StarFood.Domain.Commands;
 using StarFood.Domain.Entities;
 using StarFood.Domain.Repositories;
+using StarFood.Infrastructure.Data;
+using StarsFoodAPI.Services.HttpContext;
 
 [Route("api")]
 [ApiController]
 public class VariationsController : ControllerBase
 {
+    private readonly StarFoodDbContext _context;
     private readonly IVariationsRepository _productVariationsRepository;
+    private readonly ICommandHandler<CreateVariationCommand, Variations> _createVariationCommandHandler;
+    private readonly ICommandHandler<UpdateVariationCommand, Variations> _updateVariationCommandHandler;
 
-    public VariationsController(IVariationsRepository productVariationsRepository)
+    public VariationsController(StarFoodDbContext context,
+                                IVariationsRepository productVariationsRepository, 
+                                ICommandHandler<CreateVariationCommand, Variations> createVariationCommandHandler,
+                                ICommandHandler<UpdateVariationCommand, Variations> updateVariationCommandHandler)
     {
+        _context = context;
         _productVariationsRepository = productVariationsRepository;
+        _createVariationCommandHandler = createVariationCommandHandler;
+        _updateVariationCommandHandler = updateVariationCommandHandler;
     }
 
     [HttpGet("GetAllVariations")]
-    public async Task<IActionResult> GetAllVariations(int restaurantId)
+    public async Task<IActionResult> GetAllVariations([FromServices] AuthenticatedContext auth)
     {
-        var variations = await _productVariationsRepository.GetAllAsync(restaurantId);
-        return Ok(variations);
+        try
+        {
+            var restaurantId = auth.RestaurantId;
+            var variations = await _productVariationsRepository.GetAllAsync(restaurantId);
+            return Ok(variations);
+        }
+        catch (Exception ex) 
+        {
+            return StatusCode(StatusCodes.Status400BadRequest, ex.Message);
+        }
     }
 
-    [HttpGet("GetVariation/{id}")]
-    public async Task<IActionResult> GetVariationById(int id)
+    [HttpPut("GetVariation/{id}")]
+    public async Task<IActionResult> GetVariationById([FromServices]AuthenticatedContext auth, int id)
     {
-        var variation = await _productVariationsRepository.GetByIdAsync(id);
-        if (variation == null)
+        try
         {
-            return NotFound();
-        }
+            var restaurantId = auth.RestaurantId;
+            var variation = await _productVariationsRepository.GetByIdAsync(id);
+            if (variation == null)
+            {
+                return NotFound();
+            }
 
-        return Ok(variation);
+            return Ok(variation);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(StatusCodes.Status400BadRequest, ex.Message);
+        }
     }
 
     [HttpPost("CreateVariation")]
-    public async Task<IActionResult> CreateVariation([FromBody] CreateVariationCommand variationCommand)
+    public async Task<IActionResult> CreateVariation(
+        [FromServices] AuthenticatedContext auth,
+        [FromBody] List<CreateVariationCommand> createVariationCommand)
     {
-        var newVariation = new Variations
+        try
         {
-            Description = variationCommand.Description,
-            Value = variationCommand.Value,
-            RestaurantId = variationCommand.RestaurantId,
-        };
+            var restaurantId = auth.RestaurantId;
+            var newVariation = await _createVariationCommandHandler.HandleAsyncList(createVariationCommand, restaurantId);
 
-        if (newVariation != null)
-        {
-            await _productVariationsRepository.CreateAsync(newVariation);
-            return Ok(newVariation);
+            if (newVariation != null)
+            {
+                return Ok(newVariation);
+            }
+            else
+            {
+                return BadRequest();
+            }
         }
-        else
+        catch (Exception ex)
         {
-            return BadRequest();
+            return StatusCode(StatusCodes.Status400BadRequest, ex.Message);
         }
-
     }
 
-    [HttpPut("UpdateVariation/{id}")]
-    public async Task<IActionResult> UpdateVariation(int id, [FromBody] Variations variation)
+    [HttpPatch("UpdateVariation/{id}")]
+    public async Task<IActionResult> UpdateVariation(
+        [FromServices] AuthenticatedContext auth,
+        [FromBody] UpdateVariationCommand updateVariationCommand)
     {
-        if (!ModelState.IsValid)
+        try
         {
-            return BadRequest(ModelState);
+            var restaurantId = auth.RestaurantId;
+            Variations updateVariation = new();
+            var variation = _context.Variations.FindAsync(updateVariationCommand.Id);
+
+            if (variation.Result != null)
+            {
+                updateVariation = await _updateVariationCommandHandler.HandleAsync(updateVariationCommand, restaurantId);
+            }
+            else
+            {
+                return NotFound();
+            }
+
+            return Ok(updateVariation);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(StatusCodes.Status400BadRequest, ex.Message);
         }
 
-        var existingVariation = await _productVariationsRepository.GetByIdAsync(id);
-        if (existingVariation == null)
-        {
-            return NotFound();
-        }
-
-        existingVariation.Update(variation.Description, variation.Value);
-
-        await _productVariationsRepository.UpdateAsync(id, existingVariation);
-        return Ok(existingVariation);
-    }
-
-    [HttpPut("SetVariationAvailability/{id}")]
-    public async Task<IActionResult> SetAvailability(int id, bool isAvailable)
-    {
-        if (!ModelState.IsValid)
-        {
-            return BadRequest(ModelState);
-        }
-
-        var existingVariation = await _productVariationsRepository.GetByIdAsync(id);
-        if (existingVariation == null)
-        {
-            return NotFound();
-        }
-
-        existingVariation.SetAvailability(isAvailable);
-        return Ok(existingVariation);
     }
 
     [HttpDelete("DeleteVariation/{id}")]

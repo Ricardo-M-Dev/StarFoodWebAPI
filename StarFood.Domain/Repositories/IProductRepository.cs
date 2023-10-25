@@ -6,10 +6,9 @@ namespace StarFood.Application.Interfaces
     {
         Task<List<Products>> GetAllAsync(int restaurantId);
         Task<Products> GetByIdAsync(int id);
-        Task<List<Products>> GetByCategory(int categoryId);
+        Task<List<Products>> GetByCategoryIdAsync(int categoryId);
         Task CreateAsync(Products product);
         Task UpdateAsync(int id, Products updatedProduct);
-        Task ChangeAvailability(int id, bool isAvailable);
         Task DeleteAsync(int id);
     }
 }

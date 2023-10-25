@@ -12,9 +12,8 @@ namespace StarFood.Infrastructure.Data
 
         public DbSet<Restaurants> Restaurants { get; set; }
         public DbSet<Products> Products { get; set; }
-        public DbSet<ProductCategories> Categories { get; set; }
+        public DbSet<Categories> Categories { get; set; }
         public DbSet<Variations> Variations { get; set; }
-        public DbSet<ProductVariations> ProductVariations { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -26,14 +25,11 @@ namespace StarFood.Infrastructure.Data
             modelBuilder.Entity<Products>()
                 .HasKey(d => d.Id);
 
-            modelBuilder.Entity<ProductCategories>()
+            modelBuilder.Entity<Categories>()
                 .HasKey(c => c.Id);
 
             modelBuilder.Entity<Variations>()
                 .HasKey(pv => pv.Id);
-
-            modelBuilder.Entity<ProductVariations>()
-                .HasKey(dp => new { dp.ProductId, dp.VariationId });
 
             modelBuilder.Entity<Products>()
                 .HasOne(d => d.Category)
@@ -41,19 +37,9 @@ namespace StarFood.Infrastructure.Data
                 .HasForeignKey(d => d.CategoryId);
 
             modelBuilder.Entity<Variations>()
-                .HasOne(pv => pv.Restaurant)
+                .HasOne(pv => pv.Products)
                 .WithMany()
-                .HasForeignKey(pv => pv.RestaurantId);
-
-            modelBuilder.Entity<ProductVariations>()
-                .HasOne(dp => dp.Product)
-                .WithMany(d => d.ProductsProductVariations)
-                .HasForeignKey(dp => dp.ProductId);
-
-            modelBuilder.Entity<ProductVariations>()
-                .HasOne(dp => dp.Variation)
-                .WithMany(pv => pv.ProductsProductVariations)
-                .HasForeignKey(dp => dp.VariationId);
+                .HasForeignKey(pv => pv.ProductId);
         }
 
     }

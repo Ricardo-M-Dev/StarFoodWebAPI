@@ -1,22 +1,21 @@
 ﻿using StarFood.Application.Interfaces;
 using StarFood.Domain.Commands;
 using StarFood.Domain.Entities;
-using StarFood.Domain.Repositories;
 
 namespace StarFood.Application.CommandHandlers
 {
-    public class UpdateProductCommandHandler : ICommandHandler<UpdateProductCommand, Products>
+    public class CreateProductCommandHandler : ICommandHandler<CreateProductCommand, Products>
     {
         private readonly IProductRepository _productRepository;
-        private readonly IProductCategoriesRepository _categoryRepository;
+        private readonly ICategoriesRepository _categoryRepository;
 
-        public UpdateProductCommandHandler(IProductRepository productRepository, IProductCategoriesRepository categoryRepository)
+        public CreateProductCommandHandler(IProductRepository productRepository, ICategoriesRepository categoryRepository)
         {
             _productRepository = productRepository;
             _categoryRepository = categoryRepository;
         }
 
-        public async Task<Products> HandleAsync(UpdateProductCommand command, int restaurantId)
+        public async Task<Products> HandleAsync(CreateProductCommand command, int restaurantId)
         {
             if (string.IsNullOrEmpty(command.Name))
             {
@@ -26,11 +25,6 @@ namespace StarFood.Application.CommandHandlers
             if (string.IsNullOrEmpty(command.Description))
             {
                 throw new ArgumentException("A descrição do prato é obrigatória.");
-            }
-
-            if (command.ProductTypeId == 0)
-            {
-                throw new ArgumentException("O tipo de produto é obrigatório.");
             }
 
             if (command.CategoryId == 0)
@@ -43,24 +37,22 @@ namespace StarFood.Application.CommandHandlers
                 throw new ArgumentException("Categoria não encontrada.");
             }
 
-            var updatedProduct = new Products
+            var newProduct = new Products
             {
                 Name = command.Name,
                 Description = command.Description,
+                ImgUrl = command.ImgUrl,
+                CreatedTime = DateTime.Now,
                 CategoryId = command.CategoryId,
+                RestaurantId = command.RestaurantId,
             };
 
-            await _productRepository.UpdateAsync(command.Id, updatedProduct);
+            await _productRepository.CreateAsync(newProduct);
 
-            return updatedProduct;
+            return newProduct;
         }
 
-        public Task<List<Products>> HandleAsyncList(List<UpdateProductCommand> commandList)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<List<Products>> HandleAsyncList(List<UpdateProductCommand> commandList, int restaurantId)
+        public Task<List<Products>> HandleAsyncList(List<CreateProductCommand> commandList, int restaurantId)
         {
             throw new NotImplementedException();
         }

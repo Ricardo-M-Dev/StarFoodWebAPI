@@ -4,25 +4,27 @@ using StarFood.Domain.Entities;
 
 namespace StarFood.Application.CommandHandlers
 {
-    public class CreateProductCategoryCommandHandler : ICommandHandler<CreateProductCategoryCommand, ProductCategories>
+    public class CreateCategoryCommandHandler : ICommandHandler<CreateCategoryCommand, Categories>
     {
-        private readonly IProductCategoriesRepository _categoryRepository;
+        private readonly ICategoriesRepository _categoryRepository;
 
-        public CreateProductCategoryCommandHandler(IProductCategoriesRepository categoryRepository)
+        public CreateCategoryCommandHandler(ICategoriesRepository categoryRepository)
         {
             _categoryRepository = categoryRepository;
         }
 
-        public async Task<ProductCategories> HandleAsync(CreateProductCategoryCommand command, int restaurantId)
+        public async Task<Categories> HandleAsync(CreateCategoryCommand command, int restaurantId)
         {
             if (string.IsNullOrEmpty(command.CategoryName))
             {
                 throw new ArgumentException("O nome da categoria é obrigatório.");
             }
 
-            var newCategory = new ProductCategories
+            var newCategory = new Categories
             {
+                CreatedTime = DateTime.Now,
                 CategoryName = command.CategoryName,
+                ImgUrl = command.ImgUrl,
                 RestaurantId = restaurantId,
             };
 
@@ -30,7 +32,7 @@ namespace StarFood.Application.CommandHandlers
             return newCategory;
         }
 
-        public Task<List<ProductCategories>> HandleAsyncList(List<CreateProductCategoryCommand> commandList, int restaurantId)
+        public Task<List<Categories>> HandleAsyncList(List<CreateCategoryCommand> commandList, int restaurantId)
         {
             throw new NotImplementedException();
         }

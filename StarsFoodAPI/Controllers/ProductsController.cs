@@ -1,11 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using StarFood.Application.Interfaces;
 using StarFood.Domain.Commands;
 using StarFood.Domain.Entities;
-using StarFood.Domain.Repositories;
 using StarFood.Infrastructure.Data;
 using StarsFoodAPI.Services.HttpContext;
 
+[Authorize]
 [Route("api")]
 [ApiController]
 public class ProductsController : ControllerBase
@@ -17,10 +18,10 @@ public class ProductsController : ControllerBase
     private readonly ICommandHandler<CreateVariationCommand, Variations> _createVariationCommandHandler;
 
     public ProductsController(StarFoodDbContext context,
-                              IProductRepository productsRepository, 
-                              ICommandHandler<CreateProductCommand, Products> createProductCommandHandler, 
-                              ICommandHandler<UpdateProductCommand, Products> updateProductCommandHandler, 
-                              ICommandHandler<CreateVariationCommand, Variations> createVariationsCommandHandler, 
+                              IProductRepository productsRepository,
+                              ICommandHandler<CreateProductCommand, Products> createProductCommandHandler,
+                              ICommandHandler<UpdateProductCommand, Products> updateProductCommandHandler,
+                              ICommandHandler<CreateVariationCommand, Variations> createVariationsCommandHandler,
                               ICommandHandler<UpdateVariationCommand, Variations> updateVariationCommandHandler
                               )
     {

@@ -11,22 +11,21 @@ using StarsFoodAPI.Services.HttpContext;
 [ApiController]
 public class ProductsController : ControllerBase
 {
-    private readonly StarFoodDbContext _context;
     private readonly IProductRepository _productsRepository;
+    private readonly ICategoriesRepository _categoriesRepository;
     private readonly ICommandHandler<CreateProductCommand, Products> _createProductCommandHandler;
     private readonly ICommandHandler<UpdateProductCommand, Products> _updateProductCommandHandler;
     private readonly ICommandHandler<CreateVariationCommand, Variations> _createVariationCommandHandler;
 
-    public ProductsController(StarFoodDbContext context,
-                              IProductRepository productsRepository,
+    public ProductsController(IProductRepository productsRepository,
+                              ICategoriesRepository categoriesRepository,
                               ICommandHandler<CreateProductCommand, Products> createProductCommandHandler,
                               ICommandHandler<UpdateProductCommand, Products> updateProductCommandHandler,
-                              ICommandHandler<CreateVariationCommand, Variations> createVariationsCommandHandler,
-                              ICommandHandler<UpdateVariationCommand, Variations> updateVariationCommandHandler
+                              ICommandHandler<CreateVariationCommand, Variations> createVariationsCommandHandler
                               )
     {
-        _context = context;
         _productsRepository = productsRepository;
+        _categoriesRepository = categoriesRepository;
         _createProductCommandHandler = createProductCommandHandler;
         _updateProductCommandHandler = updateProductCommandHandler;
         _createVariationCommandHandler = createVariationsCommandHandler;
@@ -48,13 +47,16 @@ public class ProductsController : ControllerBase
     }
 
     [HttpPut("GetProduct/{id}")]
-    public async Task<IActionResult> GetProductById(int id)
+    public async Task<IActionResult> GetProductById(int id, [FromServices] AuthenticatedContext auth)
     {
+        var restaurantId = auth.RestaurantId;
         var product = await _productsRepository.GetByIdAsync(id);
-        if (product == null)
-        {
-            return NotFound();
-        }
+        if (product == null) return NotFound();
+        
+
+        var category = await _categoriesRepository.GetByIdAsync(product.CategoryId, restaurantId);
+        if (category == null) return NotFound();
+        product.Category = category;
 
         return Ok(product);
     }

@@ -44,7 +44,7 @@ namespace StarFood.Application.CommandHandlers
                 ImgUrl = command.ImgUrl,
                 CreatedTime = DateTime.Now,
                 CategoryId = command.CategoryId,
-                RestaurantId = command.RestaurantId,
+                RestaurantId = restaurantId,
             };
 
             await _productRepository.CreateAsync(newProduct);

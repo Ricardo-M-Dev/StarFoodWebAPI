@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using StarFood.Application.Interfaces;
 using StarFood.Domain.Commands;
 using StarFood.Domain.Entities;
@@ -6,6 +7,7 @@ using StarFood.Domain.Repositories;
 using StarFood.Infrastructure.Data;
 using StarsFoodAPI.Services.HttpContext;
 
+[Authorize]
 [Route("api")]
 [ApiController]
 public class VariationsController : ControllerBase

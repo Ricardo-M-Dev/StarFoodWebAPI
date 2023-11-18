@@ -1,9 +1,12 @@
-﻿namespace StarFood.Domain.Entities
+﻿using System.ComponentModel;
+
+namespace StarFood.Domain.Entities
 {
     public class Categories
     {
         public int Id { get; private set; }
         public string CategoryName { get; set; }
+        [DefaultValue("")]
         public string ImgUrl { get; set; }
         public DateTime CreatedTime { get; set; }
         public DateTime? UpdateTime { get; set; }

@@ -8,6 +8,7 @@ using StarFood.Domain.Repositories;
 using StarFood.Infrastructure.Auth;
 using StarFood.Infrastructure.Data;
 using StarFood.Infrastructure.Data.Repositories;
+using StarFood.Infrastructure.Middleware;
 using StarsFoodAPI.Services.HttpContext;
 using System.Configuration;
 using System.Text;
@@ -76,7 +77,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
+app.UseMiddleware<HttpMiddleware>();
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();

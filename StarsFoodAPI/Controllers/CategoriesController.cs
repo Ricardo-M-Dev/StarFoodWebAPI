@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using StarFood.Application.Interfaces;
 using StarFood.Domain.Commands;
@@ -8,6 +9,7 @@ using StarFood.Infrastructure.Data.Repositories;
 using StarsFoodAPI.Services.HttpContext;
 using System.Numerics;
 
+[Authorize]
 [Route("api")]
 [ApiController]
 public class CategoriesController : ControllerBase

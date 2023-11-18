@@ -8,6 +8,7 @@ namespace StarFood.Domain.Entities
         public string Name { get; set; }
         public string Description { get; set; }
         public int CategoryId { get; set; }
+        [DefaultValue("")]
         public string ImgUrl { get; set; }
         public DateTime CreatedTime { get; set; }
         public DateTime? UpdateTime { get; set; }

@@ -19,3 +19,5 @@ services:
       - "443:5000"
     depends_on:
       - db
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production

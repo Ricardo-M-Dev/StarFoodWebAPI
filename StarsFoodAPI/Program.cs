@@ -18,7 +18,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 var configuration = new ConfigurationBuilder()
     .SetBasePath(builder.Environment.ContentRootPath)
-    .AddJsonFile("appsettings.json")
+    .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true)
     .Build();
 
 var jwtSection = configuration.GetSection("Jwt");

@@ -75,7 +75,7 @@ public class VariationsController : ControllerBase
 
             if (newVariation != null)
             {
-                return Ok(newVariation);
+                return Ok();
             }
             else
             {
@@ -90,12 +90,14 @@ public class VariationsController : ControllerBase
 
     [HttpPatch("UpdateVariation/{id}")]
     public async Task<IActionResult> UpdateVariation(
+        [FromRoute] int id,
         [FromServices] AuthenticatedContext auth,
         [FromBody] UpdateVariationCommand updateVariationCommand)
     {
         try
         {
             var restaurantId = auth.RestaurantId;
+            updateVariationCommand.Id = id;
             var updatedVariation = await _updateVariationCommandHandler.HandleAsync(updateVariationCommand, restaurantId);
 
             if (updatedVariation != null)

@@ -40,7 +40,7 @@ namespace StarFood.Application.CommandHandlers
                 throw new ArgumentException("Categoria não encontrada.");
             }
 
-            Products? product = _context.Products.FindAsync(command.Id).Result;
+            var product = await _context.Products.FindAsync(command.Id);
 
             if (product == null)
             {

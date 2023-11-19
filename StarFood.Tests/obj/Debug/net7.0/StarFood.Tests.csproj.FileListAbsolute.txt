@@ -106,7 +106,13 @@ C:\Dev\Projects\StarFoodWebAPI\StarFood.Tests\bin\Debug\net7.0\StarFood.Tests.de
 C:\Dev\Projects\StarFoodWebAPI\StarFood.Tests\bin\Debug\net7.0\StarFood.Tests.runtimeconfig.json
 C:\Dev\Projects\StarFoodWebAPI\StarFood.Tests\bin\Debug\net7.0\StarFood.Tests.dll
 C:\Dev\Projects\StarFoodWebAPI\StarFood.Tests\bin\Debug\net7.0\StarFood.Tests.pdb
+C:\Dev\Projects\StarFoodWebAPI\StarFood.Tests\bin\Debug\net7.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
 C:\Dev\Projects\StarFoodWebAPI\StarFood.Tests\bin\Debug\net7.0\Microsoft.VisualStudio.CodeCoverage.Shim.dll
+C:\Dev\Projects\StarFoodWebAPI\StarFood.Tests\bin\Debug\net7.0\Microsoft.IdentityModel.JsonWebTokens.dll
+C:\Dev\Projects\StarFoodWebAPI\StarFood.Tests\bin\Debug\net7.0\Microsoft.IdentityModel.Logging.dll
+C:\Dev\Projects\StarFoodWebAPI\StarFood.Tests\bin\Debug\net7.0\Microsoft.IdentityModel.Protocols.dll
+C:\Dev\Projects\StarFoodWebAPI\StarFood.Tests\bin\Debug\net7.0\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
+C:\Dev\Projects\StarFoodWebAPI\StarFood.Tests\bin\Debug\net7.0\Microsoft.IdentityModel.Tokens.dll
 C:\Dev\Projects\StarFoodWebAPI\StarFood.Tests\bin\Debug\net7.0\Microsoft.TestPlatform.CoreUtilities.dll
 C:\Dev\Projects\StarFoodWebAPI\StarFood.Tests\bin\Debug\net7.0\Microsoft.TestPlatform.PlatformAbstractions.dll
 C:\Dev\Projects\StarFoodWebAPI\StarFood.Tests\bin\Debug\net7.0\Microsoft.VisualStudio.TestPlatform.ObjectModel.dll
@@ -116,6 +122,7 @@ C:\Dev\Projects\StarFoodWebAPI\StarFood.Tests\bin\Debug\net7.0\Microsoft.TestPla
 C:\Dev\Projects\StarFoodWebAPI\StarFood.Tests\bin\Debug\net7.0\Microsoft.VisualStudio.TestPlatform.Common.dll
 C:\Dev\Projects\StarFoodWebAPI\StarFood.Tests\bin\Debug\net7.0\Newtonsoft.Json.dll
 C:\Dev\Projects\StarFoodWebAPI\StarFood.Tests\bin\Debug\net7.0\NuGet.Frameworks.dll
+C:\Dev\Projects\StarFoodWebAPI\StarFood.Tests\bin\Debug\net7.0\System.IdentityModel.Tokens.Jwt.dll
 C:\Dev\Projects\StarFoodWebAPI\StarFood.Tests\bin\Debug\net7.0\xunit.abstractions.dll
 C:\Dev\Projects\StarFoodWebAPI\StarFood.Tests\bin\Debug\net7.0\xunit.assert.dll
 C:\Dev\Projects\StarFoodWebAPI\StarFood.Tests\bin\Debug\net7.0\xunit.core.dll

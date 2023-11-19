@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using StarFood.Domain.Entities;
 using StarFood.Infrastructure.Auth;
 using StarsFoodAPI.Services.HttpContext;
 
@@ -16,9 +17,9 @@ namespace StarsFoodAPI.Controllers
         }
 
         [HttpPost("Login")]
-        public IActionResult Login([FromServices] AuthenticatedContext auth)
+        public IActionResult Login([FromBody] Users user)
         {
-            var restaurantId = auth.RestaurantId;
+            var restaurantId = user.RestaurantId;
             var token = _auth.GenerateJwtToken(restaurantId.ToString());
 
             var cookieOptions = new CookieOptions

@@ -51,16 +51,19 @@ public class RestaurantsController : ControllerBase
         var restaurantId = createRestaurantCommand.RestaurantId;
         var newRestaurant = await _createRestaurantCommandHandler.HandleAsync(createRestaurantCommand, restaurantId);
         
-        return Ok(newRestaurant);
+        return Ok();
     }
 
     [HttpPut("UpdateRestaurant/{id}")]
     public async Task<IActionResult> UpdateRestaurant(
+        [FromRoute] int id,
         [FromServices] AuthenticatedContext auth,
         [FromBody] UpdateRestaurantCommand updateRestaurantCommand)
     {
         var restaurantId = auth.RestaurantId;
+        updateRestaurantCommand.Id = id;
         Restaurants updateRestaurant = new();
+
         var existingRestaurant = await _restaurantsRepository.GetByIdAsync(restaurantId);
         if (existingRestaurant != null)
         {

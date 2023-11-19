@@ -25,7 +25,7 @@ namespace StarFood.Application.CommandHandlers
                 throw new ArgumentException("O nome da variação é obrigatório.");
             }
 
-            Variations? variation = _context.Variations.FindAsync(command.Id).Result;
+            Variations? variation = await _context.Variations.FindAsync(command.Id);
 
             if (variation == null)
             {

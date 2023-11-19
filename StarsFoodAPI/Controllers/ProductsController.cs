@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using StarFood.Application.Interfaces;
 using StarFood.Domain.Commands;
 using StarFood.Domain.Entities;
-using StarFood.Infrastructure.Data;
+using StarFood.Domain.Repositories;
 using StarsFoodAPI.Services.HttpContext;
 
 [Authorize]
@@ -13,12 +13,14 @@ public class ProductsController : ControllerBase
 {
     private readonly IProductRepository _productsRepository;
     private readonly ICategoriesRepository _categoriesRepository;
+    private readonly IVariationsRepository _variationsRepository;
     private readonly ICommandHandler<CreateProductCommand, Products> _createProductCommandHandler;
     private readonly ICommandHandler<UpdateProductCommand, Products> _updateProductCommandHandler;
     private readonly ICommandHandler<CreateVariationCommand, Variations> _createVariationCommandHandler;
 
     public ProductsController(IProductRepository productsRepository,
                               ICategoriesRepository categoriesRepository,
+                              IVariationsRepository variationsRepository,
                               ICommandHandler<CreateProductCommand, Products> createProductCommandHandler,
                               ICommandHandler<UpdateProductCommand, Products> updateProductCommandHandler,
                               ICommandHandler<CreateVariationCommand, Variations> createVariationsCommandHandler
@@ -26,6 +28,7 @@ public class ProductsController : ControllerBase
     {
         _productsRepository = productsRepository;
         _categoriesRepository = categoriesRepository;
+        _variationsRepository = variationsRepository;
         _createProductCommandHandler = createProductCommandHandler;
         _updateProductCommandHandler = updateProductCommandHandler;
         _createVariationCommandHandler = createVariationsCommandHandler;
@@ -38,6 +41,17 @@ public class ProductsController : ControllerBase
         {
             var restaurantId = auth.RestaurantId;
             var products = await _productsRepository.GetAllAsync(restaurantId);
+            if (products == null) return NotFound();
+
+            foreach (var product in products)
+            {
+                var category = await _categoriesRepository.GetByIdAsync(product.CategoryId, restaurantId);
+                if (category != null) product.Category = category;
+
+                var variation = await _variationsRepository.GetByProductIdAsync(product.Id);
+                if (variation != null) product.Variations = variation;
+            }
+
             return Ok(products);
         }
         catch (Exception ex)
@@ -50,13 +64,15 @@ public class ProductsController : ControllerBase
     public async Task<IActionResult> GetProductById(int id, [FromServices] AuthenticatedContext auth)
     {
         var restaurantId = auth.RestaurantId;
+
         var product = await _productsRepository.GetByIdAsync(id);
         if (product == null) return NotFound();
-        
 
         var category = await _categoriesRepository.GetByIdAsync(product.CategoryId, restaurantId);
-        if (category == null) return NotFound();
-        product.Category = category;
+        if (category != null) product.Category = category;
+
+        var variation = await _variationsRepository.GetByProductIdAsync(product.Id);
+        if (variation != null) product.Variations = variation;
 
         return Ok(product);
     }
@@ -79,7 +95,7 @@ public class ProductsController : ControllerBase
                 }
 
                 var newVariations = await _createVariationCommandHandler.HandleAsyncList(createProductModel.createVariationCommandList, restaurantId);
-                return Ok(newProduct);
+                return Ok();
             }
             else
             {
@@ -94,12 +110,14 @@ public class ProductsController : ControllerBase
 
     [HttpPatch("UpdateProduct/{id}")]
     public async Task<IActionResult> UpdateProduct(
+        [FromRoute] int id,
         [FromServices] AuthenticatedContext auth,
         [FromBody] UpdateProductCommand updateProductCommand)
     {
         try
         {
             var restaurantId = auth.RestaurantId;
+            updateProductCommand.Id = id;
             var updatedProduct = await _updateProductCommandHandler.HandleAsync(updateProductCommand, restaurantId);
 
             if (updatedProduct != null)

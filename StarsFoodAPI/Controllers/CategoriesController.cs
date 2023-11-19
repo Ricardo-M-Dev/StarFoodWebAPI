@@ -1,13 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using StarFood.Application.Interfaces;
 using StarFood.Domain.Commands;
 using StarFood.Domain.Entities;
 using StarFood.Infrastructure.Data;
-using StarFood.Infrastructure.Data.Repositories;
 using StarsFoodAPI.Services.HttpContext;
-using System.Numerics;
 
 [Authorize]
 [Route("api")]
@@ -93,7 +90,7 @@ public class CategoriesController : ControllerBase
 
             if (newCategory != null)
             {
-                return Ok(newCategory);
+                return Ok();
             }
             else
             {
@@ -108,6 +105,7 @@ public class CategoriesController : ControllerBase
 
     [HttpPatch("UpdateCategory/{id}")]
     public async Task<IActionResult> UpdateCategory(
+        [FromRoute] int id,
         [FromServices] AuthenticatedContext auth,
         [FromBody] UpdateCategoryCommand updateCategoryCommand
         )
@@ -115,7 +113,7 @@ public class CategoriesController : ControllerBase
         try
         {
             var restaurantId = auth.RestaurantId;
-
+            updateCategoryCommand.Id = id;
             var updatedCategory = await _updateCategoryCommandHandler.HandleAsync(updateCategoryCommand, restaurantId);
 
             if (updatedCategory != null)

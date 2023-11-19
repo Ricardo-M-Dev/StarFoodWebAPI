@@ -14,6 +14,7 @@ namespace StarFood.Infrastructure.Data
         public DbSet<Products> Products { get; set; }
         public DbSet<Categories> Categories { get; set; }
         public DbSet<Variations> Variations { get; set; }
+        public DbSet<Users> Users { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -23,23 +24,21 @@ namespace StarFood.Infrastructure.Data
                 .HasKey(r => r.Id);
 
             modelBuilder.Entity<Products>()
-                .HasKey(d => d.Id);
+                .HasKey(p => p.Id);
 
             modelBuilder.Entity<Categories>()
                 .HasKey(c => c.Id);
 
             modelBuilder.Entity<Variations>()
-                .HasKey(pv => pv.Id);
+                .HasKey(v => v.Id);
+
+            modelBuilder.Entity<Users>()
+                .HasKey(u => u.Id);
 
             modelBuilder.Entity<Products>()
                 .HasOne(d => d.Category)
                 .WithMany()
                 .HasForeignKey(d => d.CategoryId);
-
-            modelBuilder.Entity<Variations>()
-                .HasOne(pv => pv.Products)
-                .WithMany()
-                .HasForeignKey(pv => pv.ProductId);
         }
 
     }

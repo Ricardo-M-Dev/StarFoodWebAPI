@@ -11,8 +11,8 @@ using StarFood.Infrastructure.Data;
 namespace StarFood.Infrastructure.Migrations
 {
     [DbContext(typeof(StarFoodDbContext))]
-    [Migration("20231024234758_InitialDb")]
-    partial class InitialDb
+    [Migration("20231119151219_InitialDB")]
+    partial class InitialDB
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -114,6 +114,38 @@ namespace StarFood.Infrastructure.Migrations
                     b.ToTable("Restaurants");
                 });
 
+            modelBuilder.Entity("StarFood.Domain.Entities.Users", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<string>("Alias")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<int>("RestaurantId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Role")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Users");
+                });
+
             modelBuilder.Entity("StarFood.Domain.Entities.Variations", b =>
                 {
                     b.Property<int>("Id")
@@ -133,6 +165,9 @@ namespace StarFood.Infrastructure.Migrations
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("ProductsId")
+                        .HasColumnType("int");
+
                     b.Property<int>("RestaurantId")
                         .HasColumnType("int");
 
@@ -144,9 +179,7 @@ namespace StarFood.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ProductId");
-
-                    b.HasIndex("RestaurantId");
+                    b.HasIndex("ProductsId");
 
                     b.ToTable("Variations");
                 });
@@ -164,21 +197,14 @@ namespace StarFood.Infrastructure.Migrations
 
             modelBuilder.Entity("StarFood.Domain.Entities.Variations", b =>
                 {
-                    b.HasOne("StarFood.Domain.Entities.Products", "Products")
-                        .WithMany()
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.HasOne("StarFood.Domain.Entities.Products", null)
+                        .WithMany("Variations")
+                        .HasForeignKey("ProductsId");
+                });
 
-                    b.HasOne("StarFood.Domain.Entities.Restaurants", "Restaurant")
-                        .WithMany()
-                        .HasForeignKey("RestaurantId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Products");
-
-                    b.Navigation("Restaurant");
+            modelBuilder.Entity("StarFood.Domain.Entities.Products", b =>
+                {
+                    b.Navigation("Variations");
                 });
 #pragma warning restore 612, 618
         }

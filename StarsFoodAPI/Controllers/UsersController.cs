@@ -1,13 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using StarFood.Application.CommandHandlers;
-using StarFood.Application.Handlers;
 using StarFood.Application.Interfaces;
 using StarFood.Domain.Commands;
-using StarFood.Domain.Entities;
 using StarFood.Domain.Repositories;
-using StarFood.Infrastructure.Data;
 using StarsFoodAPI.Services.HttpContext;
+using StarFood.Domain.Entities;
 
 namespace StarsFoodAPI.Controllers
 {
@@ -16,14 +13,16 @@ namespace StarsFoodAPI.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
-        private readonly StarFoodDbContext _context;
         private readonly IUserRepository _userRepository;
-        private readonly CreateUserCommandHandler _createUserCommandHandle;
-        private readonly UpdateUserCommandHandler _updateUserCommandHandle;
+        private readonly ICommandHandler<CreateUserCommand, Users> _createUserCommandHandle;
+        private readonly ICommandHandler<UpdateUserCommand, Users> _updateUserCommandHandle;
 
-        public UsersController(StarFoodDbContext context, IUserRepository userRepository, CreateUserCommandHandler createUserCommandHandler, UpdateUserCommandHandler updateUserCommandHandler)
+        public UsersController(
+            IUserRepository userRepository, 
+            ICommandHandler<CreateUserCommand, Users> createUserCommandHandler,
+            ICommandHandler<UpdateUserCommand, Users> updateUserCommandHandler
+            )
         {
-            _context = context;
             _userRepository = userRepository;
             _createUserCommandHandle = createUserCommandHandler;
             _updateUserCommandHandle = updateUserCommandHandler;

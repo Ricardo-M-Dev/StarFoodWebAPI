@@ -19,7 +19,7 @@ namespace StarFood.Application.Handlers
 
         public async Task<Users> HandleAsync(CreateUserCommand command, int restaurantId)
         {
-            var user = await _context.Users.FindAsync(command.Id);
+            var user = await _userRepository.GetByUsernameAsync(command.Username);
             if (user == null) 
             {
                 var newUser = new Users
@@ -42,9 +42,21 @@ namespace StarFood.Application.Handlers
             }
         }
 
-        public Task<List<Users>> HandleAsyncList(List<CreateUserCommand> commandList, int restaurantId)
+        public async Task<List<Users>> HandleAsyncList(List<CreateUserCommand> commandList, int restaurantId)
         {
-            throw new NotImplementedException();
+            var users = new List<Users>();
+
+            foreach (var command in commandList)
+            {
+                var user = new Users
+                {
+
+                };
+                await _userRepository.CreateAsync(user);
+                users.Add(user);
+            }
+
+            return users;
         }
     }
 }

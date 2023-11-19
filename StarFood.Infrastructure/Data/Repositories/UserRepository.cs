@@ -1,4 +1,5 @@
-﻿using StarFood.Domain.Entities;
+﻿using Microsoft.EntityFrameworkCore;
+using StarFood.Domain.Entities;
 using StarFood.Domain.Repositories;
 
 namespace StarFood.Infrastructure.Data.Repositories
@@ -14,7 +15,8 @@ namespace StarFood.Infrastructure.Data.Repositories
 
         public async Task CreateAsync(Users user)
         {
-            await _context.Users.FindAsync(user);
+            await _context.Users.AddAsync(user);
+            await _context.SaveChangesAsync();
         }
 
         public async Task DeleteAsync(int id)
@@ -31,6 +33,12 @@ namespace StarFood.Infrastructure.Data.Repositories
         public async Task<Users> GetByIdAsync(int id)
         {
             return await _context.Users.FindAsync(id);
+        }
+
+        public async Task<Users> GetByUsernameAsync(string username)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u =>u.Username == username);
+            return user;
         }
 
         public async Task UpdateAsync(int id, Users updateUser)

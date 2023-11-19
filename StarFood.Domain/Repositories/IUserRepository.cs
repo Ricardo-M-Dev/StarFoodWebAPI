@@ -6,6 +6,7 @@ namespace StarFood.Domain.Repositories
     {
         Task CreateAsync(Users user);
         Task<Users> GetByIdAsync(int id);
+        Task<Users> GetByUsernameAsync(string username);
         Task UpdateAsync(int id, Users user);
         Task DeleteAsync(int id);
     }

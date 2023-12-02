@@ -2,7 +2,7 @@
 
 namespace StarFood.Application.Interfaces
 {
-    public interface IProductRepository
+    public interface IProductsRepository
     {
         Task<List<Products>> GetAllAsync(int restaurantId);
         Task<Products> GetByIdAsync(int id);

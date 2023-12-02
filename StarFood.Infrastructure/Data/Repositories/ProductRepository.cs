@@ -4,7 +4,7 @@ using StarFood.Domain.Entities;
 
 namespace StarFood.Infrastructure.Data.Repositories
 {
-    public class ProductRepository : IProductRepository
+    public class ProductRepository : IProductsRepository
     {
         private readonly StarFoodDbContext _context;
 

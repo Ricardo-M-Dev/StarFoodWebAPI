@@ -21,8 +21,7 @@ namespace StarFood.Application.CommandHandlers
 
         public async Task<List<Variations>> HandleAsyncList(List<CreateVariationCommand> variationList, int restaurantId)
         {
-            var newVariation = new Variations();
-            var newVariationsList = new List<Variations>();
+            List<Variations>? newVariationsList = new();
 
             foreach (var variation in variationList)
             {
@@ -31,8 +30,8 @@ namespace StarFood.Application.CommandHandlers
                     throw new ArgumentException("O nome da variação é obrigatório.");
                 }
 
-                newVariation = new Variations
-                {
+                Variations? newVariation = new Variations
+                { 
                     Description = variation.Description,
                     ProductId = variation.ProductId,
                     Value = variation.Value,

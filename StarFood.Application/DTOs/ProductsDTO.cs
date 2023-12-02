@@ -1,9 +1,9 @@
-﻿using System.ComponentModel;
-using System.Text.Json.Serialization;
+﻿using StarFood.Domain.Entities;
+using System.ComponentModel;
 
-namespace StarFood.Domain.Entities
+namespace StarFood.Application.DTOs
 {
-    public class Products
+    public class ProductsDTO
     {
         public int Id { get; set; }
         public string? Name { get; set; }
@@ -18,8 +18,5 @@ namespace StarFood.Domain.Entities
         public bool IsAvailable { get; set; }
         public Categories? Categories { get; set; }
         public List<Variations> Variations { get; set; }
-        public List<OrderProducts> OrderProducts { get; set; }
-
-        public Products() { }
     }
 }

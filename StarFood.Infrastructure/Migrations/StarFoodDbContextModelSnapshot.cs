@@ -50,6 +50,56 @@ namespace StarFood.Infrastructure.Migrations
                     b.ToTable("Categories");
                 });
 
+            modelBuilder.Entity("StarFood.Domain.Entities.OrderProducts", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<int>("OrderId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrderId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("OrderProducts");
+                });
+
+            modelBuilder.Entity("StarFood.Domain.Entities.Orders", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("OrderDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int>("RestaurantId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Table")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Waiter")
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Orders");
+                });
+
             modelBuilder.Entity("StarFood.Domain.Entities.Products", b =>
                 {
                     b.Property<int>("Id")
@@ -111,36 +161,21 @@ namespace StarFood.Infrastructure.Migrations
                     b.ToTable("Restaurants");
                 });
 
-            modelBuilder.Entity("StarFood.Domain.Entities.Users", b =>
+            modelBuilder.Entity("StarFood.Domain.Entities.Tables", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<string>("Alias")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<bool>("IsActive")
+                    b.Property<bool>("IsAvailable")
                         .HasColumnType("tinyint(1)");
 
-                    b.Property<string>("Password")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<int>("RestaurantId")
+                    b.Property<int>("TableNumber")
                         .HasColumnType("int");
-
-                    b.Property<int>("Role")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Username")
-                        .IsRequired()
-                        .HasColumnType("longtext");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users");
+                    b.ToTable("Tables");
                 });
 
             modelBuilder.Entity("StarFood.Domain.Entities.Variations", b =>
@@ -180,6 +215,25 @@ namespace StarFood.Infrastructure.Migrations
                     b.ToTable("Variations");
                 });
 
+            modelBuilder.Entity("StarFood.Domain.Entities.OrderProducts", b =>
+                {
+                    b.HasOne("StarFood.Domain.Entities.Orders", "Orders")
+                        .WithMany("OrderProducts")
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("StarFood.Domain.Entities.Products", "Products")
+                        .WithMany("OrderProducts")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Orders");
+
+                    b.Navigation("Products");
+                });
+
             modelBuilder.Entity("StarFood.Domain.Entities.Products", b =>
                 {
                     b.HasOne("StarFood.Domain.Entities.Categories", "Categories")
@@ -196,8 +250,15 @@ namespace StarFood.Infrastructure.Migrations
                         .HasForeignKey("ProductsId");
                 });
 
+            modelBuilder.Entity("StarFood.Domain.Entities.Orders", b =>
+                {
+                    b.Navigation("OrderProducts");
+                });
+
             modelBuilder.Entity("StarFood.Domain.Entities.Products", b =>
                 {
+                    b.Navigation("OrderProducts");
+
                     b.Navigation("Variations");
                 });
 #pragma warning restore 612, 618

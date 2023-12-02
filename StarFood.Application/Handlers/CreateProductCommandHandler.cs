@@ -6,10 +6,10 @@ namespace StarFood.Application.CommandHandlers
 {
     public class CreateProductCommandHandler : ICommandHandler<CreateProductCommand, Products>
     {
-        private readonly IProductRepository _productRepository;
+        private readonly IProductsRepository _productRepository;
         private readonly ICategoriesRepository _categoryRepository;
 
-        public CreateProductCommandHandler(IProductRepository productRepository, ICategoriesRepository categoryRepository)
+        public CreateProductCommandHandler(IProductsRepository productRepository, ICategoriesRepository categoryRepository)
         {
             _productRepository = productRepository;
             _categoryRepository = categoryRepository;

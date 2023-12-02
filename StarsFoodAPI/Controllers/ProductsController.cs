@@ -13,7 +13,7 @@ using StarsFoodAPI.Services.HttpContext;
 public class ProductsController : ControllerBase
 {
     private readonly StarFoodDbContext _context;
-    private readonly IProductRepository _productsRepository;
+    private readonly IProductsRepository _productsRepository;
     private readonly IVariationsRepository _variationsRepository;
     private readonly ICommandHandler<CreateProductCommand, Products> _createProductCommandHandler;
     private readonly ICommandHandler<UpdateProductCommand, Products> _updateProductCommandHandler;
@@ -22,14 +22,12 @@ public class ProductsController : ControllerBase
 
     public ProductsController(
         StarFoodDbContext context,
-        IProductRepository productsRepository,
+        IProductsRepository productsRepository,
         IVariationsRepository variationsRepository,
         ICommandHandler<CreateProductCommand, Products> createProductCommandHandler,
         ICommandHandler<UpdateProductCommand, Products> updateProductCommandHandler,
         ICommandHandler<CreateVariationCommand, Variations> createVariationCommandHandler,
         ICommandHandler<UpdateVariationCommand, Variations> updateVariationCommandHandler
-
-
     )
     {
         _context = context;

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using StarFood.Domain.Entities;
 using StarFood.Infrastructure.Auth;
+using StarsFoodAPI.Services.HttpContext;
 
 namespace StarsFoodAPI.Controllers
 {
@@ -9,16 +10,18 @@ namespace StarsFoodAPI.Controllers
     public class AuthController : ControllerBase
     {
         private readonly Auth _auth;
+        private readonly AuthenticatedContext _authenticatedContext;
 
-        public AuthController(Auth auth)
+        public AuthController(Auth auth, AuthenticatedContext authenticatedContext)
         {
             _auth = auth;
+            _authenticatedContext = authenticatedContext;
         }
 
         [HttpPost("Login")]
-        public IActionResult Login([FromBody] Users user)
+        public IActionResult Login()
         {
-            var restaurantId = user.RestaurantId;
+            var restaurantId = _authenticatedContext.RestaurantId;
             var token = _auth.GenerateJwtToken(restaurantId.ToString());
 
             var cookieOptions = new CookieOptions

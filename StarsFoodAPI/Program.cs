@@ -59,14 +59,14 @@ builder.Services.AddDbContext<StarFoodDbContext>(options =>
                     builder => builder.MigrationsAssembly("StarFood.Infrastructure"));
 }, ServiceLifetime.Scoped);
 
-builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<IOrdersRepository, OrderRepository>();
+builder.Services.AddScoped<IProductsRepository, ProductRepository>();
 builder.Services.AddScoped<ICategoriesRepository, CategoriesRepository>();
 builder.Services.AddScoped<IVariationsRepository, VariationsRepository>();
 builder.Services.AddScoped<IRestaurantsRepository, RestaurantsRepository>();
+builder.Services.AddScoped<IOrderProductsRepository, OrderProductsRepository>();
 
-builder.Services.AddScoped<ICommandHandler<CreateUserCommand, Users>, CreateUserCommandHandler>();
-builder.Services.AddScoped<ICommandHandler<UpdateUserCommand, Users>, UpdateUserCommandHandler>();
+builder.Services.AddScoped<ICommandHandler<CreateOrderCommand, Orders>, CreateOrderCommandHandler>();
 builder.Services.AddScoped<ICommandHandler<CreateProductCommand, Products>, CreateProductCommandHandler>();
 builder.Services.AddScoped<ICommandHandler<UpdateProductCommand, Products>, UpdateProductCommandHandler>();
 builder.Services.AddScoped<ICommandHandler<CreateCategoryCommand, Categories>, CreateCategoryCommandHandler>();
@@ -76,6 +76,7 @@ builder.Services.AddScoped<ICommandHandler<CreateVariationCommand, Variations>, 
 builder.Services.AddScoped<ICommandHandler<UpdateVariationCommand, Variations>, UpdateVariationCommandHandler>();
 builder.Services.AddScoped<ICommandHandler<CreateRestaurantCommand, Restaurants>, CreateRestaurantCommandHandler>();
 builder.Services.AddScoped<ICommandHandler<UpdateRestaurantCommand, Restaurants>, UpdateRestaurantCommandHandler>();
+builder.Services.AddScoped<ICommandHandler<CreateOrderProductsCommand, OrderProducts>, CreateOrderProductsCommandHandler>();
 
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 builder.Services.AddScoped<AuthenticatedContext>();

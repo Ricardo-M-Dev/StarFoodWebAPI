@@ -11,13 +11,13 @@ using StarsFoodAPI.Services.HttpContext;
 [ApiController]
 public class CategoriesController : ControllerBase
 {
-    private readonly IProductRepository _productRepository;
+    private readonly IProductsRepository _productRepository;
     private readonly ICategoriesRepository _categoriesRepository;
     private readonly ICommandHandler<UpdateCategoryCommand, Categories> _updateCategoryCommandHandler;
     private readonly ICommandHandler<CreateCategoryCommand, Categories> _createCategoryCommandHandler;
 
     public CategoriesController(
-        IProductRepository productRepository,
+        IProductsRepository productRepository,
         ICategoriesRepository productCategoriesRepository,
         ICommandHandler<UpdateCategoryCommand, Categories> updateCategoriesRepository,
         ICommandHandler<CreateCategoryCommand, Categories> createCategoryCommandHandler)

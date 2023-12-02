@@ -8,10 +8,10 @@ namespace StarFood.Application.CommandHandlers
     public class UpdateProductCommandHandler : ICommandHandler<UpdateProductCommand, Products>
     {
         private readonly StarFoodDbContext _context;
-        private readonly IProductRepository _productRepository;
+        private readonly IProductsRepository _productRepository;
         private readonly ICategoriesRepository _categoryRepository;
 
-        public UpdateProductCommandHandler(StarFoodDbContext context, IProductRepository productRepository, ICategoriesRepository categoryRepository)
+        public UpdateProductCommandHandler(StarFoodDbContext context, IProductsRepository productRepository, ICategoriesRepository categoryRepository)
         {
             _context = context;
             _productRepository = productRepository;

@@ -40,23 +40,23 @@ namespace StarFood.Application.CommandHandlers
                 throw new ArgumentException("Categoria não encontrada.");
             }
 
-            var product = await _context.Products.FindAsync(command.Id);
+            var newProduct = await _context.Products.FindAsync(command.Id);
 
-            if (product == null)
+            if (newProduct == null)
             {
-                return product;
+                return newProduct;
             }
             else
             {
-                product.Name = command.Name;
-                product.Description = command.Description;
-                product.CategoryId = command.CategoryId;
-                product.ImgUrl = command.ImgUrl;
-                product.UpdateTime = DateTime.Now;
-                product.IsAvailable = command.IsAvailable;
+                newProduct.Name = command.Name;
+                newProduct.Description = command.Description;
+                newProduct.CategoryId = command.CategoryId;
+                newProduct.ImgUrl = command.ImgUrl;
+                newProduct.UpdateTime = DateTime.Now;
+                newProduct.IsAvailable = command.IsAvailable;
 
-                await _productRepository.UpdateAsync(command.Id, product);
-                return product;
+                await _productRepository.UpdateAsync(command.Id, newProduct);
+                return newProduct;
             }
         }
 

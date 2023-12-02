@@ -4,6 +4,7 @@ using StarFood.Application.Interfaces;
 using StarFood.Domain.Commands;
 using StarFood.Domain.Entities;
 using StarFood.Domain.Repositories;
+using StarFood.Infrastructure.Data;
 using StarsFoodAPI.Services.HttpContext;
 
 [Authorize]
@@ -11,24 +12,33 @@ using StarsFoodAPI.Services.HttpContext;
 [ApiController]
 public class ProductsController : ControllerBase
 {
+    private readonly StarFoodDbContext _context;
     private readonly IProductRepository _productsRepository;
-    private readonly ICategoriesRepository _categoriesRepository;
     private readonly IVariationsRepository _variationsRepository;
     private readonly ICommandHandler<CreateProductCommand, Products> _createProductCommandHandler;
     private readonly ICommandHandler<UpdateProductCommand, Products> _updateProductCommandHandler;
+    private readonly ICommandHandler<CreateVariationCommand, Variations> _createVariationCommandHandler;
+    private readonly ICommandHandler<UpdateVariationCommand, Variations> _updateVariationCommandHandler;
 
-    public ProductsController(IProductRepository productsRepository,
-                              ICategoriesRepository categoriesRepository,
-                              IVariationsRepository variationsRepository,
-                              ICommandHandler<CreateProductCommand, Products> createProductCommandHandler,
-                              ICommandHandler<UpdateProductCommand, Products> updateProductCommandHandler
-                              )
+    public ProductsController(
+        StarFoodDbContext context,
+        IProductRepository productsRepository,
+        IVariationsRepository variationsRepository,
+        ICommandHandler<CreateProductCommand, Products> createProductCommandHandler,
+        ICommandHandler<UpdateProductCommand, Products> updateProductCommandHandler,
+        ICommandHandler<CreateVariationCommand, Variations> createVariationCommandHandler,
+        ICommandHandler<UpdateVariationCommand, Variations> updateVariationCommandHandler
+
+
+    )
     {
+        _context = context;
         _productsRepository = productsRepository;
-        _categoriesRepository = categoriesRepository;
         _variationsRepository = variationsRepository;
         _createProductCommandHandler = createProductCommandHandler;
         _updateProductCommandHandler = updateProductCommandHandler;
+        _createVariationCommandHandler = createVariationCommandHandler;
+        _updateVariationCommandHandler = updateVariationCommandHandler;
     }
 
     [HttpGet("GetAllProducts")]
@@ -37,19 +47,32 @@ public class ProductsController : ControllerBase
         try
         {
             var restaurantId = auth.RestaurantId;
-            var products = await _productsRepository.GetAllAsync(restaurantId);
-            if (products == null) return NotFound();
+            List<Products>? products = await _productsRepository.GetAllAsync(restaurantId);
 
-            //foreach (var product in products)
-            //{
-            //    var category = await _categoriesRepository.GetByIdAsync(product.CategoryId, restaurantId);
-            //    if (category != null) product.Category = category;
+            if (products.Count == 0)
+            {
+                return NotFound();
+            }
+            else
+            {
+                foreach (var product in products)
+                {
+                    var category = await _context.Categories.FindAsync(product.CategoryId);
+                    var variations = await _variationsRepository.GetByProductIdAsync(product.Id);
 
-            //    var variation = await _variationsRepository.GetByProductIdAsync(product.Id);
-            //    if (variation != null) product.Variations = variation;
-            //}
+                    if (category != null)
+                    {
+                        product.Categories = category;
+                    }
 
-            return Ok(products);
+                    if (variations != null)
+                    {
+                        product.Variations = variations;
+                    }
+                }
+                return Ok(products);
+
+            }
         }
         catch (Exception ex)
         {
@@ -60,18 +83,37 @@ public class ProductsController : ControllerBase
     [HttpPut("GetProduct/{id}")]
     public async Task<IActionResult> GetProductById(int id, [FromServices] AuthenticatedContext auth)
     {
-        var restaurantId = auth.RestaurantId;
+        try
+        {
+            var restaurantId = auth.RestaurantId;
+            var product = await _productsRepository.GetByIdAsync(id);
 
-        var product = await _productsRepository.GetByIdAsync(id);
-        if (product == null) return NotFound();
+            if (product == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                var category = await _context.Categories.FindAsync(product.CategoryId);
+                var variations = await _variationsRepository.GetByProductIdAsync(product.Id);
 
-        //var category = await _categoriesRepository.GetByIdAsync(product.CategoryId, restaurantId);
-        //if (category != null) product.Category = category;
+                if (category != null)
+                {
+                    product.Categories = category;
+                }
 
-        //var variation = await _variationsRepository.GetByProductIdAsync(product.Id);
-        //if (variation != null) product.Variations = variation;
-
-        return Ok(product);
+                if (variations != null)
+                {
+                    product.Variations = variations;
+                }
+                return Ok(product);
+            }
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(StatusCodes.Status400BadRequest, ex.Message);
+        }
+        
     }
 
     [HttpPost("CreateProduct")]
@@ -86,11 +128,11 @@ public class ProductsController : ControllerBase
 
             if (newProduct != null)
             {
-                return Ok(newProduct);
+                return Ok();
             }
             else
             {
-                return BadRequest();
+                return NotFound();
             }
         }
         catch (Exception ex)
@@ -113,7 +155,7 @@ public class ProductsController : ControllerBase
 
             if (updatedProduct != null)
             {
-                return Ok(updatedProduct);
+                return Ok();
             }
             else
             {

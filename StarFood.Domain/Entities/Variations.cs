@@ -6,7 +6,7 @@ namespace StarFood.Domain.Entities
     public class Variations
     {
         public int Id { get; private set; }
-        public string Description { get; set; }
+        public string? Description { get; set; }
         public int ProductId { get; set; }
 
         [Column(TypeName = "decimal(18, 2)")]

@@ -16,7 +16,7 @@ namespace StarFood.Infrastructure.Data.Repositories
         public async Task<List<Products>> GetAllAsync(int restaurantId)
         {
             return await _context.Products
-                .Where(d => d.RestaurantId == restaurantId)
+                .Where(d => d.RestaurantId == restaurantId && d.IsAvailable == true)
                 .ToListAsync();
         }
 

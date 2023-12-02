@@ -48,10 +48,25 @@ public class RestaurantsController : ControllerBase
     [HttpPost("CreateRestaurant")]
     public async Task<IActionResult> CreateRestaurant([FromBody] CreateRestaurantCommand createRestaurantCommand)
     {
-        var restaurantId = createRestaurantCommand.RestaurantId;
-        var newRestaurant = await _createRestaurantCommandHandler.HandleAsync(createRestaurantCommand, restaurantId);
+        try
+        {
+            var restaurantId = createRestaurantCommand.RestaurantId;
+            var newRestaurant = await _createRestaurantCommandHandler.HandleAsync(createRestaurantCommand, restaurantId);
+
+            if (newRestaurant != null)
+            {
+                return Ok();
+            }
+            else
+            {
+                return NotFound();
+            }
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(StatusCodes.Status400BadRequest, ex.Message);
+        }
         
-        return Ok();
     }
 
     [HttpPut("UpdateRestaurant/{id}")]

@@ -12,17 +12,15 @@ using StarsFoodAPI.Services.HttpContext;
 [ApiController]
 public class VariationsController : ControllerBase
 {
-    private readonly StarFoodDbContext _context;
     private readonly IVariationsRepository _productVariationsRepository;
     private readonly ICommandHandler<CreateVariationCommand, Variations> _createVariationCommandHandler;
     private readonly ICommandHandler<UpdateVariationCommand, Variations> _updateVariationCommandHandler;
 
-    public VariationsController(StarFoodDbContext context,
-                                IVariationsRepository productVariationsRepository, 
-                                ICommandHandler<CreateVariationCommand, Variations> createVariationCommandHandler,
-                                ICommandHandler<UpdateVariationCommand, Variations> updateVariationCommandHandler)
+    public VariationsController(
+        IVariationsRepository productVariationsRepository, 
+        ICommandHandler<CreateVariationCommand, Variations> createVariationCommandHandler,
+        ICommandHandler<UpdateVariationCommand, Variations> updateVariationCommandHandler)
     {
-        _context = context;
         _productVariationsRepository = productVariationsRepository;
         _createVariationCommandHandler = createVariationCommandHandler;
         _updateVariationCommandHandler = updateVariationCommandHandler;
@@ -79,7 +77,7 @@ public class VariationsController : ControllerBase
             }
             else
             {
-                return BadRequest();
+                return NotFound();
             }
         }
         catch (Exception ex)
@@ -88,8 +86,8 @@ public class VariationsController : ControllerBase
         }
     }
 
-    [HttpPatch("UpdateVariation/{id}")]
-    public async Task<IActionResult> UpdateVariation(
+    [HttpPatch("UpdateVariations")]
+    public async Task<IActionResult> UpdateVariations(
         [FromServices] AuthenticatedContext auth,
         [FromBody] List<UpdateVariationCommand> updateVariationCommand)
     {
@@ -100,11 +98,11 @@ public class VariationsController : ControllerBase
 
             if (updatedVariation != null)
             {
-                return Ok(updatedVariation);
+                return Ok();
             }
             else
             {
-                return BadRequest();
+                return NotFound();
             }
         }
         catch (Exception ex)
@@ -117,13 +115,21 @@ public class VariationsController : ControllerBase
     [HttpDelete("DeleteVariation/{id}")]
     public async Task<IActionResult> DeleteVariation(int id)
     {
-        var variation = await _productVariationsRepository.GetByIdAsync(id);
-        if (variation == null)
+        try
         {
-            return NotFound();
-        }
+            var variation = await _productVariationsRepository.GetByIdAsync(id);
+            if (variation == null)
+            {
+                return NotFound();
+            }
 
-        await _productVariationsRepository.DeleteAsync(id);
-        return Ok();
+            await _productVariationsRepository.DeleteAsync(id);
+            return Ok();
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(StatusCodes.Status400BadRequest, ex.Message);
+        }
+        
     }
 }

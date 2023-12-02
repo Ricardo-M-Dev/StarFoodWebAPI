@@ -90,15 +90,13 @@ public class VariationsController : ControllerBase
 
     [HttpPatch("UpdateVariation/{id}")]
     public async Task<IActionResult> UpdateVariation(
-        [FromRoute] int id,
         [FromServices] AuthenticatedContext auth,
-        [FromBody] UpdateVariationCommand updateVariationCommand)
+        [FromBody] List<UpdateVariationCommand> updateVariationCommand)
     {
         try
         {
             var restaurantId = auth.RestaurantId;
-            updateVariationCommand.Id = id;
-            var updatedVariation = await _updateVariationCommandHandler.HandleAsync(updateVariationCommand, restaurantId);
+            var updatedVariation = await _updateVariationCommandHandler.HandleAsyncList(updateVariationCommand, restaurantId);
 
             if (updatedVariation != null)
             {

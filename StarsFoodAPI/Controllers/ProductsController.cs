@@ -16,14 +16,12 @@ public class ProductsController : ControllerBase
     private readonly IVariationsRepository _variationsRepository;
     private readonly ICommandHandler<CreateProductCommand, Products> _createProductCommandHandler;
     private readonly ICommandHandler<UpdateProductCommand, Products> _updateProductCommandHandler;
-    private readonly ICommandHandler<CreateVariationCommand, Variations> _createVariationCommandHandler;
 
     public ProductsController(IProductRepository productsRepository,
                               ICategoriesRepository categoriesRepository,
                               IVariationsRepository variationsRepository,
                               ICommandHandler<CreateProductCommand, Products> createProductCommandHandler,
-                              ICommandHandler<UpdateProductCommand, Products> updateProductCommandHandler,
-                              ICommandHandler<CreateVariationCommand, Variations> createVariationsCommandHandler
+                              ICommandHandler<UpdateProductCommand, Products> updateProductCommandHandler
                               )
     {
         _productsRepository = productsRepository;
@@ -31,7 +29,6 @@ public class ProductsController : ControllerBase
         _variationsRepository = variationsRepository;
         _createProductCommandHandler = createProductCommandHandler;
         _updateProductCommandHandler = updateProductCommandHandler;
-        _createVariationCommandHandler = createVariationsCommandHandler;
     }
 
     [HttpGet("GetAllProducts")]
@@ -43,14 +40,14 @@ public class ProductsController : ControllerBase
             var products = await _productsRepository.GetAllAsync(restaurantId);
             if (products == null) return NotFound();
 
-            foreach (var product in products)
-            {
-                var category = await _categoriesRepository.GetByIdAsync(product.CategoryId, restaurantId);
-                if (category != null) product.Category = category;
+            //foreach (var product in products)
+            //{
+            //    var category = await _categoriesRepository.GetByIdAsync(product.CategoryId, restaurantId);
+            //    if (category != null) product.Category = category;
 
-                var variation = await _variationsRepository.GetByProductIdAsync(product.Id);
-                if (variation != null) product.Variations = variation;
-            }
+            //    var variation = await _variationsRepository.GetByProductIdAsync(product.Id);
+            //    if (variation != null) product.Variations = variation;
+            //}
 
             return Ok(products);
         }
@@ -68,11 +65,11 @@ public class ProductsController : ControllerBase
         var product = await _productsRepository.GetByIdAsync(id);
         if (product == null) return NotFound();
 
-        var category = await _categoriesRepository.GetByIdAsync(product.CategoryId, restaurantId);
-        if (category != null) product.Category = category;
+        //var category = await _categoriesRepository.GetByIdAsync(product.CategoryId, restaurantId);
+        //if (category != null) product.Category = category;
 
-        var variation = await _variationsRepository.GetByProductIdAsync(product.Id);
-        if (variation != null) product.Variations = variation;
+        //var variation = await _variationsRepository.GetByProductIdAsync(product.Id);
+        //if (variation != null) product.Variations = variation;
 
         return Ok(product);
     }
@@ -80,22 +77,16 @@ public class ProductsController : ControllerBase
     [HttpPost("CreateProduct")]
     public async Task<IActionResult> CreateProduct(
         [FromServices] AuthenticatedContext auth,
-        [FromBody] CreateProductVariationCommand createProductModel)
+        [FromBody] CreateProductCommand createProductCommand)
     {
         try
         {
             var restaurantId = auth.RestaurantId;
-            var newProduct = await _createProductCommandHandler.HandleAsync(createProductModel.createProductCommand, restaurantId);
+            var newProduct = await _createProductCommandHandler.HandleAsync(createProductCommand, restaurantId);
 
             if (newProduct != null)
             {
-                foreach (var variation in createProductModel.createVariationCommandList)
-                {
-                    variation.ProductId = newProduct.Id;
-                }
-
-                var newVariations = await _createVariationCommandHandler.HandleAsyncList(createProductModel.createVariationCommandList, restaurantId);
-                return Ok();
+                return Ok(newProduct);
             }
             else
             {

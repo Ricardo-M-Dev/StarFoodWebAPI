@@ -16,9 +16,6 @@ namespace StarFood.Domain.Entities
         [DefaultValue(false)]
         public bool IsAvailable { get; set; }
 
-        public Categories Category { get; set; }
-        public List<Variations> Variations { get; set; }
-
         public Products() { }
     }
 }

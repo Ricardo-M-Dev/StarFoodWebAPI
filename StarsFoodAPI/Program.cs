@@ -41,6 +41,16 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowLocalhost8000",
+        builder => builder.WithOrigins("http://localhost:8000")
+                          .AllowAnyHeader()
+                          .AllowAnyMethod()
+                          .AllowCredentials()
+                          .SetIsOriginAllowed(origin => true));
+});
+
 builder.Services.AddDbContext<StarFoodDbContext>(options =>
 {
     string connectionString = configuration.GetConnectionString("DefaultConnection");
@@ -83,6 +93,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseSwagger();
 app.UseSwaggerUI();
+app.UseCors("AllowLocalhost8000");
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();

@@ -34,15 +34,6 @@ namespace StarFood.Infrastructure.Data
 
             modelBuilder.Entity<Users>()
                 .HasKey(u => u.Id);
-
-            //modelBuilder.Entity<Users>()
-            //    .HasKey(u => u.Username);
-
-            modelBuilder.Entity<Products>()
-                .HasOne(d => d.Category)
-                .WithMany()
-                .HasForeignKey(d => d.CategoryId);
         }
-
     }
 }

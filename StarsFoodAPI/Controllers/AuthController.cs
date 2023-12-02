@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using StarFood.Domain.Entities;
 using StarFood.Infrastructure.Auth;
-using StarsFoodAPI.Services.HttpContext;
 
 namespace StarsFoodAPI.Controllers
 {

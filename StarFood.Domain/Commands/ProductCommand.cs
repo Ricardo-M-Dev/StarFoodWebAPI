@@ -1,9 +1,12 @@
-﻿using System.ComponentModel;
+﻿using StarFood.Domain.Entities;
+using System.ComponentModel;
 
-namespace StarFood.Domain.Entities
+namespace StarFood.Domain.Commands
 {
-    public class Products
+    public class ProductCommand
     {
+        public ProductCommand() { }
+
         public int Id { get; set; }
         public string? Name { get; set; }
         public string? Description { get; set; }
@@ -18,7 +21,5 @@ namespace StarFood.Domain.Entities
         public Categories? Categories { get; set; }
         public List<Variations> Variations { get; set; }
         public List<OrderProducts> OrderProducts { get; set; }
-
-        public Products() { }
     }
 }

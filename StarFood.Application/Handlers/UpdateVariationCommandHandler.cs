@@ -49,13 +49,15 @@ namespace StarFood.Application.CommandHandlers
                 }
                 else
                 {
-                    Variations newVariation = new();
-                    newVariation.Description = variation.Description;
-                    newVariation.ProductId = variation.ProductId;
-                    newVariation.UpdateTime = DateTime.Now;
-                    newVariation.Value = variation.Value;
-                    newVariation.IsAvailable = variation.IsAvailable;
-
+                    Variations newVariation = new Variations
+                    {
+                        Description = variation.Description,
+                        ProductId = variation.ProductId,
+                        UpdateTime = DateTime.Now,
+                        Value = variation.Value,
+                        IsAvailable = variation.IsAvailable,
+                    };
+                    
                     await _variationRepository.CreateAsync(newVariation);
 
                     updatedVariations.Add(newVariation);

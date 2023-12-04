@@ -1,8 +1,8 @@
 ﻿using StarFood.Domain.Entities;
 
-namespace StarFood.Domain.Commands
+namespace StarFood.Domain.ViewModels
 {
-    public class UpdateProductCommand
+    public class ProductCategoryVariationViewModel
     {
         public int Id { get; set; }
         public string? Name { get; set; }
@@ -10,6 +10,7 @@ namespace StarFood.Domain.Commands
         public int CategoryId { get; set; }
         public string? ImgUrl { get; set; }
         public bool IsAvailable { get; set; }
-        public List<Variations>? Variations { get; set; }
+        public Categories? Categories { get; set; }
+        public List<Variations> Variations { get; set; }
     }
 }

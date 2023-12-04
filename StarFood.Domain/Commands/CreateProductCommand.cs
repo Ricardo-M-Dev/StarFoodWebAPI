@@ -1,13 +1,13 @@
-﻿namespace StarFood.Domain.Commands
+﻿using StarFood.Domain.Entities;
+
+namespace StarFood.Domain.Commands
 {
     public class CreateProductCommand
     {
-        public int Id { get; private set; }
-        public string Name { get; set; } = string.Empty;
-        public string Description { get; set; } = string.Empty;
-        public string ImgUrl { get; set; } = string.Empty;
-        public DateTime CreatedTime { get; set; }
+        public string? Name { get; set; }
+        public string? Description { get; set; }
         public int CategoryId { get; set; }
-        public int RestaurantId { get; set; }
+        public string? ImgUrl { get; set; }
+        public List<Variations>? Variations { get; set; }
     }
 }

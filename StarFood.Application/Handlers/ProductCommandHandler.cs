@@ -1,58 +1,125 @@
-﻿using StarFood.Application.Interfaces;
+﻿using MediatR;
+using StarFood.Application.Base;
+using StarFood.Application.Base.Messages;
+using StarFood.Application.Interfaces;
 using StarFood.Domain.Commands;
 using StarFood.Domain.Entities;
 using StarFood.Domain.Repositories;
-using StarFood.Infrastructure.Data;
 
 namespace StarFood.Application.Handlers
 {
-    public class ProductCommandHandler : ICommandHandler<ProductCommand, Products>
+    public class ProductCommandHandler :
+        IRequestHandler<CreateProductCommand, ICommandResponse>,
+        IRequestHandler<UpdateProductCommand, ICommandResponse>
     {
-        private readonly StarFoodDbContext _context;
-        private readonly IProductsRepository _productsRepository;
+        private readonly IProductsRepository _productRepository;
         private readonly IVariationsRepository _variationsRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-
-        public ProductCommandHandler(StarFoodDbContext context, IProductsRepository productsRepository, IVariationsRepository variationsRepository)
+        public ProductCommandHandler(
+            IProductsRepository productRepository,
+            IVariationsRepository variationsRepository,
+            IUnitOfWork unitOfWork
+        )
         {
-            _context = context;
-            _productsRepository = productsRepository;
+            _productRepository = productRepository;
             _variationsRepository = variationsRepository;
+            _unitOfWork = unitOfWork;
         }
 
-        public Task<Products> HandleAsync(ProductCommand command, int restaurantId)
+        public async Task<ICommandResponse> Handle(CreateProductCommand request, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
-        }
-
-        public async Task<List<Products>> HandleAsyncList(List<ProductCommand> commandList, int restaurantId)
-        {
-            List<Products>? products = await _productsRepository.GetAllAsync(restaurantId);
-
-            if (products.Count == 0)
+            Products? newProduct = new Products
             {
-                return new List<Products>();
-            }
-            else
+                Name = request.Name,
+                Description = request.Description,
+                ImgUrl = request.ImgUrl,
+                CreatedTime = DateTime.Now,
+                CategoryId = request.CategoryId,
+                RestaurantId = request.RestaurantId,
+            };
+
+            _productRepository.Add(newProduct);
+
+            foreach (var variation in request.Variations)
             {
-                foreach (var product in products)
+                var newVariation = new Variations
                 {
-                    var category = await _context.Categories.FindAsync(product.CategoryId);
-                    var variations = await _variationsRepository.GetByProductIdAsync(product.Id);
+                    Description = variation.Description,
+                    ProductId = newProduct.Id,
+                    Value = variation.Value,
+                    CreatedTime = DateTime.Now,
+                    RestaurantId = request.RestaurantId,
+                };
 
-                    if (category != null)
-                    {
-                        product.Categories = category;
-                    }
+                _variationsRepository.Add(newVariation);
 
-                    if (variations != null)
-                    {
-                        product.Variations = variations;
-                    }
-                }
+            };
 
-                return products;
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+            return new SuccessCommandResponse(newProduct);
+        }
+
+        public async Task<ICommandResponse> Handle(UpdateProductCommand request, CancellationToken cancellationToken)
+        {
+            var updateProduct = _productRepository.GetProductById(request.Restaurant, request.Id);
+
+            if (updateProduct == null)
+            {
+                return new ErrorCommandResponse();
             }
+
+            updateProduct.Name = request.Name;
+            updateProduct.Description = request.Description;
+            updateProduct.CategoryId = request.CategoryId;
+            updateProduct.ImgUrl = request.ImgUrl;
+            updateProduct.UpdateTime = DateTime.Now;
+            updateProduct.IsAvailable = request.IsAvailable;
+
+            _productRepository.Edit(updateProduct);
+
+            List<Variations> updatedVariations = new List<Variations>();
+
+            foreach (var variation in request.Variations)
+            {
+                var updateVariation = _variationsRepository.GetVariationById(request.Restaurant, variation.Id);
+
+                if (updateVariation != null)
+                {
+                    updateVariation.Description = variation.Description;
+                    updateVariation.ProductId = updateProduct.Id;
+                    updateVariation.UpdateTime = DateTime.Now;
+                    updateVariation.Value = variation.Value;
+                    updateVariation.IsAvailable = variation.IsAvailable;
+
+                    _variationsRepository.Edit(updateVariation);
+
+                    updatedVariations.Add(updateVariation);
+                }
+                else
+                {
+                    var newVariation = new Variations
+                    {
+                        Description = variation.Description,
+                        ProductId = updateProduct.Id,
+                        Value = variation.Value,
+                        CreatedTime = DateTime.Now,
+                        RestaurantId = request.RestaurantId,
+                    };
+
+                    _variationsRepository.Add(newVariation);
+
+                    updatedVariations.Add(newVariation);
+                }
+            };
+
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+            updateProduct.Variations.AddRange(updatedVariations);
+
+            return new SuccessCommandResponse(updateProduct);
+
         }
     }
 }

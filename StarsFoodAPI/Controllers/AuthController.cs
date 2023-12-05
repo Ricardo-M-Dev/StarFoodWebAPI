@@ -10,9 +10,9 @@ namespace StarsFoodAPI.Controllers
     public class AuthController : ControllerBase
     {
         private readonly Auth _auth;
-        private readonly AuthenticatedContext _authenticatedContext;
+        private readonly RequestState _authenticatedContext;
 
-        public AuthController(Auth auth, AuthenticatedContext authenticatedContext)
+        public AuthController(Auth auth, RequestState authenticatedContext)
         {
             _auth = auth;
             _authenticatedContext = authenticatedContext;

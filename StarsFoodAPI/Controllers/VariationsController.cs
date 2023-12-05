@@ -27,7 +27,7 @@ public class VariationsController : ControllerBase
     }
 
     [HttpGet("GetAllVariations")]
-    public async Task<IActionResult> GetAllVariations([FromServices] AuthenticatedContext auth)
+    public async Task<IActionResult> GetAllVariations([FromServices] RequestState auth)
     {
         try
         {
@@ -42,7 +42,7 @@ public class VariationsController : ControllerBase
     }
 
     [HttpPut("GetVariation/{id}")]
-    public async Task<IActionResult> GetVariationById([FromServices]AuthenticatedContext auth, int id)
+    public async Task<IActionResult> GetVariationById([FromServices]RequestState auth, int id)
     {
         try
         {
@@ -63,7 +63,7 @@ public class VariationsController : ControllerBase
 
     [HttpPost("CreateVariation")]
     public async Task<IActionResult> CreateVariation(
-        [FromServices] AuthenticatedContext auth,
+        [FromServices] RequestState auth,
         [FromBody] List<CreateVariationCommand> createVariationCommand)
     {
         try
@@ -88,7 +88,7 @@ public class VariationsController : ControllerBase
 
     [HttpPatch("UpdateVariations")]
     public async Task<IActionResult> UpdateVariations(
-        [FromServices] AuthenticatedContext auth,
+        [FromServices] RequestState auth,
         [FromBody] List<UpdateVariationCommand> updateVariationCommand)
     {
         try

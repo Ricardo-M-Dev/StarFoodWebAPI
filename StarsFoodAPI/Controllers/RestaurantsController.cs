@@ -33,7 +33,7 @@ public class RestaurantsController : ControllerBase
     }
 
     [HttpGet("GetRestaurant/{id}")]
-    public async Task<IActionResult> GetRestaurantById([FromServices] AuthenticatedContext auth)
+    public async Task<IActionResult> GetRestaurantById([FromServices] RequestState auth)
     {
         var restaurantId = auth.RestaurantId;
         var restaurant = await _restaurantsRepository.GetByIdAsync(restaurantId);
@@ -72,7 +72,7 @@ public class RestaurantsController : ControllerBase
     [HttpPut("UpdateRestaurant/{id}")]
     public async Task<IActionResult> UpdateRestaurant(
         [FromRoute] int id,
-        [FromServices] AuthenticatedContext auth,
+        [FromServices] RequestState auth,
         [FromBody] UpdateRestaurantCommand updateRestaurantCommand)
     {
         var restaurantId = auth.RestaurantId;

@@ -6,6 +6,7 @@ using StarFood.Application.Handlers;
 using StarFood.Application.Interfaces;
 using StarFood.Domain.Commands;
 using StarFood.Domain.Entities;
+using MediatR;
 using StarFood.Domain.Repositories;
 using StarFood.Infrastructure.Auth;
 using StarFood.Infrastructure.Data;
@@ -13,6 +14,8 @@ using StarFood.Infrastructure.Data.Repositories;
 using StarFood.Infrastructure.Middleware;
 using StarsFoodAPI.Services.HttpContext;
 using System.Text;
+using StarFood.Application.Communication;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -59,28 +62,27 @@ builder.Services.AddDbContext<StarFoodDbContext>(options =>
                     builder => builder.MigrationsAssembly("StarFood.Infrastructure"));
 }, ServiceLifetime.Scoped);
 
+
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+builder.Services.AddScoped<Auth>();
+builder.Services.AddScoped<RequestState>();
+builder.Services.AddScoped<IMediatorHandler, MediatorHandler>();
 builder.Services.AddScoped<IOrdersRepository, OrderRepository>();
 builder.Services.AddScoped<IProductsRepository, ProductRepository>();
 builder.Services.AddScoped<ICategoriesRepository, CategoriesRepository>();
 builder.Services.AddScoped<IVariationsRepository, VariationsRepository>();
 builder.Services.AddScoped<IRestaurantsRepository, RestaurantsRepository>();
 builder.Services.AddScoped<IOrderProductsRepository, OrderProductsRepository>();
+builder.Services.AddMediatR(typeof(MediatorHandler).GetTypeInfo().Assembly);
 
 builder.Services.AddScoped<ICommandHandler<CreateOrderCommand, Orders>, CreateOrderCommandHandler>();
-builder.Services.AddScoped<ICommandHandler<CreateProductCommand, Products>, CreateProductCommandHandler>();
-builder.Services.AddScoped<ICommandHandler<UpdateProductCommand, Products>, UpdateProductCommandHandler>();
-builder.Services.AddScoped<ICommandHandler<CreateCategoryCommand, Categories>, CreateCategoryCommandHandler>();
-builder.Services.AddScoped<ICommandHandler<UpdateCategoryCommand, Categories>, UpdateCategoryCommandHandler>();
-builder.Services.AddScoped<ICommandHandler<UpdateCategoryCommand, Categories>, UpdateCategoryCommandHandler>();
 builder.Services.AddScoped<ICommandHandler<CreateVariationCommand, Variations>, CreateVariationCommandHandler>();
 builder.Services.AddScoped<ICommandHandler<UpdateVariationCommand, Variations>, UpdateVariationCommandHandler>();
 builder.Services.AddScoped<ICommandHandler<CreateRestaurantCommand, Restaurants>, CreateRestaurantCommandHandler>();
 builder.Services.AddScoped<ICommandHandler<UpdateRestaurantCommand, Restaurants>, UpdateRestaurantCommandHandler>();
 builder.Services.AddScoped<ICommandHandler<CreateOrderProductsCommand, OrderProducts>, CreateOrderProductsCommandHandler>();
 
-builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-builder.Services.AddScoped<AuthenticatedContext>();
-builder.Services.AddScoped<Auth>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();

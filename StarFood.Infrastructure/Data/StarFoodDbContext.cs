@@ -40,6 +40,12 @@ namespace StarFood.Infrastructure.Data
             modelBuilder.Entity<Tables>()
                 .HasKey(t => t.Id);
 
+            modelBuilder.Entity<Variations>()
+                .HasOne(v => v.Products)
+                .WithMany(p => p.Variations)
+                .HasForeignKey(v => v.ProductId)
+                .OnDelete(DeleteBehavior.Cascade);
+
             modelBuilder.Entity<OrderProducts>()
                 .HasKey(op => op.Id);
 

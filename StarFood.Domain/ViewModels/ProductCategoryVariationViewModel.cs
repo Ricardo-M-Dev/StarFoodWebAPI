@@ -10,7 +10,7 @@ namespace StarFood.Domain.ViewModels
         public int CategoryId { get; set; }
         public string? ImgUrl { get; set; }
         public bool IsAvailable { get; set; }
-        public Categories? Categories { get; set; }
-        public List<Variations> Variations { get; set; }
+        public Categories? Category { get; set; }
+        public List<Variations>? Variations { get; set; }
     }
 }

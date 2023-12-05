@@ -1,15 +1,17 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
+using StarFood.Domain;
 using StarFood.Infrastructure.Data;
 using System.Data;
 
 namespace StarsFoodAPI.Services.HttpContext
 {
-    public class AuthenticatedContext
+    public class RequestState
     {
         private readonly IHttpContextAccessor _accessor;
         private readonly DbContextOptions<StarFoodDbContext> _dbContextOptions;
 
-        public AuthenticatedContext(IHttpContextAccessor accessor, DbContextOptions<StarFoodDbContext> dbContextOptions)
+        public RequestState(IHttpContextAccessor accessor, DbContextOptions<StarFoodDbContext> dbContextOptions)
         {
             _accessor = accessor;
             _dbContextOptions = dbContextOptions;

@@ -1,53 +1,36 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using StarFood.Application.Interfaces;
-using StarFood.Domain.Commands;
+using StarFood.Domain.Base;
 using StarFood.Domain.Entities;
 
 namespace StarFood.Infrastructure.Data.Repositories
 {
-    public class CategoriesRepository : ICategoriesRepository
+    public class CategoriesRepository : BaseRepository<Categories>, ICategoriesRepository
     {
         private readonly StarFoodDbContext _context;
 
-        public CategoriesRepository(StarFoodDbContext context)
+        public CategoriesRepository(StarFoodDbContext context):base (context)
         {
             _context = context;
+
         }
 
-        public async Task<List<Categories>> GetAllAsync(int restaurantId)
+        public List<Categories> GetCategoriesByRestaurantId(Restaurants restaurant)
         {
-            return await _context.Categories
-                .Where(c => c.RestaurantId == restaurantId)
-                .ToListAsync();
+            List<Categories> categories = base.DbSet
+                .Where(c => c.RestaurantId == restaurant.RestaurantId)
+                .ToList();
+
+            return categories;
         }
 
-        public async Task<Categories> GetByIdAsync(int id, int restaurantId)
+        public Categories GetCategoryById(Restaurants restaurant, int id)
         {
-            return await _context.Categories
-                .FirstOrDefaultAsync(c => c.Id == id && c.RestaurantId == restaurantId);
-        }
+            Categories? category = base.DbSet
+                .Where(c => c.Id == id && c.RestaurantId == restaurant.RestaurantId)
+                .FirstOrDefault();
 
-        public async Task CreateAsync(Categories category)
-        {
-            await _context.Categories.AddAsync(category);
-            await _context.SaveChangesAsync();
-        }
-
-        public async Task UpdateAsync(Categories category)
-        {
-            _context.Categories.Update(category);
-            await _context.SaveChangesAsync();
-        }
-
-        public async Task DeleteAsync(int Id, int restaurantId)
-        {
-            var category = await GetByIdAsync(Id, restaurantId);
-
-            if (category != null)
-            {
-                _context.Categories.Remove(category);
-                await _context.SaveChangesAsync();
-            }
+            return category;
         }
     }
 }

@@ -1,10 +1,13 @@
 ﻿using StarFood.Domain.Entities;
 using System.ComponentModel;
+using StarFood.Application.Base.Messages;
 
-namespace StarFood.Application.DTOs
+namespace StarFood.Domain.Commands
 {
-    public class ProductsDTO
+    public class ProductCommand : Command<ICommandResponse>
     {
+        public ProductCommand() { }
+
         public int Id { get; set; }
         public string? Name { get; set; }
         public string? Description { get; set; }
@@ -18,5 +21,6 @@ namespace StarFood.Application.DTOs
         public bool IsAvailable { get; set; }
         public Categories? Categories { get; set; }
         public List<Variations> Variations { get; set; }
+        public List<OrderProducts> OrderProducts { get; set; }
     }
 }

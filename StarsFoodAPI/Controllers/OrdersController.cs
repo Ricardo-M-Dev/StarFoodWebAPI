@@ -25,7 +25,7 @@ public class OrdersController : ControllerBase
 
     [HttpPost("CreateOrder")]
     public async Task<IActionResult> CreateOrder(
-        [FromServices] AuthenticatedContext auth,
+        [FromServices] RequestState auth,
         [FromBody] CreateOrderCommand createOrderCommand)
     {
         try
@@ -50,7 +50,7 @@ public class OrdersController : ControllerBase
 
     [HttpPost("AddProducts")]
     public async Task<IActionResult> AddProducts(
-        [FromServices] AuthenticatedContext auth,
+        [FromServices] RequestState auth,
         [FromBody] List<CreateOrderProductsCommand> createOrderProductsCommand)
     {
         try

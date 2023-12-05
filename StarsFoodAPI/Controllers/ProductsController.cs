@@ -1,11 +1,13 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using StarFood.Application.Base;
+using StarFood.Application.Communication;
+using StarFood.Application.DomainModel.Commands;
 using StarFood.Application.Interfaces;
 using StarFood.Domain.Commands;
-using StarFood.Domain.Entities;
 using StarFood.Domain.Repositories;
 using StarFood.Domain.ViewModels;
-using StarFood.Infrastructure.Data;
 using StarsFoodAPI.Services.HttpContext;
 
 [Authorize]
@@ -13,63 +15,65 @@ using StarsFoodAPI.Services.HttpContext;
 [ApiController]
 public class ProductsController : ControllerBase
 {
-    private readonly StarFoodDbContext _context;
-    private readonly IProductsRepository _productsRepository;
+    private readonly ICategoriesRepository _categoriesRepository;
     private readonly IVariationsRepository _variationsRepository;
-    private readonly ICommandHandler<ProductCommand, Products> _productsCommandHandler;
-    private readonly ICommandHandler<CreateProductCommand, Products> _createProductCommandHandler;
-    private readonly ICommandHandler<UpdateProductCommand, Products> _updateProductCommandHandler;
+    private readonly IRestaurantsRepository _restaurantRepository;
 
     public ProductsController(
-        StarFoodDbContext context,
-        IProductsRepository productsRepository,
+        ICategoriesRepository categoriesRepository,
         IVariationsRepository variationsRepository,
-        ICommandHandler<ProductCommand, Products> productsCommandHandler,
-        ICommandHandler<CreateProductCommand, Products> createProductCommandHandler,
-        ICommandHandler<UpdateProductCommand, Products> updateProductCommandHandler
+        IRestaurantsRepository restaurantsRepository
     )
     {
-        _context = context;
-        _productsRepository = productsRepository;
+        _categoriesRepository = categoriesRepository;
         _variationsRepository = variationsRepository;
-        _productsCommandHandler = productsCommandHandler;
-        _createProductCommandHandler = createProductCommandHandler;
-        _updateProductCommandHandler = updateProductCommandHandler;
+        _restaurantRepository = restaurantsRepository;
     }
 
     [HttpGet("GetAllProducts")]
-    public async Task<ActionResult<ProductCategoryVariationViewModel>> GetAllProducts([FromServices] AuthenticatedContext auth)
+    public async Task<ActionResult<ProductCategoryVariationViewModel>> GetAllProducts(
+        [FromServices] IProductsRepository repository,
+        [FromServices] IMapper map,
+        [FromServices] RequestState requestContext
+    )
     {
         try
         {
-            var restaurantId = auth.RestaurantId;
-
-            //TODO: Achar uma maneira de sobescrever o metodo HandleAsyncList para não passar o command
-            List<ProductCommand> productCommand = new List<ProductCommand>();
-            var products = await _productsCommandHandler.HandleAsyncList(productCommand, restaurantId);
-
-            if (products.Count > 0)
+            var restaurant = _restaurantRepository.GetRestaurantById(requestContext.RestaurantId);
+            if (restaurant == null)
             {
-                return Ok(products);
+                return BadRequest(new DomainException($"Restaurante de ID {requestContext.RestaurantId} não pode ser encontrado."));
             }
-            else
-            {
-                return NotFound();
-            }
+
+            var list = repository.GetProductsByRestaurantId(restaurant);
+
+            var result = map.Map<List<ProductCategoryVariationViewModel>>(list.AsQueryable());
+
+            return Ok(result.ToArray().OrderBy(p => p.Name, StringComparer.OrdinalIgnoreCase));
         }
         catch (Exception ex)
         {
-            return StatusCode(StatusCodes.Status400BadRequest, ex.Message);
+            return BadRequest(ex);
         }
     }
 
-    [HttpPut("GetProduct/{id}")]
-    public async Task<IActionResult> GetProductById(int id, [FromServices] AuthenticatedContext auth)
+    [HttpGet("GetProduct/{id}")]
+    public async Task<ActionResult<ProductCategoryVariationViewModel>> GetProductById(
+        [FromRoute] int id,
+        [FromServices] IProductsRepository repository,
+        [FromServices] IMapper map,
+        [FromServices] RequestState requestContext
+    )
     {
         try
         {
-            var restaurantId = auth.RestaurantId;
-            var product = await _productsRepository.GetByIdAsync(id);
+            var restaurant = _restaurantRepository.GetRestaurantById(requestContext.RestaurantId);
+            if (restaurant == null)
+            {
+                return BadRequest(new DomainException($"Restaurante de ID {requestContext.RestaurantId} não pode ser encontrado."));
+            }
+
+            var product = repository.GetProductById(restaurant, id);
 
             if (product == null)
             {
@@ -77,8 +81,8 @@ public class ProductsController : ControllerBase
             }
             else
             {
-                var category = await _context.Categories.FindAsync(product.CategoryId);
-                var variations = await _variationsRepository.GetByProductIdAsync(product.Id);
+                var category = _categoriesRepository.GetCategoryById(restaurant, product.CategoryId);
+                var variations = _variationsRepository.GetVariationsByProductId(restaurant, product.Id);
 
                 if (category != null)
                 {
@@ -89,78 +93,104 @@ public class ProductsController : ControllerBase
                 {
                     product.Variations = variations;
                 }
-                return Ok(product);
+
+                var result = map.Map<ProductCategoryVariationViewModel>(product);
+
+                return Ok(result);
             }
         }
         catch (Exception ex)
         {
-            return StatusCode(StatusCodes.Status400BadRequest, ex.Message);
+            return BadRequest(ex);
         }
-        
+
     }
 
     [HttpPost("CreateProduct")]
     public async Task<IActionResult> CreateProduct(
-        [FromServices] AuthenticatedContext auth,
-        [FromBody] CreateProductCommand createProductCommand)
+        [FromBody] CreateProductCommand cmd,
+        [FromServices] IMediatorHandler mediator,
+        [FromServices] IMapper map,
+        [FromServices] IHostApplicationLifetime appLifetime,
+        [FromServices] RequestState requestContext
+    )
     {
-        try
+        var restaurant = _restaurantRepository.GetRestaurantById(requestContext.RestaurantId);
+        if (restaurant == null)
         {
-            var restaurantId = auth.RestaurantId;
-            var newProduct = await _createProductCommandHandler.HandleAsync(createProductCommand, restaurantId);
+            return BadRequest(new DomainException($"Restaurant de ID {requestContext.RestaurantId} não pode ser encontrado."));
+        }
 
-            if (newProduct != null)
-            {
-                return Ok();
-            }
-            else
-            {
-                return NotFound();
-            }
-        }
-        catch (Exception ex)
+        cmd.UpdateRequestInfo(requestContext, restaurant);
+
+        var result = await mediator.SendCommand(cmd, appLifetime.ApplicationStopping);
+
+        if (result.IsValid)
         {
-            return StatusCode(StatusCodes.Status400BadRequest, ex.Message);
+            result.Object = map.Map<ProductCategoryVariationViewModel>(result.Object);
+            return Ok();
         }
+
+        return BadRequest(result);
     }
 
     [HttpPatch("UpdateProduct")]
     public async Task<IActionResult> UpdateProduct(
-        [FromServices] AuthenticatedContext auth,
-        [FromBody] UpdateProductCommand updateProductCommand)
+        [FromBody] UpdateProductCommand cmd,
+        [FromServices] IMediatorHandler mediator,
+        [FromServices] IMapper map,
+        [FromServices] IHostApplicationLifetime appLifetime,
+        [FromServices] RequestState requestContext
+    )
     {
-        try
+        var restaurant = _restaurantRepository.GetRestaurantById(requestContext.RestaurantId);
+        if (restaurant == null)
         {
-            var restaurantId = auth.RestaurantId;
-            var updatedProduct = await _updateProductCommandHandler.HandleAsync(updateProductCommand, restaurantId);
+            return BadRequest(new DomainException($"Restaurant de ID {requestContext.RestaurantId} não pode ser encontrado."));
+        }
 
-            if (updatedProduct != null)
-            {
-                return Ok();
-            }
-            else
-            {
-                return NotFound();
-            }
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(StatusCodes.Status400BadRequest, ex.Message);
-        }
-    }
+        cmd.UpdateRequestInfo(requestContext, restaurant);
 
-    [HttpDelete("DeleteProduct/{id}")]
-    public async Task<IActionResult> DeleteProduct(int id)
-    {
-        var product = await _productsRepository.GetByIdAsync(id);
-        if (product == null)
+        var result = await mediator.SendCommand(cmd, appLifetime.ApplicationStopping);
+
+        if (result.IsValid)
         {
-            return NotFound();
-        }
-        else
-        {
-            await _productsRepository.DeleteAsync(id);
+            result.Object = map.Map<ProductCategoryVariationViewModel>(result.Object);
             return Ok();
         }
+
+        return BadRequest(result);
+    }
+
+    [HttpDelete("DeleteProduct")]
+    public async Task<IActionResult> DeleteProduct(
+        [FromRoute] int id,
+        [FromServices] IMediatorHandler mediator,
+        [FromServices] IMapper map,
+        [FromServices] IHostApplicationLifetime appLifetime,
+        [FromServices] RequestState requestContext
+    )
+    {
+        var restaurant = _restaurantRepository.GetRestaurantById(requestContext.RestaurantId);
+        if (restaurant == null)
+        {
+            return BadRequest(new DomainException($"Restaurant de ID {requestContext.RestaurantId} não pode ser encontrado."));
+        }
+
+        var cmd = new DeleteProductCommand()
+        {
+            Id = id,
+            Restaurant = restaurant
+        };
+
+        var result = await mediator.SendCommand(cmd, appLifetime.ApplicationStopping);
+
+        if (result.IsValid)
+        {
+            result.Object = map.Map<ProductCategoryVariationViewModel>(result.Object);
+            return Ok(result);
+        }
+
+        return BadRequest(result);
     }
 }

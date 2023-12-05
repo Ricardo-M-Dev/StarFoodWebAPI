@@ -1,6 +1,8 @@
-﻿namespace StarFood.Domain.Commands
+﻿using StarFood.Application.Base.Messages;
+
+namespace StarFood.Domain.Commands
 {
-    public class UpdateCategoryCommand
+    public class UpdateCategoryCommand : Command<ICommandResponse>
     {
         public int Id { get; set; }
         public string CategoryName { get; set; } = string.Empty;

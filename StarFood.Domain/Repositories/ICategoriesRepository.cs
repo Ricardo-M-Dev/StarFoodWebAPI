@@ -1,13 +1,11 @@
-﻿using StarFood.Domain.Entities;
+﻿using StarFood.Application.Base;
+using StarFood.Domain.Entities;
 
 namespace StarFood.Application.Interfaces
 {
-    public interface ICategoriesRepository
+    public interface ICategoriesRepository : IBaseRepository<Categories>
     {
-        Task<List<Categories>> GetAllAsync(int restaurantId);
-        Task<Categories> GetByIdAsync(int id, int restaurantId);
-        Task CreateAsync(Categories category);
-        Task UpdateAsync(Categories category);
-        Task DeleteAsync(int id, int restaurantId);
+        List<Categories> GetCategoriesByRestaurantId(Restaurants restaurant);
+        Categories GetCategoryById(Restaurants restaurant, int id);
     }
 }

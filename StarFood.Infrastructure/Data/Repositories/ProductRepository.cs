@@ -1,58 +1,42 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using StarFood.Application.Interfaces;
+using StarFood.Domain.Base;
 using StarFood.Domain.Entities;
 
 namespace StarFood.Infrastructure.Data.Repositories
 {
-    public class ProductRepository : IProductsRepository
+    public class ProductRepository : BaseRepository<Products>, IProductsRepository
     {
-        private readonly StarFoodDbContext _context;
 
-        public ProductRepository(StarFoodDbContext context)
+        public ProductRepository(StarFoodDbContext context) : base(context)
         {
-            _context = context;
         }
 
-        public async Task<List<Products>> GetAllAsync(int restaurantId)
+        public List<Products> GetProductsByRestaurantId(Restaurants restaurant)
         {
-            return await _context.Products
-                .Where(d => d.RestaurantId == restaurantId && d.IsAvailable == true)
-                .ToListAsync();
+            List<Products>? products =  base.DbSet
+                .Where(d => d.RestaurantId == restaurant.RestaurantId)
+                .ToList();
+
+            return products;
         }
 
-        public async Task<Products> GetByIdAsync(int id)
+        public Products GetProductById(Restaurants restaurant, int id)
         {
-            return await _context.Products.FindAsync(id);
+            Products? product = base.DbSet
+                .Where(p => p.Id == id && p.RestaurantId == restaurant.RestaurantId)
+                .FirstOrDefault();
+
+            return product;
         }
 
-        public async Task<List<Products>> GetByCategoryIdAsync(int categoryId)
+        public List<Products> GetProductByCategoryId(Restaurants restaurant, int categoryId)
         {
-            return await _context.Products
-                .Where(d => d.CategoryId == categoryId)
-                .ToListAsync();
-        }
+            List<Products>? products = base.DbSet
+                .Where(p => p.CategoryId == categoryId && p.RestaurantId == restaurant.RestaurantId)
+                .ToList();
 
-        public async Task CreateAsync(Products product)
-        {
-            await _context.Products.AddAsync(product);
-            await _context.SaveChangesAsync();
-        }
-
-        public async Task UpdateAsync(int Id, Products updateProduct)
-        {
-            _context.Products.Update(updateProduct);
-            await _context.SaveChangesAsync();
-        }
-
-        public async Task DeleteAsync(int id)
-        {
-            var product = await GetByIdAsync(id);
-
-            if (product != null)
-            {
-                _context.Products.Remove(product);
-                await _context.SaveChangesAsync();
-            }
+            return products;
         }
     }
 }

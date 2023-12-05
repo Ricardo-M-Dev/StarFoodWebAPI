@@ -1,14 +1,12 @@
-﻿using StarFood.Domain.Entities;
+﻿using StarFood.Application.Base;
+using StarFood.Domain.Entities;
 
 namespace StarFood.Application.Interfaces
 {
-    public interface IProductsRepository
+    public interface IProductsRepository : IBaseRepository<Products>
     {
-        Task<List<Products>> GetAllAsync(int restaurantId);
-        Task<Products> GetByIdAsync(int id);
-        Task<List<Products>> GetByCategoryIdAsync(int categoryId);
-        Task CreateAsync(Products product);
-        Task UpdateAsync(int id, Products updatedProduct);
-        Task DeleteAsync(int id);
+        List<Products> GetProductsByRestaurantId(Restaurants restaurant);
+        Products GetProductById(Restaurants restaurant, int id);
+        List<Products> GetProductByCategoryId(Restaurants restaurant, int categoryId);
     }
 }

@@ -66,6 +66,7 @@ builder.Services.AddScoped<IVariationsRepository, VariationsRepository>();
 builder.Services.AddScoped<IRestaurantsRepository, RestaurantsRepository>();
 builder.Services.AddScoped<IOrderProductsRepository, OrderProductsRepository>();
 
+builder.Services.AddScoped<ICommandHandler<ProductCommand, Products>, ProductCommandHandler>();
 builder.Services.AddScoped<ICommandHandler<CreateOrderCommand, Orders>, CreateOrderCommandHandler>();
 builder.Services.AddScoped<ICommandHandler<CreateProductCommand, Products>, CreateProductCommandHandler>();
 builder.Services.AddScoped<ICommandHandler<UpdateProductCommand, Products>, UpdateProductCommandHandler>();

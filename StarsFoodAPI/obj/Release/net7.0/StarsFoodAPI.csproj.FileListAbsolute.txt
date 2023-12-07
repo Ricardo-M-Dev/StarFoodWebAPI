@@ -13,7 +13,12 @@ C:\Dev\Projects\StarFoodWebAPI\StarsFoodAPI\bin\Release\net7.0\StarsFoodAPI.deps
 C:\Dev\Projects\StarFoodWebAPI\StarsFoodAPI\bin\Release\net7.0\StarsFoodAPI.runtimeconfig.json
 C:\Dev\Projects\StarFoodWebAPI\StarsFoodAPI\bin\Release\net7.0\StarsFoodAPI.dll
 C:\Dev\Projects\StarFoodWebAPI\StarsFoodAPI\bin\Release\net7.0\StarsFoodAPI.pdb
+C:\Dev\Projects\StarFoodWebAPI\StarsFoodAPI\bin\Release\net7.0\AutoMapper.dll
+C:\Dev\Projects\StarFoodWebAPI\StarsFoodAPI\bin\Release\net7.0\AutoMapper.Extensions.Microsoft.DependencyInjection.dll
 C:\Dev\Projects\StarFoodWebAPI\StarsFoodAPI\bin\Release\net7.0\Humanizer.dll
+C:\Dev\Projects\StarFoodWebAPI\StarsFoodAPI\bin\Release\net7.0\MediatR.dll
+C:\Dev\Projects\StarFoodWebAPI\StarsFoodAPI\bin\Release\net7.0\MediatR.Contracts.dll
+C:\Dev\Projects\StarFoodWebAPI\StarsFoodAPI\bin\Release\net7.0\MediatR.Extensions.Microsoft.DependencyInjection.dll
 C:\Dev\Projects\StarFoodWebAPI\StarsFoodAPI\bin\Release\net7.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
 C:\Dev\Projects\StarFoodWebAPI\StarsFoodAPI\bin\Release\net7.0\Microsoft.AspNetCore.JsonPatch.dll
 C:\Dev\Projects\StarFoodWebAPI\StarsFoodAPI\bin\Release\net7.0\Microsoft.AspNetCore.OpenApi.dll

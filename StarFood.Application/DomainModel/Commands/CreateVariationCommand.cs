@@ -1,6 +1,8 @@
-﻿namespace StarFood.Domain.Commands
+﻿using StarFood.Application.Base.Messages;
+
+namespace StarFood.Domain.Commands
 {
-    public class CreateVariationCommand
+    public class CreateVariationCommand : Command<ICommandResponse>
     {
         public int Id { get; private set; }
         public string Description { get; set; } = string.Empty;

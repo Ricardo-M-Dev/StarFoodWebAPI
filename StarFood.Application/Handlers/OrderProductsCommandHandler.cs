@@ -7,11 +7,11 @@ using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace StarFood.Application.Handlers
 {
-    public class CreateOrderProductsCommandHandler : ICommandHandler<CreateOrderProductsCommand, OrderProducts>
+    public class OrderProductsCommandHandler : ICommandHandler<CreateOrderProductsCommand, OrderProducts>
     {
         private readonly IOrderProductsRepository _orderProductsRepository;
 
-        public CreateOrderProductsCommandHandler(IOrderProductsRepository orderProductsRepository)
+        public OrderProductsCommandHandler(IOrderProductsRepository orderProductsRepository)
         {
             _orderProductsRepository = orderProductsRepository;
         }

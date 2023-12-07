@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using StarFood.Application.CommandHandlers;
 using StarFood.Application.Handlers;
 using StarFood.Application.Interfaces;
 using StarFood.Domain.Commands;
@@ -16,6 +15,9 @@ using StarsFoodAPI.Services.HttpContext;
 using System.Text;
 using StarFood.Application.Communication;
 using System.Reflection;
+using Microsoft.Extensions.DependencyInjection;
+using StarFood.Application.Base;
+using StarFood.Application.Data.Context;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -74,17 +76,16 @@ builder.Services.AddScoped<ICategoriesRepository, CategoriesRepository>();
 builder.Services.AddScoped<IVariationsRepository, VariationsRepository>();
 builder.Services.AddScoped<IRestaurantsRepository, RestaurantsRepository>();
 builder.Services.AddScoped<IOrderProductsRepository, OrderProductsRepository>();
+
+builder.Services.AddScoped<ICommandHandler<CreateOrderCommand, Orders>, OrderCommandHandler>();
+builder.Services.AddScoped<ICommandHandler<CreateOrderProductsCommand, OrderProducts>, OrderProductsCommandHandler>();
+
+builder.Services.AddTransient(typeof(IUnitOfWork<>), typeof(UnitOfWork<>));
+
 builder.Services.AddMediatR(typeof(MediatorHandler).GetTypeInfo().Assembly);
 
-builder.Services.AddScoped<ICommandHandler<CreateOrderCommand, Orders>, CreateOrderCommandHandler>();
-builder.Services.AddScoped<ICommandHandler<CreateVariationCommand, Variations>, CreateVariationCommandHandler>();
-builder.Services.AddScoped<ICommandHandler<UpdateVariationCommand, Variations>, UpdateVariationCommandHandler>();
-builder.Services.AddScoped<ICommandHandler<CreateRestaurantCommand, Restaurants>, CreateRestaurantCommandHandler>();
-builder.Services.AddScoped<ICommandHandler<UpdateRestaurantCommand, Restaurants>, UpdateRestaurantCommandHandler>();
-builder.Services.AddScoped<ICommandHandler<CreateOrderProductsCommand, OrderProducts>, CreateOrderProductsCommandHandler>();
-
-
 builder.Services.AddControllers();
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 

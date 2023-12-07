@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using StarFood.Infrastructure.Data;
 
@@ -10,9 +11,11 @@ using StarFood.Infrastructure.Data;
 namespace StarFood.Infrastructure.Migrations
 {
     [DbContext(typeof(StarFoodDbContext))]
-    partial class StarFoodDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231207035944_initialDb")]
+    partial class initialDb
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -68,6 +71,9 @@ namespace StarFood.Infrastructure.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
+                    b.Property<int>("VariationId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("OrderId");
@@ -106,9 +112,6 @@ namespace StarFood.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<int?>("CategoriesId")
-                        .HasColumnType("int");
-
                     b.Property<int>("CategoryId")
                         .HasColumnType("int");
 
@@ -135,7 +138,7 @@ namespace StarFood.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CategoriesId");
+                    b.HasIndex("CategoryId");
 
                     b.ToTable("Products");
                 });
@@ -196,9 +199,6 @@ namespace StarFood.Infrastructure.Migrations
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("ProductsId")
-                        .HasColumnType("int");
-
                     b.Property<int>("RestaurantId")
                         .HasColumnType("int");
 
@@ -206,11 +206,11 @@ namespace StarFood.Infrastructure.Migrations
                         .HasColumnType("datetime(6)");
 
                     b.Property<decimal>("Value")
-                        .HasColumnType("decimal(18, 2)");
+                        .HasColumnType("decimal(65,30)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ProductsId");
+                    b.HasIndex("ProductId");
 
                     b.ToTable("Variations");
                 });
@@ -236,18 +236,29 @@ namespace StarFood.Infrastructure.Migrations
 
             modelBuilder.Entity("StarFood.Domain.Entities.Products", b =>
                 {
-                    b.HasOne("StarFood.Domain.Entities.Categories", "Categories")
-                        .WithMany()
-                        .HasForeignKey("CategoriesId");
+                    b.HasOne("StarFood.Domain.Entities.Categories", "Category")
+                        .WithMany("Products")
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Navigation("Categories");
+                    b.Navigation("Category");
                 });
 
             modelBuilder.Entity("StarFood.Domain.Entities.Variations", b =>
                 {
-                    b.HasOne("StarFood.Domain.Entities.Products", null)
+                    b.HasOne("StarFood.Domain.Entities.Products", "Product")
                         .WithMany("Variations")
-                        .HasForeignKey("ProductsId");
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("StarFood.Domain.Entities.Categories", b =>
+                {
+                    b.Navigation("Products");
                 });
 
             modelBuilder.Entity("StarFood.Domain.Entities.Orders", b =>

@@ -1,13 +1,11 @@
-﻿
-using StarFood.Application.Base.Messages;
-
-namespace StarFood.Domain.Commands
+﻿namespace StarFood.Domain.ViewModels
 {
-    public class UpdateRestaurantCommand : Command<ICommandResponse>
+    public class RestaurantsViewModel
     {
         public int Id { get; set; }
         public int RestaurantId { get; set; }
         public string? Name { get; set; }
         public bool IsAvailable { get; set; }
+
     }
 }

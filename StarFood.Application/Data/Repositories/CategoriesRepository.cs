@@ -7,11 +7,9 @@ namespace StarFood.Infrastructure.Data.Repositories
 {
     public class CategoriesRepository : BaseRepository<Categories>, ICategoriesRepository
     {
-        private readonly StarFoodDbContext _context;
 
         public CategoriesRepository(StarFoodDbContext context):base (context)
         {
-            _context = context;
 
         }
 

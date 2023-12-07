@@ -5,11 +5,11 @@ using StarFood.Domain.Repositories;
 
 namespace StarFood.Application.Handlers
 {
-    public class CreateOrderCommandHandler : ICommandHandler<CreateOrderCommand, Orders>
+    public class OrderCommandHandler : ICommandHandler<CreateOrderCommand, Orders>
     {
         private readonly IOrdersRepository _ordersRepository;
 
-        public CreateOrderCommandHandler(IOrdersRepository ordersRepository)
+        public OrderCommandHandler(IOrdersRepository ordersRepository)
         {
             _ordersRepository = ordersRepository;
         }

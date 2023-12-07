@@ -1,25 +1,29 @@
 ﻿using MediatR;
 using StarFood.Application.Base;
 using StarFood.Application.Base.Messages;
+using StarFood.Application.DomainModel.Commands;
 using StarFood.Application.Interfaces;
 using StarFood.Domain.Commands;
 using StarFood.Domain.Entities;
 using StarFood.Domain.Repositories;
+using StarFood.Infrastructure.Data;
 
 namespace StarFood.Application.Handlers
 {
-    public class ProductCommandHandler :
+    public class ProductsCommandHandler :
         IRequestHandler<CreateProductCommand, ICommandResponse>,
-        IRequestHandler<UpdateProductCommand, ICommandResponse>
+        IRequestHandler<UpdateProductCommand, ICommandResponse>,
+        IRequestHandler<DeleteProductCommand, ICommandResponse>
     {
         private readonly IProductsRepository _productRepository;
         private readonly IVariationsRepository _variationsRepository;
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly IUnitOfWork<StarFoodDbContext> _unitOfWork;
 
-        public ProductCommandHandler(
+        public ProductsCommandHandler(
             IProductsRepository productRepository,
             IVariationsRepository variationsRepository,
-            IUnitOfWork unitOfWork
+            IUnitOfWork<StarFoodDbContext> unitOfWork
+
         )
         {
             _productRepository = productRepository;
@@ -40,6 +44,8 @@ namespace StarFood.Application.Handlers
             };
 
             _productRepository.Add(newProduct);
+
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             foreach (var variation in request.Variations)
             {
@@ -120,6 +126,22 @@ namespace StarFood.Application.Handlers
 
             return new SuccessCommandResponse(updateProduct);
 
+        }
+
+        public async Task<ICommandResponse> Handle(DeleteProductCommand request, CancellationToken cancellationToken)
+        {
+            Products? deleteProduct = _productRepository.GetProductById(request.Restaurant, request.Id);
+
+            if (deleteProduct == null)
+            {
+                return new ErrorCommandResponse();
+            }
+
+            _productRepository.Remove(deleteProduct);
+
+            await _unitOfWork.SaveChangesAsync();
+
+            return new SuccessCommandResponse(deleteProduct);
         }
     }
 }

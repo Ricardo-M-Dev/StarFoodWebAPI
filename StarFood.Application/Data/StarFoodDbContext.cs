@@ -1,9 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using StarFood.Application.Base;
 using StarFood.Domain.Entities;
 
 namespace StarFood.Infrastructure.Data
 {
-    public class StarFoodDbContext : DbContext
+    public class StarFoodDbContext : DbContext, IContext
     {
         public StarFoodDbContext(DbContextOptions<StarFoodDbContext> options)
             : base(options)
@@ -41,10 +42,15 @@ namespace StarFood.Infrastructure.Data
                 .HasKey(t => t.Id);
 
             modelBuilder.Entity<Variations>()
-                .HasOne(v => v.Products)
+                .HasOne(v => v.Product)
                 .WithMany(p => p.Variations)
                 .HasForeignKey(v => v.ProductId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Products>()
+                .HasOne(p => p.Category)
+                .WithMany(c => c.Products)
+                .HasForeignKey(p => p.CategoryId);
 
             modelBuilder.Entity<OrderProducts>()
                 .HasKey(op => op.Id);

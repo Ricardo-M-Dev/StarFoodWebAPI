@@ -10,7 +10,7 @@ namespace StarFood.Domain.Repositories
 {
     public interface IRestaurantsRepository : IBaseRepository<Restaurants>
     {
-        ValueTask<Restaurants> GetByRestaurantIdAsync(CancellationToken cancellationToken, int id);
+        void SetStatus(int restaurantId, bool status);
         Restaurants GetByRestaurantId(int restaurantId);
     }
 }

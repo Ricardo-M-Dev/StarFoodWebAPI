@@ -8,7 +8,9 @@ namespace StarFood.Application.Base.Mappers
     {
         public DomainToViewModelMappingProfiles() 
         {
-            CreateMap<Products, ProductCategoryVariationViewModel>();
+            CreateMap<Products, ProductsViewModel>();
+            CreateMap<Categories, CategoriesViewModel>();
+            CreateMap<Restaurants, RestaurantsViewModel>();
         }
     }
 }

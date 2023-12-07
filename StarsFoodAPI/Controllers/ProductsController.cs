@@ -31,7 +31,7 @@ public class ProductsController : ControllerBase
     }
 
     [HttpGet("GetAllProducts")]
-    public async Task<ActionResult<ProductCategoryVariationViewModel>> GetAllProducts(
+    public async Task<ActionResult<ProductsViewModel>> GetAllProducts(
         [FromServices] IProductsRepository repository,
         [FromServices] IMapper map,
         [FromServices] RequestState requestContext
@@ -47,7 +47,23 @@ public class ProductsController : ControllerBase
 
             var list = repository.GetProductsByRestaurantId(restaurant);
 
-            var result = map.Map<List<ProductCategoryVariationViewModel>>(list.AsQueryable());
+            foreach (var product in list)
+            {
+                var category = _categoriesRepository.GetCategoryById(restaurant, product.CategoryId);
+                var variations = _variationsRepository.GetVariationsByProductId(restaurant, product.Id);
+
+                if (category != null)
+                {
+                    product.Category = category;
+                }
+
+                if (variations != null)
+                {
+                    product.Variations = variations;
+                }
+            }
+
+            var result = map.Map<List<ProductsViewModel>>(list.AsQueryable());
 
             return Ok(result.ToArray().OrderBy(p => p.Name, StringComparer.OrdinalIgnoreCase));
         }
@@ -58,7 +74,7 @@ public class ProductsController : ControllerBase
     }
 
     [HttpGet("GetProduct/{id}")]
-    public async Task<ActionResult<ProductCategoryVariationViewModel>> GetProductById(
+    public async Task<ActionResult<ProductsViewModel>> GetProductById(
         [FromRoute] int id,
         [FromServices] IProductsRepository repository,
         [FromServices] IMapper map,
@@ -86,7 +102,7 @@ public class ProductsController : ControllerBase
 
                 if (category != null)
                 {
-                    product.Categories = category;
+                    product.Category = category;
                 }
 
                 if (variations != null)
@@ -94,7 +110,7 @@ public class ProductsController : ControllerBase
                     product.Variations = variations;
                 }
 
-                var result = map.Map<ProductCategoryVariationViewModel>(product);
+                var result = map.Map<ProductsViewModel>(product);
 
                 return Ok(result);
             }
@@ -127,7 +143,7 @@ public class ProductsController : ControllerBase
 
         if (result.IsValid)
         {
-            result.Object = map.Map<ProductCategoryVariationViewModel>(result.Object);
+            result.Object = map.Map<ProductsViewModel>(result.Object);
             return Ok();
         }
 
@@ -155,14 +171,14 @@ public class ProductsController : ControllerBase
 
         if (result.IsValid)
         {
-            result.Object = map.Map<ProductCategoryVariationViewModel>(result.Object);
+            result.Object = map.Map<ProductsViewModel>(result.Object);
             return Ok();
         }
 
         return BadRequest(result);
     }
 
-    [HttpDelete("DeleteProduct")]
+    [HttpDelete("DeleteProduct/{id}")]
     public async Task<IActionResult> DeleteProduct(
         [FromRoute] int id,
         [FromServices] IMediatorHandler mediator,
@@ -187,7 +203,7 @@ public class ProductsController : ControllerBase
 
         if (result.IsValid)
         {
-            result.Object = map.Map<ProductCategoryVariationViewModel>(result.Object);
+            result.Object = map.Map<ProductsViewModel>(result.Object);
             return Ok(result);
         }
 

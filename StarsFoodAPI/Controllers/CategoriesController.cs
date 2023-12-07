@@ -6,7 +6,6 @@ using StarFood.Application.Communication;
 using StarFood.Application.DomainModel.Commands;
 using StarFood.Application.Interfaces;
 using StarFood.Domain.Commands;
-using StarFood.Domain.Entities;
 using StarFood.Domain.Repositories;
 using StarFood.Domain.ViewModels;
 using StarsFoodAPI.Services.HttpContext;
@@ -110,8 +109,10 @@ public class CategoriesController : ControllerBase
             result.Object = map.Map<CategoriesViewModel>(result.Object);
             return Ok();
         }
-
-        return BadRequest(result);
+        else
+        {
+            return BadRequest(result);
+        }
     }
 
     [HttpPatch("UpdateCategory")]
@@ -138,8 +139,10 @@ public class CategoriesController : ControllerBase
             result.Object = map.Map<CategoriesViewModel>(result.Object);
             return Ok();
         }
-
-        return BadRequest();
+        else
+        {
+            return BadRequest();
+        }
     }
 
     [HttpDelete("DeleteCategory/{id}")]

@@ -36,7 +36,7 @@ namespace StarFood.Infrastructure.Data.Repositories
         public List<Variations> GetVariationsByProductId(Restaurants restaurant, int productId)
         {
             List<Variations> variations = base.DbSet
-                .Where(v => v.ProductId == productId && v.RestaurantId == restaurant.RestaurantId)
+                .Where(v => v.ProductId == productId && v.IsAvailable == true && v.RestaurantId == restaurant.RestaurantId)
                 .ToList();
 
             return variations;

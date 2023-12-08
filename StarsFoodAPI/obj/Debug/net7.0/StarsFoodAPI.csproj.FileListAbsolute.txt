@@ -5,6 +5,12 @@ C:\Dev\Projects\StarsFoodAPI\obj\Debug\net7.0\StarsFoodAPI.AssemblyInfo.cs
 C:\Dev\Projects\StarsFoodAPI\obj\Debug\net7.0\StarsFoodAPI.csproj.CoreCompileInputs.cache
 C:\Dev\Projects\StarsFoodAPI\obj\Debug\net7.0\StarsFoodAPI.MvcApplicationPartsAssemblyInfo.cs
 C:\Dev\Projects\StarsFoodAPI\obj\Debug\net7.0\StarsFoodAPI.MvcApplicationPartsAssemblyInfo.cache
+C:\Dev\Projects\StarFoodWebAPI\StarsFoodAPI\obj\Debug\net7.0\StarsFoodAPI.csproj.AssemblyReference.cache
+C:\Dev\Projects\StarFoodWebAPI\StarsFoodAPI\obj\Debug\net7.0\StarsFoodAPI.GeneratedMSBuildEditorConfig.editorconfig
+C:\Dev\Projects\StarFoodWebAPI\StarsFoodAPI\obj\Debug\net7.0\StarsFoodAPI.AssemblyInfoInputs.cache
+C:\Dev\Projects\StarFoodWebAPI\StarsFoodAPI\obj\Debug\net7.0\StarsFoodAPI.AssemblyInfo.cs
+C:\Dev\Projects\StarFoodWebAPI\StarsFoodAPI\obj\Debug\net7.0\StarsFoodAPI.csproj.CoreCompileInputs.cache
+C:\Dev\Projects\StarFoodWebAPI\StarsFoodAPI\obj\Debug\net7.0\StarsFoodAPI.MvcApplicationPartsAssemblyInfo.cache
 C:\Dev\Projects\StarFoodWebAPI\StarsFoodAPI\bin\Debug\net7.0\appsettings.Development.json
 C:\Dev\Projects\StarFoodWebAPI\StarsFoodAPI\bin\Debug\net7.0\appsettings.json
 C:\Dev\Projects\StarFoodWebAPI\StarsFoodAPI\bin\Debug\net7.0\appsettings.Production.json
@@ -237,13 +243,6 @@ C:\Dev\Projects\StarFoodWebAPI\StarsFoodAPI\bin\Debug\net7.0\StarFood.Infrastruc
 C:\Dev\Projects\StarFoodWebAPI\StarsFoodAPI\bin\Debug\net7.0\StarFood.Application.pdb
 C:\Dev\Projects\StarFoodWebAPI\StarsFoodAPI\bin\Debug\net7.0\StarFood.Infrastructure.pdb
 C:\Dev\Projects\StarFoodWebAPI\StarsFoodAPI\bin\Debug\net7.0\StarFood.Domain.pdb
-C:\Dev\Projects\StarFoodWebAPI\StarsFoodAPI\obj\Debug\net7.0\StarsFoodAPI.csproj.AssemblyReference.cache
-C:\Dev\Projects\StarFoodWebAPI\StarsFoodAPI\obj\Debug\net7.0\StarsFoodAPI.GeneratedMSBuildEditorConfig.editorconfig
-C:\Dev\Projects\StarFoodWebAPI\StarsFoodAPI\obj\Debug\net7.0\StarsFoodAPI.AssemblyInfoInputs.cache
-C:\Dev\Projects\StarFoodWebAPI\StarsFoodAPI\obj\Debug\net7.0\StarsFoodAPI.AssemblyInfo.cs
-C:\Dev\Projects\StarFoodWebAPI\StarsFoodAPI\obj\Debug\net7.0\StarsFoodAPI.csproj.CoreCompileInputs.cache
-C:\Dev\Projects\StarFoodWebAPI\StarsFoodAPI\obj\Debug\net7.0\StarsFoodAPI.MvcApplicationPartsAssemblyInfo.cs
-C:\Dev\Projects\StarFoodWebAPI\StarsFoodAPI\obj\Debug\net7.0\StarsFoodAPI.MvcApplicationPartsAssemblyInfo.cache
 C:\Dev\Projects\StarFoodWebAPI\StarsFoodAPI\obj\Debug\net7.0\staticwebassets\msbuild.StarsFoodAPI.Microsoft.AspNetCore.StaticWebAssets.props
 C:\Dev\Projects\StarFoodWebAPI\StarsFoodAPI\obj\Debug\net7.0\staticwebassets\msbuild.build.StarsFoodAPI.props
 C:\Dev\Projects\StarFoodWebAPI\StarsFoodAPI\obj\Debug\net7.0\staticwebassets\msbuild.buildMultiTargeting.StarsFoodAPI.props

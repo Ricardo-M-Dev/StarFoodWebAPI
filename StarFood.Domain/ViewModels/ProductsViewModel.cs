@@ -15,6 +15,7 @@ namespace StarFood.Domain.ViewModels
         public DateTime? UpdateTime { get; set; }
         public int CategoryId { get; set; }
         public bool IsAvailable { get; set; }
+        public Categories? Category { get; set; }
         public List<Variations>? Variations { get; set; }
     }
 }

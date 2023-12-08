@@ -181,6 +181,7 @@ public class ProductsController : ControllerBase
     [HttpDelete("DeleteProduct/{id}")]
     public async Task<IActionResult> DeleteProduct(
         [FromRoute] int id,
+        [FromBody] DeleteProductCommand cmd,
         [FromServices] IMediatorHandler mediator,
         [FromServices] IMapper map,
         [FromServices] IHostApplicationLifetime appLifetime,
@@ -192,12 +193,6 @@ public class ProductsController : ControllerBase
         {
             return BadRequest(new DomainException($"Restaurant de ID {requestContext.RestaurantId} não pode ser encontrado."));
         }
-
-        var cmd = new DeleteProductCommand()
-        {
-            Id = id,
-            Restaurant = restaurant
-        };
 
         var result = await mediator.SendCommand(cmd, appLifetime.ApplicationStopping);
 

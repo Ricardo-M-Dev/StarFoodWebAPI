@@ -154,7 +154,9 @@ namespace StarFood.Application.Handlers
                 return new ErrorCommandResponse();
             }
 
-            _productRepository.Remove(deleteProduct);
+            deleteProduct.IsAvailable = request.IsAvailable;
+
+            _productRepository.Edit(deleteProduct);
 
             await _unitOfWork.SaveChangesAsync();
 

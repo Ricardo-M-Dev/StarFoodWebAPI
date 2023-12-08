@@ -1,14 +1,12 @@
-﻿using StarFood.Domain.Entities;
+﻿using StarFood.Application.Base;
+using StarFood.Domain.Entities;
 
 namespace StarFood.Domain.Repositories
 {
-    public interface IVariationsRepository
+    public interface IVariationsRepository : IBaseRepository<Variations>
     {
-        Task<List<Variations>> GetAllAsync(string restaurantId);
-        Task<Variations> GetByIdAsync(int id);
-        Task CreateAsync(Variations productVariations);
-        Task UpdateAsync(int id, Variations productVariations);
-        Task ChangeAvailability(int id, bool isAvailable);
-        Task DeleteAsync(int id);
+        List<Variations> GetVariationsByRestaurantId(Restaurants restaurant);
+        Variations GetVariationById(Restaurants restaurant, int id);
+        List<Variations> GetVariationsByProductId(Restaurants restaurant, int productId);
     }
 }

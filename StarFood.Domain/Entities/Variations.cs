@@ -1,35 +1,36 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel;
-
-namespace StarFood.Domain.Entities
+﻿namespace StarFood.Domain.Entities
 {
     public class Variations
     {
         public int Id { get; set; }
-        public string Description { get; set; }
-
-        [Column(TypeName = "decimal(18, 2)")]
-        [DefaultValue(0.00)]
+        public string? Description { get; set; }
         public decimal Value { get; set; }
-        public string RestaurantId { get; set; }
-        [DefaultValue(false)]
+
+        [System.Text.Json.Serialization.JsonIgnore]
+        [Newtonsoft.Json.JsonIgnore]
+        public int? ProductId { get; set; }
+
+        [System.Text.Json.Serialization.JsonIgnore]
+        [Newtonsoft.Json.JsonIgnore]
+        public DateTime CreatedTime { get; set; } = DateTime.Now;
+
+        [System.Text.Json.Serialization.JsonIgnore]
+        [Newtonsoft.Json.JsonIgnore]
+        public DateTime? UpdateTime { get; set; }
+
+        [System.Text.Json.Serialization.JsonIgnore]
+        [Newtonsoft.Json.JsonIgnore]
+        public int RestaurantId { get; set; }
+
+        [System.Text.Json.Serialization.JsonIgnore]
+        [Newtonsoft.Json.JsonIgnore]
         public bool IsAvailable { get; set; }
 
-        public Restaurants Restaurant { get; set; }
-        public List<ProductVariations> ProductsProductVariations { get; set; } = new List<ProductVariations>();
+        [System.Text.Json.Serialization.JsonIgnore]
+        [Newtonsoft.Json.JsonIgnore]
+        public Products? Product { get; set; }
 
         public Variations() { }
-
-        public void Update(string description, decimal value)
-        {
-            Description = description;
-            Value = value;
-        }
-
-        public void SetAvailability(bool isAvailable)
-        {
-            IsAvailable = isAvailable;
-        }
     }
 
 }

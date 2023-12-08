@@ -1,99 +1,101 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using StarFood.Application.Base;
+using StarFood.Application.Communication;
 using StarFood.Domain.Commands;
-using StarFood.Domain.Entities;
 using StarFood.Domain.Repositories;
+using StarFood.Domain.ViewModels;
+using StarsFoodAPI.Services.HttpContext;
 
+[Authorize]
 [Route("api")]
 [ApiController]
 public class RestaurantsController : ControllerBase
 {
-    private readonly IRestaurantsRepository _restaurantsRepository;
 
-    public RestaurantsController(IRestaurantsRepository restaurantsRepository)
+    public RestaurantsController()
     {
-        _restaurantsRepository = restaurantsRepository;
-    }
 
-    [HttpGet("GetAllRestaurants")]
-    public async Task<IActionResult> GetAllRestaurants()
-    {
-        var restaurants = await _restaurantsRepository.GetAllAsync();
-        return Ok(restaurants);
     }
 
     [HttpGet("GetRestaurant/{id}")]
-    public async Task<IActionResult> GetRestaurantById(int id)
+    public async Task<IActionResult> GetRestaurantById(
+        [FromServices] IRestaurantsRepository repository,
+        [FromServices] IMapper map,
+        [FromServices] RequestState requestContext
+    )
     {
-        var restaurant = await _restaurantsRepository.GetByIdAsync(id);
+        var restaurant = repository.GetRestaurantById(requestContext.RestaurantId);
         if (restaurant == null)
         {
-            return NotFound();
+            return BadRequest(new DomainException($"Restaurante de ID {requestContext.RestaurantId} não pode ser encontrado."));
         }
-
-        return Ok(restaurant);
+        else
+        {
+            var result = map.Map<RestaurantsViewModel>(restaurant);
+            return Ok(result);
+        }
     }
 
     [HttpPost("CreateRestaurant")]
-    public async Task<IActionResult> CreateRestaurant(string restaurantId, [FromBody] CreateRestaurantCommand createRestaurantCommand)
+    public async Task<IActionResult> CreateRestaurant(
+        [FromBody] CreateRestaurantCommand cmd,
+        [FromServices] IRestaurantsRepository repository,
+        [FromServices] IMediatorHandler mediator,
+        [FromServices] IMapper map,
+        [FromServices] IHostApplicationLifetime appLifetime,
+        [FromServices] RequestState requestContext
+    )
     {
-        var newRestaurant = new Restaurants
+        var restaurant = repository.GetRestaurantById(requestContext.RestaurantId);
+
+        if (restaurant != null)
         {
-            RestaurantId = restaurantId,
-            Name = createRestaurantCommand.Name,
-        };
-
-        await _restaurantsRepository.CreateAsync(newRestaurant);
-        return Ok(newRestaurant);
-    }
-
-    //[HttpPut("UpdateRestaurant/{id}")]
-    //public async Task<IActionResult> UpdateRestaurant(string restaurantId, [FromBody] Restaurants restaurant)
-    //{
-    //    if (!ModelState.IsValid)
-    //    {
-    //        return BadRequest(ModelState);
-    //    }
-
-    //    var existingRestaurant = await _restaurantsRepository.GetByIdAsync(restaurantId);
-    //    if (existingRestaurant == null)
-    //    {
-    //        return NotFound();
-    //    }
-
-    //    existingRestaurant.Update(restaurant.Name);
-
-    //    await _restaurantsRepository.UpdateAsync(id, existingRestaurant);
-    //    return Ok(existingRestaurant);
-    //}
-
-    [HttpPut("SetRestaurantAvailability/{id}")]
-    public async Task<IActionResult> SetAvailability(int id, bool isAvailable)
-    {
-        if (!ModelState.IsValid)
-        {
-            return BadRequest(ModelState);
+            cmd.UpdateRequestInfo(requestContext, restaurant);
         }
 
-        var existingRestaurant = await _restaurantsRepository.GetByIdAsync(id);
-        if (existingRestaurant == null)
+        var result = await mediator.SendCommand(cmd, appLifetime.ApplicationStopping);
+
+        if (result.IsValid)
+        {
+            result.Object = map.Map<RestaurantsViewModel>(result.Object);
+            return Ok();
+        }
+        else
         {
             return NotFound();
         }
-
-        existingRestaurant.SetAvailability(isAvailable);
-        return Ok(existingRestaurant);
     }
 
-    [HttpDelete("DeleteRestaurant/{id}")]
-    public async Task<IActionResult> DeleteRestaurant(int id)
+    [HttpPut("UpdateRestaurant/{id}")]
+    public async Task<IActionResult> UpdateRestaurant(
+        [FromBody] UpdateRestaurantCommand cmd,
+        [FromServices] IRestaurantsRepository repository,
+        [FromServices] IMediatorHandler mediator,
+        [FromServices] IMapper map,
+        [FromServices] IHostApplicationLifetime appLifetime,
+        [FromServices] RequestState requestContext
+    )
     {
-        var restaurant = await _restaurantsRepository.GetByIdAsync(id);
+        var restaurant = repository.GetRestaurantById(requestContext.RestaurantId);
         if (restaurant == null)
         {
-            return NotFound();
+            return BadRequest(new DomainException($"Restaurant de ID {requestContext.RestaurantId} não pode ser encontrado."));
         }
 
-        await _restaurantsRepository.DeleteAsync(id);
-        return Ok();
+        cmd.UpdateRequestInfo(requestContext, restaurant);
+
+        var result = await mediator.SendCommand(cmd, appLifetime.ApplicationStopping);
+
+        if (result.IsValid)
+        {
+            result.Object = map.Map<RestaurantsViewModel>(result.Object);
+            return Ok();
+        }
+        else
+        {
+            return NotFound();
+        }
     }
 }

@@ -1,5 +1,9 @@
 # StarFoodAPI
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) ![C#](https://img.shields.io/badge/C%23-7.0-blue.svg) ![Docker](https://img.shields.io/badge/Docker-4.20.0-blue.svg) ![MySQL](https://img.shields.io/badge/MySQL-8.0-blue.svg)
+
+**Note: Este projeto está atualmente em desenvolvimento (WIP).**
+
 O Projeto StarFood é um sistema de gerenciamento de restaurantes, projetado para simplificar as operações cotidianas de restaurantes, bistrôs e estabelecimentos de alimentos. Ele fornece uma plataforma completa para gerenciar menus, categorias de pratos, tipos de produtos, variações de produtos e muito mais. O projeto é desenvolvido usando a arquitetura Domain-Driven Design (DDD) e é altamente extensível e personalizável.
 
 ## Conteúdo

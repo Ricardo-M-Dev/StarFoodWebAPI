@@ -1,49 +1,86 @@
-
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using StarFood.Application.CommandHandlers;
+using Microsoft.IdentityModel.Tokens;
+using StarFood.Application.Handlers;
 using StarFood.Application.Interfaces;
 using StarFood.Domain.Commands;
 using StarFood.Domain.Entities;
+using MediatR;
 using StarFood.Domain.Repositories;
+using StarFood.Infrastructure.Auth;
 using StarFood.Infrastructure.Data;
 using StarFood.Infrastructure.Data.Repositories;
+using StarFood.Infrastructure.Middleware;
 using StarsFoodAPI.Services.HttpContext;
+using System.Text;
+using StarFood.Application.Communication;
+using System.Reflection;
+using Microsoft.Extensions.DependencyInjection;
+using StarFood.Application.Base;
+using StarFood.Application.Data.Context;
 
 var builder = WebApplication.CreateBuilder(args);
+
 var configuration = new ConfigurationBuilder()
     .SetBasePath(builder.Environment.ContentRootPath)
-    .AddJsonFile("appsettings.json")
+    .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true)
     .Build();
+
+var jwtSection = configuration.GetSection("Jwt");
+var jwtKey = jwtSection["Key"];
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = false,
+            ValidateAudience = false,
+            ValidateLifetime = true,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
+        };
+    });
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowLocalhost8000",
+        builder => builder.WithOrigins("http://localhost:8000")
+                          .AllowAnyHeader()
+                          .AllowAnyMethod()
+                          .AllowCredentials()
+                          .SetIsOriginAllowed(origin => true));
+});
 
 builder.Services.AddDbContext<StarFoodDbContext>(options =>
 {
     string connectionString = configuration.GetConnectionString("DefaultConnection");
-
     options.UseMySql(connectionString,
                     ServerVersion.AutoDetect(connectionString),
                     builder => builder.MigrationsAssembly("StarFood.Infrastructure"));
-});
+}, ServiceLifetime.Scoped);
 
-builder.Services.AddScoped<IRestaurantsRepository, RestaurantsRepository>();
-builder.Services.AddScoped<IProductRepository, ProductRepository>();
-builder.Services.AddScoped<IProductCategoriesRepository, ProductCategoriesRepository>();
-builder.Services.AddScoped<IProductTypesRepository, ProductTypesRepository>();
-builder.Services.AddScoped<IProductVariationsRepository, ProductVariationsRepository>();
+
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+builder.Services.AddScoped<Auth>();
+builder.Services.AddScoped<RequestState>();
+builder.Services.AddScoped<IMediatorHandler, MediatorHandler>();
+builder.Services.AddScoped<IOrdersRepository, OrderRepository>();
+builder.Services.AddScoped<IProductsRepository, ProductRepository>();
+builder.Services.AddScoped<ICategoriesRepository, CategoriesRepository>();
 builder.Services.AddScoped<IVariationsRepository, VariationsRepository>();
+builder.Services.AddScoped<IRestaurantsRepository, RestaurantsRepository>();
+builder.Services.AddScoped<IOrderProductsRepository, OrderProductsRepository>();
 
-builder.Services.AddScoped<ICommandHandler<CreateProductCommand, Products>, CreateProductCommandHandler>();
-builder.Services.AddScoped<ICommandHandler<UpdateProductCommand, Products>, UpdateProductCommandHandler>();
-builder.Services.AddScoped<ICommandHandler<CreateProductTypeCommand, ProductTypes>, CreateProductTypeCommandHandler>();
-builder.Services.AddScoped<ICommandHandler<UpdateProductTypeCommand, ProductTypes>, UpdateProductTypeCommandHandler>();
-builder.Services.AddScoped<ICommandHandler<CreateProductCategoryCommand, ProductCategories>, CreateProductCategoryCommandHandler>();
-builder.Services.AddScoped<ICommandHandler<UpdateProductCategoryCommand, ProductCategories>, UpdateProductCategoryCommandHandler>();
-builder.Services.AddScoped<ICommandHandler<CreateVariationCommand, Variations>, CreateVariationCommandHandler>();
-builder.Services.AddScoped<ICommandHandler<UpdateVariationCommand, Variations>, UpdateVariationCommandHandler>();
+builder.Services.AddScoped<ICommandHandler<CreateOrderCommand, Orders>, OrderCommandHandler>();
+builder.Services.AddScoped<ICommandHandler<CreateOrderProductsCommand, OrderProducts>, OrderProductsCommandHandler>();
 
-builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-builder.Services.AddScoped<AuthenticatedContext>();
+builder.Services.AddTransient(typeof(IUnitOfWork<>), typeof(UnitOfWork<>));
+
+builder.Services.AddMediatR(typeof(MediatorHandler).GetTypeInfo().Assembly);
 
 builder.Services.AddControllers();
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -51,14 +88,14 @@ var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
 }
 
+app.UseSwagger();
+app.UseSwaggerUI();
+app.UseCors("AllowLocalhost8000");
 app.UseHttpsRedirection();
-
+app.UseAuthentication();
 app.UseAuthorization();
-
+app.UseMiddleware<HttpMiddleware>();
 app.MapControllers();
-
 app.Run();

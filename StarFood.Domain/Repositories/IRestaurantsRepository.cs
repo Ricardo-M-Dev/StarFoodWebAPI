@@ -1,4 +1,5 @@
-﻿using StarFood.Domain.Entities;
+﻿using StarFood.Application.Base;
+using StarFood.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,13 +8,9 @@ using System.Threading.Tasks;
 
 namespace StarFood.Domain.Repositories
 {
-    public interface IRestaurantsRepository
+    public interface IRestaurantsRepository : IBaseRepository<Restaurants>
     {
-        Task<List<Restaurants>> GetAllAsync();
-        Task<Restaurants> GetByIdAsync(int id);
-        Task CreateAsync(Restaurants restaurant);
-        Task UpdateAsync(int id, Restaurants updatedRestaurant);
-        Task ChangeAvailability(int id, bool isAvailable);
-        Task DeleteAsync(int id);
+        void SetStatus(int restaurantId, bool status);
+        Restaurants GetByRestaurantId(int restaurantId);
     }
 }

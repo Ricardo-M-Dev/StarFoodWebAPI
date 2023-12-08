@@ -9,11 +9,6 @@ C:\Dev\Projects\StarsFoodAPI\StarFood.Application\obj\Debug\net7.0\StarFood.Appl
 C:\Dev\Projects\StarsFoodAPI\StarFood.Application\obj\Debug\net7.0\refint\StarFood.Application.dll
 C:\Dev\Projects\StarsFoodAPI\StarFood.Application\obj\Debug\net7.0\StarFood.Application.pdb
 C:\Dev\Projects\StarsFoodAPI\StarFood.Application\obj\Debug\net7.0\ref\StarFood.Application.dll
-C:\Dev\Projects\StarFoodWebAPI\StarFood.Application\obj\Debug\net7.0\StarFood.Application.csproj.AssemblyReference.cache
-C:\Dev\Projects\StarFoodWebAPI\StarFood.Application\obj\Debug\net7.0\StarFood.Application.GeneratedMSBuildEditorConfig.editorconfig
-C:\Dev\Projects\StarFoodWebAPI\StarFood.Application\obj\Debug\net7.0\StarFood.Application.AssemblyInfoInputs.cache
-C:\Dev\Projects\StarFoodWebAPI\StarFood.Application\obj\Debug\net7.0\StarFood.Application.AssemblyInfo.cs
-C:\Dev\Projects\StarFoodWebAPI\StarFood.Application\obj\Debug\net7.0\StarFood.Application.csproj.CoreCompileInputs.cache
 C:\Dev\Projects\StarFoodWebAPI\StarFood.Application\bin\Debug\net7.0\StarFood.Application.deps.json
 C:\Dev\Projects\StarFoodWebAPI\StarFood.Application\bin\Debug\net7.0\StarFood.Application.dll
 C:\Dev\Projects\StarFoodWebAPI\StarFood.Application\bin\Debug\net7.0\StarFood.Application.pdb
@@ -21,6 +16,11 @@ C:\Dev\Projects\StarFoodWebAPI\StarFood.Application\bin\Debug\net7.0\StarFood.Do
 C:\Dev\Projects\StarFoodWebAPI\StarFood.Application\bin\Debug\net7.0\StarFood.Infrastructure.dll
 C:\Dev\Projects\StarFoodWebAPI\StarFood.Application\bin\Debug\net7.0\StarFood.Domain.pdb
 C:\Dev\Projects\StarFoodWebAPI\StarFood.Application\bin\Debug\net7.0\StarFood.Infrastructure.pdb
+C:\Dev\Projects\StarFoodWebAPI\StarFood.Application\obj\Debug\net7.0\StarFood.Application.csproj.AssemblyReference.cache
+C:\Dev\Projects\StarFoodWebAPI\StarFood.Application\obj\Debug\net7.0\StarFood.Application.GeneratedMSBuildEditorConfig.editorconfig
+C:\Dev\Projects\StarFoodWebAPI\StarFood.Application\obj\Debug\net7.0\StarFood.Application.AssemblyInfoInputs.cache
+C:\Dev\Projects\StarFoodWebAPI\StarFood.Application\obj\Debug\net7.0\StarFood.Application.AssemblyInfo.cs
+C:\Dev\Projects\StarFoodWebAPI\StarFood.Application\obj\Debug\net7.0\StarFood.Application.csproj.CoreCompileInputs.cache
 C:\Dev\Projects\StarFoodWebAPI\StarFood.Application\obj\Debug\net7.0\StarFood.Application.csproj.CopyComplete
 C:\Dev\Projects\StarFoodWebAPI\StarFood.Application\obj\Debug\net7.0\StarFood.Application.dll
 C:\Dev\Projects\StarFoodWebAPI\StarFood.Application\obj\Debug\net7.0\refint\StarFood.Application.dll

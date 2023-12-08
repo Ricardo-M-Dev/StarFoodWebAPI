@@ -73,7 +73,9 @@ namespace StarFood.Application.Handlers
                 return new ErrorCommandResponse();
             }
 
-            _categoriesRepository.Remove(deleteCategory);
+            deleteCategory.IsAvailable = request.IsAvailable;
+
+            _categoriesRepository.Edit(deleteCategory);
 
             await _unitOfWork.SaveChangesAsync();
 

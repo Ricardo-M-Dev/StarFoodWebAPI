@@ -7,5 +7,6 @@ namespace StarFood.Application.DomainModel.Commands
         public DeleteCategoryCommand() { }
 
         public int Id { get; set; }
+        public bool IsAvailable { get; set; }
     }
 }

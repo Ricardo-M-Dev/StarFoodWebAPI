@@ -87,23 +87,39 @@ namespace StarFood.Application.Handlers
 
             List<Variations> updatedVariations = new List<Variations>();
 
-            foreach (var variation in request.Variations)
+            var variationsData = _variationsRepository.GetVariationsByProductId(request.Restaurant, updateProduct.Id);
+
+            foreach (var variation in variationsData)
             {
-                var updateVariation = _variationsRepository.GetVariationById(request.Restaurant, variation.Id);
+                var matchingVariation = request.Variations.FirstOrDefault(v => v.Id == variation.Id);
 
-                if (updateVariation != null)
+                if (matchingVariation != null)
                 {
-                    updateVariation.Description = variation.Description;
-                    updateVariation.ProductId = updateProduct.Id;
-                    updateVariation.UpdateTime = DateTime.Now;
-                    updateVariation.Value = variation.Value;
-                    updateVariation.IsAvailable = variation.IsAvailable;
+                    variation.Description = matchingVariation.Description;
+                    variation.ProductId = updateProduct.Id;
+                    variation.UpdateTime = DateTime.Now;
+                    variation.Value = matchingVariation.Value;
+                    variation.IsAvailable = true;
 
-                    _variationsRepository.Edit(updateVariation);
+                    _variationsRepository.Edit(variation);
 
-                    updatedVariations.Add(updateVariation);
+                    updatedVariations.Add(variation);
                 }
                 else
+                {
+                    variation.IsAvailable = false;
+
+                    _variationsRepository.Edit(variation);
+
+                    updatedVariations.Add(variation);
+                }
+            }
+
+            foreach (var variation in request.Variations)
+            {
+                var existingVariation = variationsData.FirstOrDefault(v => v.Id == variation.Id);
+
+                if (existingVariation == null)
                 {
                     var newVariation = new Variations
                     {
@@ -112,13 +128,14 @@ namespace StarFood.Application.Handlers
                         Value = variation.Value,
                         CreatedTime = DateTime.Now,
                         RestaurantId = request.RestaurantId,
+                        IsAvailable = true
                     };
 
                     _variationsRepository.Add(newVariation);
 
                     updatedVariations.Add(newVariation);
                 }
-            };
+            }
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 

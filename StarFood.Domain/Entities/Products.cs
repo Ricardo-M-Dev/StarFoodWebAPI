@@ -13,6 +13,7 @@ namespace StarFood.Domain.Entities
         public DateTime? UpdateTime { get; set; }
         public int RestaurantId { get; set; }
         public bool IsAvailable { get; set; }
+        public bool Active { get; set; }
 
         [System.Text.Json.Serialization.JsonIgnore]
         [Newtonsoft.Json.JsonIgnore]

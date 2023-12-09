@@ -178,9 +178,36 @@ public class ProductsController : ControllerBase
         return BadRequest(result);
     }
 
-    [HttpDelete("DeleteProduct/{id}")]
+    [HttpPatch("SetProduct")]
+    public async Task<IActionResult> SetProduct(
+    [FromBody] StatusProductCommand cmd,
+    [FromServices] IMediatorHandler mediator,
+    [FromServices] IMapper map,
+    [FromServices] IHostApplicationLifetime appLifetime,
+    [FromServices] RequestState requestContext
+)
+    {
+        var restaurant = _restaurantRepository.GetRestaurantById(requestContext.RestaurantId);
+        if (restaurant == null)
+        {
+            return BadRequest(new DomainException($"Restaurant de ID {requestContext.RestaurantId} não pode ser encontrado."));
+        }
+
+        cmd.UpdateRequestInfo(requestContext, restaurant);
+
+        var result = await mediator.SendCommand(cmd, appLifetime.ApplicationStopping);
+
+        if (result.IsValid)
+        {
+            result.Object = map.Map<ProductsViewModel>(result.Object);
+            return Ok(result);
+        }
+
+        return BadRequest(result);
+    }
+
+    [HttpDelete("DeleteProduct")]
     public async Task<IActionResult> DeleteProduct(
-        [FromRoute] int id,
         [FromBody] DeleteProductCommand cmd,
         [FromServices] IMediatorHandler mediator,
         [FromServices] IMapper map,

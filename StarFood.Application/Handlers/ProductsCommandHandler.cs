@@ -13,7 +13,8 @@ namespace StarFood.Application.Handlers
     public class ProductsCommandHandler :
         IRequestHandler<CreateProductCommand, ICommandResponse>,
         IRequestHandler<UpdateProductCommand, ICommandResponse>,
-        IRequestHandler<DeleteProductCommand, ICommandResponse>
+        IRequestHandler<DeleteProductCommand, ICommandResponse>,
+        IRequestHandler<StatusProductCommand, ICommandResponse>
     {
         private readonly IProductsRepository _productRepository;
         private readonly IVariationsRepository _variationsRepository;
@@ -40,6 +41,8 @@ namespace StarFood.Application.Handlers
                 ImgUrl = request.ImgUrl,
                 CreatedTime = DateTime.Now,
                 CategoryId = request.CategoryId,
+                IsAvailable = true,
+                Active = true,
                 RestaurantId = request.RestaurantId,
             };
 
@@ -55,6 +58,8 @@ namespace StarFood.Application.Handlers
                     ProductId = newProduct.Id,
                     Value = variation.Value,
                     CreatedTime = DateTime.Now,
+                    IsAvailable = true,
+                    Active = true,
                     RestaurantId = request.RestaurantId,
                 };
 
@@ -99,20 +104,16 @@ namespace StarFood.Application.Handlers
                     variation.ProductId = updateProduct.Id;
                     variation.UpdateTime = DateTime.Now;
                     variation.Value = matchingVariation.Value;
-                    variation.IsAvailable = true;
-
-                    _variationsRepository.Edit(variation);
-
-                    updatedVariations.Add(variation);
+                    variation.IsAvailable = matchingVariation.IsAvailable;
                 }
                 else
                 {
-                    variation.IsAvailable = false;
-
-                    _variationsRepository.Edit(variation);
-
-                    updatedVariations.Add(variation);
+                    variation.Active = false;
                 }
+
+                _variationsRepository.Edit(variation);
+
+                updatedVariations.Add(variation);
             }
 
             foreach (var variation in request.Variations)
@@ -128,7 +129,8 @@ namespace StarFood.Application.Handlers
                         Value = variation.Value,
                         CreatedTime = DateTime.Now,
                         RestaurantId = request.RestaurantId,
-                        IsAvailable = true
+                        IsAvailable = true,
+                        Active = true,
                     };
 
                     _variationsRepository.Add(newVariation);
@@ -147,20 +149,38 @@ namespace StarFood.Application.Handlers
 
         public async Task<ICommandResponse> Handle(DeleteProductCommand request, CancellationToken cancellationToken)
         {
-            Products? deleteProduct = _productRepository.GetProductById(request.Restaurant, request.Id);
+            var deleteProduct = _productRepository.GetProductById(request.Restaurant, request.Id);
 
             if (deleteProduct == null)
             {
                 return new ErrorCommandResponse();
             }
 
-            deleteProduct.IsAvailable = request.IsAvailable;
+            deleteProduct.Active = request.Active;
 
             _productRepository.Edit(deleteProduct);
 
             await _unitOfWork.SaveChangesAsync();
 
             return new SuccessCommandResponse(deleteProduct);
+        }
+
+        public async Task<ICommandResponse> Handle(StatusProductCommand request, CancellationToken cancellationToken)
+        {
+            var statusProduct = _productRepository.GetProductById(request.Restaurant, request.Id);
+
+            if (statusProduct == null)
+            {
+                return new ErrorCommandResponse();
+            }
+
+            statusProduct.IsAvailable = request.IsAvailable;
+
+            _productRepository.Edit(statusProduct);
+
+            await _unitOfWork.SaveChangesAsync();
+
+            return new SuccessCommandResponse(statusProduct);
         }
     }
 }

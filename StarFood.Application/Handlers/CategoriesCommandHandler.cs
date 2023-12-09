@@ -12,7 +12,8 @@ namespace StarFood.Application.Handlers
     public class CategoriesCommandHandler :
         IRequestHandler<CreateCategoryCommand, ICommandResponse>,
         IRequestHandler<UpdateCategoryCommand, ICommandResponse>,
-        IRequestHandler<DeleteCategoryCommand, ICommandResponse>
+        IRequestHandler<DeleteCategoryCommand, ICommandResponse>,
+        IRequestHandler<StatusCategoryCommand, ICommandResponse>
     {
         private readonly ICategoriesRepository _categoriesRepository;
         private readonly IUnitOfWork<StarFoodDbContext> _unitOfWork;
@@ -73,13 +74,31 @@ namespace StarFood.Application.Handlers
                 return new ErrorCommandResponse();
             }
 
-            deleteCategory.IsAvailable = request.IsAvailable;
+            deleteCategory.Active = request.Active;
 
             _categoriesRepository.Edit(deleteCategory);
 
             await _unitOfWork.SaveChangesAsync();
 
             return new SuccessCommandResponse(deleteCategory);
+        }
+
+        public async Task<ICommandResponse> Handle(StatusCategoryCommand request, CancellationToken cancellationToken)
+        {
+            Categories? statusCategory = _categoriesRepository.GetCategoryById(request.Restaurant, request.Id);
+
+            if (statusCategory == null)
+            {
+                return new ErrorCommandResponse();
+            }
+
+            statusCategory.IsAvailable = request.IsAvailable;
+
+            _categoriesRepository.Edit(statusCategory);
+
+            await _unitOfWork.SaveChangesAsync();
+
+            return new SuccessCommandResponse(statusCategory);
         }
     }
 

@@ -145,9 +145,38 @@ public class CategoriesController : ControllerBase
         }
     }
 
-    [HttpDelete("DeleteCategory/{id}")]
+    [HttpPatch("SetCategory")]
+    public async Task<IActionResult> SetCategory(
+        [FromBody] StatusCategoryCommand cmd,
+        [FromServices] IMediatorHandler mediator,
+        [FromServices] IMapper map,
+        [FromServices] IHostApplicationLifetime appLifetime,
+        [FromServices] RequestState requestContext
+        )
+    {
+        var restaurant = _restaurantRepository.GetRestaurantById(requestContext.RestaurantId);
+        if (restaurant == null)
+        {
+            return BadRequest(new DomainException($"Restaurant de ID {requestContext.RestaurantId} não pode ser encontrado."));
+        }
+
+        cmd.UpdateRequestInfo(requestContext, restaurant);
+
+        var result = await mediator.SendCommand(cmd, appLifetime.ApplicationStopping);
+
+        if (result.IsValid)
+        {
+            result.Object = map.Map<CategoriesViewModel>(result.Object);
+            return Ok(result);
+        }
+        else
+        {
+            return BadRequest();
+        }
+    }
+
+    [HttpDelete("DeleteCategory")]
     public async Task<IActionResult> DeleteCategory(
-        [FromRoute] int id,
         [FromBody] DeleteCategoryCommand cmd,
         [FromServices] IMediatorHandler mediator,
         [FromServices] IMapper map,

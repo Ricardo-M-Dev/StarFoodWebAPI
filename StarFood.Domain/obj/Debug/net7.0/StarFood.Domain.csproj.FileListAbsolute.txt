@@ -21,3 +21,4 @@ C:\Dev\Projects\StarFoodWebAPI\StarFood.Domain\obj\Debug\net7.0\StarFood.Domain.
 C:\Dev\Projects\StarFoodWebAPI\StarFood.Domain\obj\Debug\net7.0\refint\StarFood.Domain.dll
 C:\Dev\Projects\StarFoodWebAPI\StarFood.Domain\obj\Debug\net7.0\StarFood.Domain.pdb
 C:\Dev\Projects\StarFoodWebAPI\StarFood.Domain\obj\Debug\net7.0\ref\StarFood.Domain.dll
+C:\Dev\Projects\StarFoodWebAPI\StarFood.Domain\obj\Debug\net7.0\StarFood.Domain.sourcelink.json

@@ -30,3 +30,4 @@ C:\Dev\Projects\StarFoodWebAPI\StarFood.Infrastructure\obj\Debug\net7.0\refint\S
 C:\Dev\Projects\StarFoodWebAPI\StarFood.Infrastructure\obj\Debug\net7.0\StarFood.Infrastructure.pdb
 C:\Dev\Projects\StarFoodWebAPI\StarFood.Infrastructure\obj\Debug\net7.0\StarFood.Infrastructure.genruntimeconfig.cache
 C:\Dev\Projects\StarFoodWebAPI\StarFood.Infrastructure\obj\Debug\net7.0\ref\StarFood.Infrastructure.dll
+C:\Dev\Projects\StarFoodWebAPI\StarFood.Infrastructure\obj\Debug\net7.0\StarFood.Infrastructure.sourcelink.json

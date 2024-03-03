@@ -1,61 +1,55 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using StarFood.Domain;
+using StarFood.Domain.Base;
 using StarFood.Domain.Entities;
 using StarFood.Domain.Repositories;
 
 namespace StarFood.Infrastructure.Data.Repositories
 {
-    public class OrderRepository : IOrdersRepository
+    public class OrderRepository : BaseRepository<Orders>, IOrdersRepository
     {
         private readonly StarFoodDbContext _context;
 
-        public OrderRepository(StarFoodDbContext context)
+        public OrderRepository(StarFoodDbContext context): base(context)
         {
             _context = context;
         }
 
-        public async Task CreateAsync(Orders order)
+        public Orders GetOrderById(int orderId, int restaurantId)
         {
-            await _context.Orders.AddAsync(order);
-            await _context.SaveChangesAsync();
+            Orders? order = base.DbSet
+                .Where(o => o.Id == orderId && o.RestaurantId == restaurantId)
+                .FirstOrDefault();
+
+            return order;
         }
 
-        public async Task DeleteAsync(int id)
+        public List<Orders> GetOrdersByTable(int tableId, int restaurantId)
         {
-            var order = await GetByIdAsync(id);
+            List<Orders> orders = base.DbSet
+                .Where(o => o.TableId == tableId && o.RestaurantId == restaurantId)
+                .ToList();
 
-            if (order != null)
-            {
-                _context.Orders.Remove(order);
-                await _context.SaveChangesAsync();
-            }
+            return orders;
         }
 
-        public async Task<List<Orders>> GetAllAsync(int restaurantId)
+        public List<Orders> GetOrdersByUserId(int userId, int restaurantId)
         {
-            return await _context.Orders
+            List<Orders> orders = base.DbSet
+                .Where(o => o.UserId == userId && o.RestaurantId == restaurantId)
+                .ToList();
+
+            return orders;
+        }
+
+        public List<Orders> GetOrdersByRestaurantId(int restaurantId)
+        {
+            List<Orders>? orders = base.DbSet
                 .Where(o => o.RestaurantId == restaurantId)
-                .ToListAsync();
-        }
+                .ToList();
 
-        public async Task<Orders> GetByIdAsync(int id)
-        {
-            return await _context.Orders.FindAsync(id);
-        }
-
-        public async Task<Orders> GetByTableAsync(int table)
-        {
-            return await _context.Orders
-                .Where(o => o.Table == table && o.OrderDate == DateTime.Now)
-                .FirstOrDefaultAsync();
-        }
-
-        public async Task<Orders> GetByWaiterNameAsync(string waiterName)
-        {
-            return await _context.Orders
-                .Where(o => o.Waiter == waiterName && o.OrderDate == DateTime.Now)
-                .FirstOrDefaultAsync();
+            return orders;
         }
 
         public async Task UpdateAsync(int id, Orders updatedOrder)

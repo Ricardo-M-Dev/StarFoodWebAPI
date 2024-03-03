@@ -1,10 +1,7 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using StarFood.Application.Handlers;
 using StarFood.Application.Interfaces;
-using StarFood.Domain.Commands;
-using StarFood.Domain.Entities;
 using MediatR;
 using StarFood.Domain.Repositories;
 using StarFood.Infrastructure.Auth;
@@ -15,7 +12,6 @@ using StarsFoodAPI.Services.HttpContext;
 using System.Text;
 using StarFood.Application.Communication;
 using System.Reflection;
-using Microsoft.Extensions.DependencyInjection;
 using StarFood.Application.Base;
 using StarFood.Application.Data.Context;
 
@@ -56,7 +52,10 @@ builder.Services.AddDbContext<StarFoodDbContext>(options =>
     string connectionString = configuration.GetConnectionString("DefaultConnection");
     options.UseMySql(connectionString,
                     ServerVersion.AutoDetect(connectionString),
-                    builder => builder.MigrationsAssembly("StarFood.Infrastructure"));
+                    builder => builder.MigrationsAssembly("StarFood.Application"));
+
+    options.EnableSensitiveDataLogging();
+    options.LogTo(Console.WriteLine, LogLevel.Debug);
 }, ServiceLifetime.Scoped);
 
 
@@ -70,10 +69,8 @@ builder.Services.AddScoped<IProductsRepository, ProductRepository>();
 builder.Services.AddScoped<ICategoriesRepository, CategoriesRepository>();
 builder.Services.AddScoped<IVariationsRepository, VariationsRepository>();
 builder.Services.AddScoped<IRestaurantsRepository, RestaurantsRepository>();
-builder.Services.AddScoped<IOrderProductsRepository, OrderProductsRepository>();
-
-builder.Services.AddScoped<ICommandHandler<CreateOrderCommand, Orders>, OrderCommandHandler>();
-builder.Services.AddScoped<ICommandHandler<CreateOrderProductsCommand, OrderProducts>, OrderProductsCommandHandler>();
+builder.Services.AddScoped<IProductOrderRepository, ProductsOrderRepository>();
+builder.Services.AddScoped<ITablesRepository, TablesRepository>();
 
 builder.Services.AddTransient(typeof(IUnitOfWork<>), typeof(UnitOfWork<>));
 
@@ -95,6 +92,7 @@ app.UseSwaggerUI();
 app.UseCors("AllowLocalhost8000");
 app.UseHttpsRedirection();
 app.UseAuthentication();
+app.UseRouting();
 app.UseAuthorization();
 app.UseMiddleware<HttpMiddleware>();
 app.MapControllers();

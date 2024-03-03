@@ -1,5 +1,4 @@
-﻿
-namespace StarFood.Domain
+﻿namespace StarFood.Domain
 {
     public enum Roles
     {

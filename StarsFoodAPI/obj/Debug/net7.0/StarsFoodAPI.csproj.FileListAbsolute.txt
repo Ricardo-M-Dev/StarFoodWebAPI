@@ -242,7 +242,6 @@ C:\Dev\Projects\StarFoodWebAPI\StarsFoodAPI\obj\Debug\net7.0\StarsFoodAPI.Genera
 C:\Dev\Projects\StarFoodWebAPI\StarsFoodAPI\obj\Debug\net7.0\StarsFoodAPI.AssemblyInfoInputs.cache
 C:\Dev\Projects\StarFoodWebAPI\StarsFoodAPI\obj\Debug\net7.0\StarsFoodAPI.AssemblyInfo.cs
 C:\Dev\Projects\StarFoodWebAPI\StarsFoodAPI\obj\Debug\net7.0\StarsFoodAPI.csproj.CoreCompileInputs.cache
-C:\Dev\Projects\StarFoodWebAPI\StarsFoodAPI\obj\Debug\net7.0\StarsFoodAPI.MvcApplicationPartsAssemblyInfo.cs
 C:\Dev\Projects\StarFoodWebAPI\StarsFoodAPI\obj\Debug\net7.0\StarsFoodAPI.MvcApplicationPartsAssemblyInfo.cache
 C:\Dev\Projects\StarFoodWebAPI\StarsFoodAPI\obj\Debug\net7.0\staticwebassets\msbuild.StarsFoodAPI.Microsoft.AspNetCore.StaticWebAssets.props
 C:\Dev\Projects\StarFoodWebAPI\StarsFoodAPI\obj\Debug\net7.0\staticwebassets\msbuild.build.StarsFoodAPI.props
@@ -258,3 +257,5 @@ C:\Dev\Projects\StarFoodWebAPI\StarsFoodAPI\obj\Debug\net7.0\refint\StarsFoodAPI
 C:\Dev\Projects\StarFoodWebAPI\StarsFoodAPI\obj\Debug\net7.0\StarsFoodAPI.pdb
 C:\Dev\Projects\StarFoodWebAPI\StarsFoodAPI\obj\Debug\net7.0\StarsFoodAPI.genruntimeconfig.cache
 C:\Dev\Projects\StarFoodWebAPI\StarsFoodAPI\obj\Debug\net7.0\ref\StarsFoodAPI.dll
+C:\Dev\Projects\StarFoodWebAPI\StarsFoodAPI\obj\Debug\net7.0\StarsFoodAPI.sourcelink.json
+C:\Dev\Projects\StarFoodWebAPI\StarsFoodAPI\obj\Debug\net7.0\StarsFoodAPI.MvcApplicationPartsAssemblyInfo.cs

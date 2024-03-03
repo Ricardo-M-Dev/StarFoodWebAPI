@@ -1,7 +1,6 @@
 ﻿using MediatR;
 using StarFood.Application.Base;
 using StarFood.Application.Base.Messages;
-using StarFood.Application.DomainModel.Commands;
 using StarFood.Application.Interfaces;
 using StarFood.Domain.Commands;
 using StarFood.Domain.Entities;
@@ -29,78 +28,107 @@ namespace StarFood.Application.Handlers
 
         public async Task<ICommandResponse> Handle(CreateCategoryCommand request, CancellationToken cancellationToken)
         {
-            Categories? newCategory = new Categories
+            try
             {
-                CategoryName = request.CategoryName,
-                ImgUrl = request.ImgUrl,
-                CreatedTime = DateTime.Now,
-                RestaurantId = request.RestaurantId,
-            };
+                Categories? category = new Categories
+                {
+                    Name = request.Name,
+                    CreatedDate = DateTime.Now,
+                    RestaurantId = request.RestaurantId,
+                    Deleted = false,
+                    Status = true
+                };
 
-            _categoriesRepository.Add(newCategory);
+                _categoriesRepository.Add(category);
 
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
+                await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-            return new SuccessCommandResponse(newCategory);
+                return new SuccessCommandResponse(category.Id, category);
+            }
+            catch (Exception ex)
+            {
+                return new ErrorCommandResponse(ex);
+            }
+
         }
 
         public async Task<ICommandResponse> Handle(UpdateCategoryCommand request, CancellationToken cancellationToken)
         {
-            Categories? updateCategory = _categoriesRepository.GetCategoryById(request.Restaurant, request.Id);
-            
-            if (updateCategory == null)
+            try
             {
-                return new ErrorCommandResponse();
+                Categories? category = _categoriesRepository.GetCategoryById(request.RestaurantId, request.Id);
+
+                if (category == null)
+                {
+                    return new ErrorCommandResponse();
+                }
+
+                category.Name = request.Name;
+                category.UpdatedDate = DateTime.Now;
+
+                _categoriesRepository.Edit(category);
+
+                await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+                return new SuccessCommandResponse();
+            }
+            catch (Exception ex)
+            {
+                return new ErrorCommandResponse(ex);
             }
 
-            updateCategory.CategoryName = request.CategoryName;
-            updateCategory.UpdateTime = DateTime.Now;
-            updateCategory.ImgUrl = request.ImgUrl;
-            updateCategory.IsAvailable = request.IsAvailable;
-
-            _categoriesRepository.Edit(updateCategory);
-
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
-
-            return new SuccessCommandResponse(updateCategory);
         }
 
         public async Task<ICommandResponse> Handle(DeleteCategoryCommand request, CancellationToken cancellationToken)
         {
-            Categories? deleteCategory = _categoriesRepository.GetCategoryById(request.Restaurant, request.Id);
-
-            if (deleteCategory == null)
+            try
             {
-                return new ErrorCommandResponse();
+                Categories? category = _categoriesRepository.GetCategoryById(request.RestaurantId, request.Id);
+
+                if (category == null)
+                {
+                    return new ErrorCommandResponse();
+                }
+
+                category.Deleted = request.Deleted;
+                category.DeletedDate = DateTime.Now;
+
+                _categoriesRepository.Edit(category);
+
+                await _unitOfWork.SaveChangesAsync();
+
+                return new SuccessCommandResponse(category);
+            }
+            catch (Exception ex)
+            {
+                return new ErrorCommandResponse(ex);
             }
 
-            deleteCategory.Active = request.Active;
-
-            _categoriesRepository.Edit(deleteCategory);
-
-            await _unitOfWork.SaveChangesAsync();
-
-            return new SuccessCommandResponse(deleteCategory);
         }
 
         public async Task<ICommandResponse> Handle(StatusCategoryCommand request, CancellationToken cancellationToken)
         {
-            Categories? statusCategory = _categoriesRepository.GetCategoryById(request.Restaurant, request.Id);
-
-            if (statusCategory == null)
+            try
             {
-                return new ErrorCommandResponse();
+                Categories? category = _categoriesRepository.GetCategoryById(request.RestaurantId, request.Id);
+
+                if (category == null)
+                {
+                    return new ErrorCommandResponse();
+                }
+
+                category.Status = request.Status;
+
+                _categoriesRepository.Edit(category);
+
+                await _unitOfWork.SaveChangesAsync();
+
+                return new SuccessCommandResponse(category);
             }
-
-            statusCategory.IsAvailable = request.IsAvailable;
-
-            _categoriesRepository.Edit(statusCategory);
-
-            await _unitOfWork.SaveChangesAsync();
-
-            return new SuccessCommandResponse(statusCategory);
+            catch (Exception ex)
+            {
+                return new ErrorCommandResponse(ex);
+            }
         }
     }
-
-
 }

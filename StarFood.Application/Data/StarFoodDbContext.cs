@@ -16,7 +16,7 @@ namespace StarFood.Infrastructure.Data
         public DbSet<Categories> Categories { get; set; }
         public DbSet<Variations> Variations { get; set; }
         public DbSet<Orders> Orders { get; set; }
-        public DbSet<OrderProducts> OrderProducts { get; set; }
+        public DbSet<ProductOrder> ProductsOrder { get; set; }
         public DbSet<Tables> Tables { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -41,29 +41,45 @@ namespace StarFood.Infrastructure.Data
             modelBuilder.Entity<Tables>()
                 .HasKey(t => t.Id);
 
-            modelBuilder.Entity<Variations>()
-                .HasOne(v => v.Product)
-                .WithMany(p => p.Variations)
-                .HasForeignKey(v => v.ProductId)
-                .OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<ProductOrder>()
+                .HasKey(op => op.Id);
+
+            modelBuilder.Entity<ProductImages>()
+                .HasKey(op => op.Id);
+
+            modelBuilder.Entity<Orders>()
+            .Property(o => o.Status)
+            .HasConversion<string>();
 
             modelBuilder.Entity<Products>()
                 .HasOne(p => p.Category)
                 .WithMany(c => c.Products)
                 .HasForeignKey(p => p.CategoryId);
 
-            modelBuilder.Entity<OrderProducts>()
-                .HasKey(op => op.Id);
+            modelBuilder.Entity<Variations>()
+                .HasOne(v => v.Products)
+                .WithMany(p => p.Variations)
+                .HasForeignKey(v => v.ProductId);
 
-            modelBuilder.Entity<OrderProducts>()
-            .HasOne(op => op.Orders)
-            .WithMany(o => o.OrderProducts)
-            .HasForeignKey(op => op.OrderId);
+            modelBuilder.Entity<Categories>()
+                .HasOne(c => c.Restaurant)
+                .WithMany(r => r.Categories)
+                .HasForeignKey(c => c.RestaurantId);
 
-            modelBuilder.Entity<OrderProducts>()
-            .HasOne(op => op.Products)
-            .WithMany(p => p.OrderProducts)
-            .HasForeignKey(op => op.ProductId);
+            modelBuilder.Entity<Products>()
+                .HasOne(p => p.Restaurant)
+                .WithMany(r => r.Products)
+                .HasForeignKey(p => p.RestaurantId);
+
+            modelBuilder.Entity<Variations>()
+                .HasOne(v => v.Restaurant)
+                .WithMany(r => r.Variations)
+                .HasForeignKey(v => v.RestaurantId);
+
+            modelBuilder.Entity<Orders>()
+                .HasOne(o => o.Restaurant)
+                .WithMany(r => r.Orders)
+                .HasForeignKey(o => o.RestaurantId);
         }
     }
 }

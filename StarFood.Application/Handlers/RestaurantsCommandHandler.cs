@@ -10,7 +10,9 @@ namespace StarFood.Application.Handlers
 {
     public class RestaurantsCommandHandler :
         IRequestHandler<CreateRestaurantCommand, ICommandResponse>,
-        IRequestHandler<UpdateRestaurantCommand, ICommandResponse>
+        IRequestHandler<UpdateRestaurantCommand, ICommandResponse>,
+        IRequestHandler<StatusRestaurantCommand, ICommandResponse>,
+        IRequestHandler<DeleteRestaurantCommand, ICommandResponse>
     {
         private readonly IRestaurantsRepository _restaurantRepository;
         private readonly IUnitOfWork<StarFoodDbContext> _unitOfWork;
@@ -26,35 +28,100 @@ namespace StarFood.Application.Handlers
 
         public async Task<ICommandResponse> Handle(CreateRestaurantCommand request, CancellationToken cancellationToken)
         {
-            Restaurants? newRestaurant = new Restaurants
+            try
             {
-                RestaurantId = request.RestaurantId,
-                Name = request.Name,
-            };
+                Restaurants? newRestaurant = new Restaurants
+                {
+                    Name = request.Name,
+                    RestaurantId = request.RestaurantId,
+                    CreatedDate = DateTime.Now
+                };
 
-            _restaurantRepository.Add(newRestaurant);
-            await _unitOfWork.SaveChangesAsync();
+                _restaurantRepository.Add(newRestaurant);
 
-            return new SuccessCommandResponse(newRestaurant);
+                await _unitOfWork.SaveChangesAsync();
+
+                return new SuccessCommandResponse(newRestaurant.Id, newRestaurant);
+            }
+            catch (Exception ex)
+            {
+                return new ErrorCommandResponse(ex);
+            }
         }
 
         public async Task<ICommandResponse> Handle(UpdateRestaurantCommand request, CancellationToken cancellationToken)
         {
-            var updateRestaurant = _restaurantRepository.GetByRestaurantId(request.RestaurantId);
-
-            if (updateRestaurant == null)
+            try
             {
-                return new ErrorCommandResponse();
+                var updateRestaurant = _restaurantRepository.GetByRestaurantId(request.RestaurantId);
+
+                if (updateRestaurant == null)
+                {
+                    return new ErrorCommandResponse();
+                }
+
+                updateRestaurant.Name = request.Name;
+                updateRestaurant.RestaurantId = request.RestaurantId;
+                updateRestaurant.Status = request.Status;
+                updateRestaurant.Deleted = request.Deleted;
+
+                _restaurantRepository.Edit(updateRestaurant);
+                await _unitOfWork.SaveChangesAsync();
+
+                return new SuccessCommandResponse(updateRestaurant);
             }
+            catch (Exception ex)
+            {
+                return new ErrorCommandResponse(ex);
+            }
+        }
 
-            updateRestaurant.Name = request.Name;
-            updateRestaurant.RestaurantId = request.RestaurantId;
-            updateRestaurant.IsAvailable = request.IsAvailable;
+        public async Task<ICommandResponse> Handle(StatusRestaurantCommand request, CancellationToken cancellationToken)
+        {
+            try
+            {
+                var statusRestaurant = _restaurantRepository.GetByRestaurantId(request.RestaurantId);
 
-            _restaurantRepository.Edit(updateRestaurant);
-            await _unitOfWork.SaveChangesAsync();
+                if (statusRestaurant == null)
+                {
+                    return new ErrorCommandResponse();
+                }
 
-            return new SuccessCommandResponse(updateRestaurant);
+                statusRestaurant.Status = request.Status;
+
+                _restaurantRepository.Edit(statusRestaurant);
+                await _unitOfWork.SaveChangesAsync();
+
+                return new SuccessCommandResponse(statusRestaurant);
+            }
+            catch (Exception ex)
+            {
+                return new ErrorCommandResponse(ex);
+            }
+        }
+
+        public async Task<ICommandResponse> Handle(DeleteRestaurantCommand request, CancellationToken cancellationToken)
+        {
+            try
+            {
+                var deleteRestaurant = _restaurantRepository.GetByRestaurantId(request.RestaurantId);
+
+                if (deleteRestaurant == null)
+                {
+                    return new ErrorCommandResponse();
+                }
+
+                deleteRestaurant.Deleted = request.Deleted;
+
+                _restaurantRepository.Edit(deleteRestaurant);
+                await _unitOfWork.SaveChangesAsync();
+
+                return new SuccessCommandResponse(deleteRestaurant);
+            }
+            catch (Exception ex)
+            {
+                return new ErrorCommandResponse(ex);
+            }
         }
     }
 }

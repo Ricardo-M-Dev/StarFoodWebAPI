@@ -3,8 +3,9 @@
     public enum OrderStatus
     {
         Waiting = 0,
-        Preparing = 1,
-        Ready = 2,
-        Done = 3,
+        In_Production = 1,
+        Done = 2,
+        Completed = 3,
+        Paid_Out = 4
     }
 }

@@ -2,16 +2,17 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using StarFood.Application.Base;
+using StarFood.Application.Base.Messages;
 using StarFood.Application.Communication;
-using StarFood.Application.DomainModel.Commands;
 using StarFood.Application.Interfaces;
 using StarFood.Domain.Commands;
+using StarFood.Domain.Entities;
 using StarFood.Domain.Repositories;
-using StarFood.Domain.ViewModels;
+using StarFood.Domain.ViewModels.Products;
 using StarsFoodAPI.Services.HttpContext;
 
 [Authorize]
-[Route("api")]
+[Route("api/categories/")]
 [ApiController]
 public class CategoriesController : ControllerBase
 {
@@ -24,7 +25,7 @@ public class CategoriesController : ControllerBase
         _restaurantRepository = restaurantsRepository;
     }
 
-    [HttpGet("GetAllCategories")]
+    [HttpGet]
     public async Task<ActionResult<CategoriesViewModel>> GetAllCategories(
         [FromServices] ICategoriesRepository repository,
         [FromServices] IMapper map,
@@ -33,25 +34,32 @@ public class CategoriesController : ControllerBase
     {
         try
         {
-            var restaurant = _restaurantRepository.GetRestaurantById(requestContext.RestaurantId);
+            Restaurants? restaurant = _restaurantRepository.GetRestaurantById(requestContext.RestaurantId);
+            int restaurantId = restaurant.RestaurantId;
+
             if (restaurant == null)
             {
-                return BadRequest(new DomainException($"Restaurante de ID {requestContext.RestaurantId} não pode ser encontrado."));
+                return NotFound(new DomainException($"Restaurante de ID {restaurantId} não pode ser encontrado."));
             }
 
-            var list = repository.GetCategoriesByRestaurantId(restaurant);
+            List<Categories>? categories = repository.GetCategoriesByRestaurantId(restaurantId);
 
-            var result = map.Map<List<CategoriesViewModel>>(list.AsQueryable());
+            if (categories == null)
+            {
+                return NotFound(new DomainException($"Nenhuma Categories do Restaurante de ID {restaurantId} foi encontrado."));
+            }
 
-            return Ok(result.ToArray().OrderBy(c => c.CategoryName, StringComparer.OrdinalIgnoreCase));
+            List<CategoriesViewModel>?result = map.Map<List<CategoriesViewModel>>(categories.AsQueryable());
+
+            return Ok(result.ToArray().OrderBy(c => c.Name, StringComparer.OrdinalIgnoreCase));
         }
         catch (Exception ex)
         {
-            return BadRequest(ex);
+            return BadRequest(ex.Message);
         }
     }
 
-    [HttpGet("GetCategory/{id}")]
+    [HttpGet("{id}")]
     public async Task<ActionResult<CategoriesViewModel>> GetCategoryById(
         [FromRoute] int id,
         [FromServices] ICategoriesRepository repository,
@@ -61,143 +69,178 @@ public class CategoriesController : ControllerBase
     {
         try
         {
-            var restaurant = _restaurantRepository.GetRestaurantById(requestContext.RestaurantId);
+            Restaurants? restaurant = _restaurantRepository.GetRestaurantById(requestContext.RestaurantId);
+            int restaurantId = restaurant.RestaurantId;
+
             if (restaurant == null)
             {
-                return BadRequest(new DomainException($"Restaurante de ID {requestContext.RestaurantId} não pode ser encontrado."));
+                return NotFound(new DomainException($"Restaurante de ID {restaurantId} não pode ser encontrado."));
             }
-            var category = repository.GetCategoryById(restaurant, id);
+            Categories? category = repository.GetCategoryById(id, restaurantId);
 
             if (category == null)
             {
-                return NotFound();
+                return NotFound(new DomainException($"Nenhuma Categoria de ID {id} foi encontrada."));
             }
             else
             {
-                var result = map.Map<CategoriesViewModel>(category);
+                CategoriesViewModel? result = map.Map<CategoriesViewModel>(category);
 
                 return Ok(result);
             }
         }
         catch (Exception ex)
         {
-            return BadRequest(ex);
+            return BadRequest(ex.Message);
         }
     }
 
-    [HttpPost("CreateCategory")]
+    [HttpPost]
     public async Task<IActionResult> CreateCategory(
         [FromBody] CreateCategoryCommand cmd,
         [FromServices] IMediatorHandler mediator,
-        [FromServices] IMapper map,
         [FromServices] IHostApplicationLifetime appLifetime,
         [FromServices] RequestState requestContext
     )
     {
-        var restaurant = _restaurantRepository.GetRestaurantById(requestContext.RestaurantId);
-        if (restaurant == null)
+        try
         {
-            return BadRequest(new DomainException($"Restaurant de ID {requestContext.RestaurantId} não pode ser encontrado."));
+            Restaurants? restaurant = _restaurantRepository.GetRestaurantById(requestContext.RestaurantId);
+            int restaurantId = restaurant.RestaurantId;
+
+            if (restaurant == null)
+            {
+                return BadRequest(new DomainException($"Restaurant de ID {restaurantId} não pode ser encontrado."));
+            }
+
+            cmd.UpdateRequestInfo(requestContext, restaurant);
+
+            ICommandResponse result = await mediator.SendCommand(cmd, appLifetime.ApplicationStopping);
+
+            if (result.IsValid)
+            {
+                return Created($"/api/categories/{result.Id}", result.Object);
+            }
+            else
+            {
+                return BadRequest(result.Exception.Message);
+            }
         }
-
-        cmd.UpdateRequestInfo(requestContext, restaurant);
-
-        var result = await mediator.SendCommand(cmd, appLifetime.ApplicationStopping);
-
-        if (result.IsValid)
+        catch (Exception ex)
         {
-            result.Object = map.Map<CategoriesViewModel>(result.Object);
-            return Ok();
+            return BadRequest(ex.Message);
         }
-        else
-        {
-            return BadRequest(result);
-        }
+        
     }
 
-    [HttpPatch("UpdateCategory")]
+    [HttpPut("{id}")]
     public async Task<IActionResult> UpdateCategory(
+        [FromRoute] int id,
         [FromBody] UpdateCategoryCommand cmd,
         [FromServices] IMediatorHandler mediator,
-        [FromServices] IMapper map,
         [FromServices] IHostApplicationLifetime appLifetime,
         [FromServices] RequestState requestContext
         )
     {
-        var restaurant = _restaurantRepository.GetRestaurantById(requestContext.RestaurantId);
-        if (restaurant == null)
+        try
         {
-            return BadRequest(new DomainException($"Restaurant de ID {requestContext.RestaurantId} não pode ser encontrado."));
+            Restaurants? restaurant = _restaurantRepository.GetRestaurantById(requestContext.RestaurantId);
+            int restaurantId = restaurant.RestaurantId;
+
+            if (restaurant == null)
+            {
+                return BadRequest(new DomainException($"Restaurant de ID {restaurantId} não pode ser encontrado."));
+            }
+
+            cmd.UpdateRequestInfo(requestContext, restaurant);
+            cmd.Id = id;
+            cmd.RestaurantId = restaurantId;
+
+            ICommandResponse result = await mediator.SendCommand(cmd, appLifetime.ApplicationStopping);
+
+            if (result.IsValid)
+            {
+                return NoContent();
+            }
+
+            return BadRequest(result.Exception.Message);
         }
-
-        cmd.UpdateRequestInfo(requestContext, restaurant);
-
-        var result = await mediator.SendCommand(cmd, appLifetime.ApplicationStopping);
-
-        if (result.IsValid)
+        catch (Exception ex)
         {
-            result.Object = map.Map<CategoriesViewModel>(result.Object);
-            return Ok();
-        }
-        else
-        {
-            return BadRequest();
+            return BadRequest(ex.Message);
         }
     }
 
-    [HttpPatch("SetCategory")]
-    public async Task<IActionResult> SetCategory(
+    [HttpPatch("{id}")]
+    public async Task<IActionResult> SetStatus(
+        [FromRoute] int id,
         [FromBody] StatusCategoryCommand cmd,
         [FromServices] IMediatorHandler mediator,
-        [FromServices] IMapper map,
         [FromServices] IHostApplicationLifetime appLifetime,
         [FromServices] RequestState requestContext
         )
     {
-        var restaurant = _restaurantRepository.GetRestaurantById(requestContext.RestaurantId);
-        if (restaurant == null)
+        try
         {
-            return BadRequest(new DomainException($"Restaurant de ID {requestContext.RestaurantId} não pode ser encontrado."));
+            Restaurants? restaurant = _restaurantRepository.GetRestaurantById(requestContext.RestaurantId);
+            int restaurantId = restaurant.RestaurantId;
+            
+            if (restaurant == null)
+            {
+                return BadRequest(new DomainException($"Restaurant de ID {restaurantId} não pode ser encontrado."));
+            }
+
+            cmd.UpdateRequestInfo(requestContext, restaurant);
+            cmd.Id = id;
+            cmd.RestaurantId = restaurantId;
+
+            ICommandResponse result = await mediator.SendCommand(cmd, appLifetime.ApplicationStopping);
+
+            if (result.IsValid)
+            {
+                return Ok(result);
+            }
+            else
+            {
+                return BadRequest();
+            }
         }
-
-        cmd.UpdateRequestInfo(requestContext, restaurant);
-
-        var result = await mediator.SendCommand(cmd, appLifetime.ApplicationStopping);
-
-        if (result.IsValid)
+        catch (Exception)
         {
-            result.Object = map.Map<CategoriesViewModel>(result.Object);
-            return Ok(result);
+
+            throw;
         }
-        else
-        {
-            return BadRequest();
-        }
+        
     }
 
-    [HttpDelete("DeleteCategory")]
+    [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteCategory(
         [FromBody] DeleteCategoryCommand cmd,
         [FromServices] IMediatorHandler mediator,
-        [FromServices] IMapper map,
         [FromServices] IHostApplicationLifetime appLifetime,
         [FromServices] RequestState requestContext
     )
     {
-        var restaurant = _restaurantRepository.GetRestaurantById(requestContext.RestaurantId);
-        if (restaurant == null)
+        try
         {
-            return BadRequest(new DomainException($"Restaurant de ID {requestContext.RestaurantId} não pode ser encontrado."));
+            Restaurants? restaurant = _restaurantRepository.GetRestaurantById(requestContext.RestaurantId);
+            if (restaurant == null)
+            {
+                return BadRequest(new DomainException($"Restaurant de ID {requestContext.RestaurantId} não pode ser encontrado."));
+            }
+
+            ICommandResponse result = await mediator.SendCommand(cmd, appLifetime.ApplicationStopping);
+
+            if (result.IsValid)
+            {
+                return NoContent();
+            }
+
+            return BadRequest(result.Exception.Message);
         }
-
-        var result = await mediator.SendCommand(cmd, appLifetime.ApplicationStopping);
-
-        if (result.IsValid)
+        catch (Exception ex)
         {
-            result.Object = map.Map<CategoriesViewModel>(result.Object);
-            return Ok(result);
+            return BadRequest(ex.Message);
         }
-
-        return BadRequest();
     }
 }

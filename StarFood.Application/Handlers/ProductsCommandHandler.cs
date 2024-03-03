@@ -34,153 +34,188 @@ namespace StarFood.Application.Handlers
 
         public async Task<ICommandResponse> Handle(CreateProductCommand request, CancellationToken cancellationToken)
         {
-            Products? newProduct = new Products
+            try
             {
-                Name = request.Name,
-                Description = request.Description,
-                ImgUrl = request.ImgUrl,
-                CreatedTime = DateTime.Now,
-                CategoryId = request.CategoryId,
-                IsAvailable = true,
-                Active = true,
-                RestaurantId = request.RestaurantId,
-            };
-
-            _productRepository.Add(newProduct);
-
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
-
-            foreach (var variation in request.Variations)
-            {
-                var newVariation = new Variations
+                Products? newProduct = new Products
                 {
-                    Description = variation.Description,
-                    ProductId = newProduct.Id,
-                    Value = variation.Value,
-                    CreatedTime = DateTime.Now,
-                    IsAvailable = true,
-                    Active = true,
+                    Name = request.Name,
+                    Description = request.Description,
+                    ImgUrl = request.ImgUrl,
+                    CreatedDate = DateTime.Now,
+                    CategoryId = request.CategoryId,
+                    Deleted = false,
+                    Status = true,
                     RestaurantId = request.RestaurantId,
                 };
 
-                _variationsRepository.Add(newVariation);
+                _productRepository.Add(newProduct);
 
-            };
+                await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
+                foreach (CreateVariations variation in request.Variations)
+                {
+                    Variations? newVariation = new Variations
+                    {
+                        Name = variation.Name,
+                        ProductId = newProduct.Id,
+                        Value = variation.Value,
+                        CreatedDate = DateTime.Now,
+                        Status = true,
+                        Deleted = false,
+                        RestaurantId = request.RestaurantId,
+                    };
 
-            return new SuccessCommandResponse(newProduct);
+                    _variationsRepository.Add(newVariation);
+                };
+
+                await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+                return new SuccessCommandResponse(newProduct.Id, newProduct);
+            }
+            catch (Exception ex)
+            {
+                return new ErrorCommandResponse(ex);
+            }
+
         }
 
         public async Task<ICommandResponse> Handle(UpdateProductCommand request, CancellationToken cancellationToken)
         {
-            var updateProduct = _productRepository.GetProductById(request.Restaurant, request.Id);
-
-            if (updateProduct == null)
+            try
             {
-                return new ErrorCommandResponse();
-            }
+                Products? product = _productRepository.GetProductById(request.RestaurantId, request.Id);
 
-            updateProduct.Name = request.Name;
-            updateProduct.Description = request.Description;
-            updateProduct.CategoryId = request.CategoryId;
-            updateProduct.ImgUrl = request.ImgUrl;
-            updateProduct.UpdateTime = DateTime.Now;
-            updateProduct.IsAvailable = request.IsAvailable;
-
-            _productRepository.Edit(updateProduct);
-
-            List<Variations> updatedVariations = new List<Variations>();
-
-            var variationsData = _variationsRepository.GetVariationsByProductId(request.Restaurant, updateProduct.Id);
-
-            foreach (var variation in variationsData)
-            {
-                var matchingVariation = request.Variations.FirstOrDefault(v => v.Id == variation.Id);
-
-                if (matchingVariation != null)
+                if (product == null)
                 {
-                    variation.Description = matchingVariation.Description;
-                    variation.ProductId = updateProduct.Id;
-                    variation.UpdateTime = DateTime.Now;
-                    variation.Value = matchingVariation.Value;
-                    variation.IsAvailable = matchingVariation.IsAvailable;
-                }
-                else
-                {
-                    variation.Active = false;
+                    return new ErrorCommandResponse();
                 }
 
-                _variationsRepository.Edit(variation);
+                product.Name = request.Name;
+                product.Description = request.Description;
+                product.ImgUrl = request.ImgUrl;
+                product.CategoryId = request.CategoryId;
+                product.UpdatedDate = DateTime.Now;
 
-                updatedVariations.Add(variation);
-            }
+                _productRepository.Edit(product);
 
-            foreach (var variation in request.Variations)
-            {
-                var existingVariation = variationsData.FirstOrDefault(v => v.Id == variation.Id);
+                List<Variations> updatedVariations = new List<Variations>();
 
-                if (existingVariation == null)
+                //Busca no banco as Variações com o ProductId do request.
+                List<Variations>? variations = _variationsRepository.GetVariationsByProductId(request.RestaurantId, product.Id);
+
+                if (variations.Count == 0)
                 {
-                    var newVariation = new Variations
+                    return new ErrorCommandResponse();
+                }
+
+                foreach (Variations variation in variations)
+                {
+                    //Verifica se existe alguma Variação do request no banco
+                    UpdateVariationCommand? updatedVariation = request.Variations.FirstOrDefault(v => v.Id == variation.Id);
+
+                    //Se sim, faz o edit
+                    if (updatedVariation != null)
                     {
-                        Description = variation.Description,
-                        ProductId = updateProduct.Id,
-                        Value = variation.Value,
-                        CreatedTime = DateTime.Now,
-                        RestaurantId = request.RestaurantId,
-                        IsAvailable = true,
-                        Active = true,
-                    };
+                        variation.Name = updatedVariation.Name;
+                        variation.ProductId = product.Id;
+                        variation.UpdatedDate = DateTime.Now;
+                        variation.Value = updatedVariation.Value;
+                        variation.Status = true;
+                    }
+                    else
+                    {
+                        //Se não, desativa
+                        variation.Status = false;
+                    }
 
-                    _variationsRepository.Add(newVariation);
+                    _variationsRepository.Edit(variation);
 
-                    updatedVariations.Add(newVariation);
+                    updatedVariations.Add(variation);
                 }
+
+                foreach (UpdateVariationCommand variation in request.Variations)
+                {
+                    //Verifica se a Variação do request existe no banco
+                    Variations? existingVariation = variations.FirstOrDefault(v => v.Id == variation.Id);
+
+                    //Se não, cria-se uma nova
+                    if (existingVariation == null)
+                    {
+                        Variations? newVariation = new Variations
+                        {
+                            Name = variation.Name,
+                            ProductId = product.Id,
+                            Value = variation.Value,
+                            CreatedDate = DateTime.Now,
+                            RestaurantId = request.RestaurantId,
+                            Status = true,
+                        };
+
+                        _variationsRepository.Add(newVariation);
+
+                        updatedVariations.Add(newVariation);
+                    }
+                }
+
+                await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+                return new SuccessCommandResponse();
             }
-
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
-
-            updateProduct.Variations.AddRange(updatedVariations);
-
-            return new SuccessCommandResponse(updateProduct);
-
+            catch (Exception ex)
+            {
+                return new ErrorCommandResponse(ex);
+            }
         }
 
         public async Task<ICommandResponse> Handle(DeleteProductCommand request, CancellationToken cancellationToken)
         {
-            var deleteProduct = _productRepository.GetProductById(request.Restaurant, request.Id);
-
-            if (deleteProduct == null)
+            try
             {
-                return new ErrorCommandResponse();
+                Products? product = _productRepository.GetProductById(request.RestaurantId, request.Id);
+
+                if (product == null)
+                {
+                    return new ErrorCommandResponse();
+                }
+
+                product.Deleted = request.Deleted;
+                product.DeletedDate = DateTime.Now;
+
+                _productRepository.Edit(product);
+
+                await _unitOfWork.SaveChangesAsync();
+
+                return new SuccessCommandResponse(product);
             }
-
-            deleteProduct.Active = request.Active;
-
-            _productRepository.Edit(deleteProduct);
-
-            await _unitOfWork.SaveChangesAsync();
-
-            return new SuccessCommandResponse(deleteProduct);
+            catch (Exception ex)
+            {
+                return new ErrorCommandResponse(ex);
+            }
         }
 
         public async Task<ICommandResponse> Handle(StatusProductCommand request, CancellationToken cancellationToken)
         {
-            var statusProduct = _productRepository.GetProductById(request.Restaurant, request.Id);
-
-            if (statusProduct == null)
+            try
             {
-                return new ErrorCommandResponse();
+                Products? product = _productRepository.GetProductById(request.RestaurantId, request.Id);
+
+                if (product == null)
+                {
+                    return new ErrorCommandResponse();
+                }
+
+                product.Status = request.Status;
+
+                _productRepository.Edit(product);
+
+                await _unitOfWork.SaveChangesAsync();
+
+                return new SuccessCommandResponse(product);
             }
-
-            statusProduct.IsAvailable = request.IsAvailable;
-
-            _productRepository.Edit(statusProduct);
-
-            await _unitOfWork.SaveChangesAsync();
-
-            return new SuccessCommandResponse(statusProduct);
+            catch (Exception ex)
+            {
+                return new ErrorCommandResponse(ex);
+            }
         }
     }
 }

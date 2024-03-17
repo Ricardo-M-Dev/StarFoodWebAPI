@@ -5,6 +5,7 @@ using StarFood.Application.Base;
 using StarFood.Application.Base.Messages;
 using StarFood.Application.Communication;
 using StarFood.Application.Interfaces;
+using StarFood.Domain;
 using StarFood.Domain.Commands;
 using StarFood.Domain.Entities;
 using StarFood.Domain.Repositories;
@@ -227,6 +228,44 @@ public class OrdersController : ControllerBase
             if (result.IsValid)
             {
                 return NoContent();
+            }
+
+            return BadRequest(result.Exception.Message);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+
+    [HttpPatch("{id}")]
+    public async Task<IActionResult> StatusOrder(
+        [FromRoute] int id,
+        [FromBody] StatusOrderCommand cmd,
+        [FromServices] IMediatorHandler mediator,
+        [FromServices] IHostApplicationLifetime appLifetime,
+        [FromServices] RequestState requestContext
+        )
+    {
+        try
+        {
+            Restaurants? restaurant = _restaurantRepository.GetRestaurantById(requestContext.RestaurantId);
+            int restaurantId = restaurant.RestaurantId;
+
+            if (restaurant == null)
+            {
+                return NotFound(new DomainException($"Restaurant de ID {restaurantId} não pode ser encontrado."));
+            }
+
+            cmd.UpdateRequestInfo(requestContext, restaurant);
+            cmd.Id = id;
+            cmd.RestaurantId = restaurantId;
+
+            ICommandResponse? result = await mediator.SendCommand(cmd, appLifetime.ApplicationStopping);
+
+            if (result.IsValid)
+            {
+                return Ok(result.Object);
             }
 
             return BadRequest(result.Exception.Message);

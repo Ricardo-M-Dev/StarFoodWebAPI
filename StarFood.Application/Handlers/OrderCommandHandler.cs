@@ -13,6 +13,7 @@ namespace StarFood.Application.Handlers
     public class OrderCommandHandler : 
         IRequestHandler<CreateOrderCommand, ICommandResponse>,
         IRequestHandler<UpdateOrderCommand, ICommandResponse>,
+        IRequestHandler<StatusOrderCommand, ICommandResponse>,
         IRequestHandler<DeleteOrderCommand, ICommandResponse>
     {
         private readonly IOrdersRepository _ordersRepository;
@@ -157,6 +158,31 @@ namespace StarFood.Application.Handlers
                 }
 
                 order.Deleted = request.Deleted;
+
+                _ordersRepository.Edit(order);
+
+                await _unitOfWork.SaveChangesAsync();
+
+                return new SuccessCommandResponse(order);
+            }
+            catch (Exception ex)
+            {
+                return new ErrorCommandResponse(ex);
+            }
+        }
+
+        public async Task<ICommandResponse> Handle(StatusOrderCommand request, CancellationToken cancellationToken)
+        {
+            try
+            {
+                Orders? order = _ordersRepository.GetOrderById(request.Id, request.RestaurantId);
+                
+                if (order == null)
+                {
+                    return new ErrorCommandResponse();
+                }
+
+                order.Status = request.Status;
 
                 _ordersRepository.Edit(order);
 

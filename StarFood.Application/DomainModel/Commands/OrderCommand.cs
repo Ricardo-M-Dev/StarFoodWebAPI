@@ -35,6 +35,13 @@ namespace StarFood.Domain.Commands
         public int Quantity { get; set; }
     }
 
+    public class StatusOrderCommand : Command<ICommandResponse>
+    {
+        [JsonIgnore]
+        public int Id { get; set; }
+        public OrderStatus Status { get; set; }
+    }
+
     public class DeleteOrderCommand : Command<ICommandResponse>
     {
         [JsonIgnore]

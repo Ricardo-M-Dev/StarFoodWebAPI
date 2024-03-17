@@ -215,6 +215,7 @@ public class CategoriesController : ControllerBase
 
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteCategory(
+        [FromRoute] int id,
         [FromBody] DeleteCategoryCommand cmd,
         [FromServices] IMediatorHandler mediator,
         [FromServices] IHostApplicationLifetime appLifetime,
@@ -224,10 +225,15 @@ public class CategoriesController : ControllerBase
         try
         {
             Restaurants? restaurant = _restaurantRepository.GetRestaurantById(requestContext.RestaurantId);
+            int restaurantId = restaurant.RestaurantId;
+
             if (restaurant == null)
             {
-                return BadRequest(new DomainException($"Restaurant de ID {requestContext.RestaurantId} não pode ser encontrado."));
+                return BadRequest(new DomainException($"Restaurant de ID {restaurantId} não pode ser encontrado."));
             }
+
+            cmd.Id = id;
+            cmd.RestaurantId = restaurantId;
 
             ICommandResponse result = await mediator.SendCommand(cmd, appLifetime.ApplicationStopping);
 

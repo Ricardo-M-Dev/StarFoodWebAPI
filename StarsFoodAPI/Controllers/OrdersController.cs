@@ -130,7 +130,7 @@ public class OrdersController : ControllerBase
 
             OrdersViewModel orderViewModel = map.Map<OrdersViewModel>(order);
 
-            List<ProductOrder>? productsOrder = new List<ProductOrder>();
+            List<ProductOrder>? productsOrder = _productOrderRepository.GetProductsOrderByOrderId(id, restaurantId);
 
             List<ProductOrderViewModel> productOrderViewModels = new List<ProductOrderViewModel>();
 
@@ -199,7 +199,7 @@ public class OrdersController : ControllerBase
         }
     }
 
-    [HttpPost("{id}")]
+    [HttpPut("{id}")]
     public async Task<IActionResult> UpdateOrder(
         [FromRoute] int id,
         [FromBody] UpdateOrderCommand cmd,
@@ -223,6 +223,43 @@ public class OrdersController : ControllerBase
             cmd.RestaurantId = restaurantId;
 
             ICommandResponse? result = await mediator.SendCommand(cmd, appLifetime.ApplicationStopping);
+
+            if (result.IsValid)
+            {
+                return NoContent();
+            }
+
+            return BadRequest(result.Exception.Message);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteOrder(
+        [FromRoute] int id,
+        [FromBody] DeleteOrderCommand cmd,
+        [FromServices] IMediatorHandler mediator,
+        [FromServices] IHostApplicationLifetime appLifetime,
+        [FromServices] RequestState requestContext
+    )
+    {
+        try
+        {
+            Restaurants? restaurant = _restaurantRepository.GetRestaurantById(requestContext.RestaurantId);
+            int restaurantId = restaurant.RestaurantId;
+
+            if (restaurant == null)
+            {
+                return BadRequest(new DomainException($"Restaurant de ID {restaurantId} não pode ser encontrado."));
+            }
+
+            cmd.Id = id;
+            cmd.RestaurantId = restaurantId;
+
+            ICommandResponse result = await mediator.SendCommand(cmd, appLifetime.ApplicationStopping);
 
             if (result.IsValid)
             {

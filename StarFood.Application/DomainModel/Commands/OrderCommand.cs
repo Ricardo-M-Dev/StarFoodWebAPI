@@ -23,9 +23,23 @@ namespace StarFood.Domain.Commands
 
     public class UpdateOrderCommand : Command<ICommandResponse>
     {
+        [JsonIgnore]
         public int Id { get; set; }
-        public bool Paid { get; set; }
+        public List<UpdateProductOrderCommand>? ProductOrders { get; set; }
+    }
 
-        public List<ProductOrder>? ProductOrders { get; set; }
+    public class UpdateProductOrderCommand : Command<ICommandResponse>
+    {
+        public int Id { get; set; }
+        public int VariationId { get; set; }
+        public int Quantity { get; set; }
+    }
+
+    public class DeleteOrderCommand : Command<ICommandResponse>
+    {
+        [JsonIgnore]
+        public int Id { get; set; }
+        public bool Deleted { get; set; }
+
     }
 }

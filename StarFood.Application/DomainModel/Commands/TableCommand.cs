@@ -9,6 +9,14 @@ namespace StarFood.Application.DomainModel.Commands
         public string? Barcode { get; set; }
     }
 
+    public class UpdateTableCommand : Command<ICommandResponse> 
+    {
+        [JsonIgnore]
+        public int Id { get; set; }
+        public int Number { get; set; }
+        public string? Barcode { get; set; }
+    }
+
     public class StatusTableCommand : Command<ICommandResponse>
     {
         [JsonIgnore]

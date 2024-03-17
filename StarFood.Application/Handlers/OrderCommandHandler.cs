@@ -12,20 +12,24 @@ namespace StarFood.Application.Handlers
 {
     public class OrderCommandHandler : 
         IRequestHandler<CreateOrderCommand, ICommandResponse>,
-        IRequestHandler<UpdateOrderCommand, ICommandResponse>
+        IRequestHandler<UpdateOrderCommand, ICommandResponse>,
+        IRequestHandler<DeleteOrderCommand, ICommandResponse>
     {
         private readonly IOrdersRepository _ordersRepository;
         private readonly IProductOrderRepository _productOrderRepository;
+        private readonly IVariationsRepository _variationsRepository;
         private readonly IUnitOfWork<StarFoodDbContext> _unitOfWork;
 
         public OrderCommandHandler(
             IOrdersRepository ordersRepository,
             IProductOrderRepository productOrderRepository,
+            IVariationsRepository variationsRepository,
             IUnitOfWork<StarFoodDbContext> unitOfWork
         )
         {
             _ordersRepository = ordersRepository;
             _productOrderRepository = productOrderRepository;
+            _variationsRepository = variationsRepository;
             _unitOfWork = unitOfWork;
         }
 
@@ -39,7 +43,7 @@ namespace StarFood.Application.Handlers
                     UserId = request.UserId,
                     TableId = request.TableId,
                     Paid = false,
-                    Active = true,
+                    Deleted = false,
                     CreatedDate = DateTime.Now,
                     RestaurantId = request.RestaurantId,
                 };
@@ -76,8 +80,7 @@ namespace StarFood.Application.Handlers
         {
             try
             {
-                List<ProductOrder> updatedProductsOrder = new List<ProductOrder>();
-
+                //Busca no banco os ProductOrder com o OrderId do request.
                 List<ProductOrder> productsOrder = _productOrderRepository.GetProductsOrderByOrderId(request.Id, request.RestaurantId);
 
                 if (productsOrder.Count == 0)
@@ -85,14 +88,20 @@ namespace StarFood.Application.Handlers
                     return new ErrorCommandResponse();
                 }
 
+                List<ProductOrder> updatedProductsOrder = new List<ProductOrder>();
+
                 foreach (ProductOrder productOrder in productsOrder)
                 {
-                    ProductOrder updatedProductOrder = request.ProductOrders.FirstOrDefault(po => po.Id == productOrder.Id);
+                    //Verifica no request, se existe o productOrder do banco
+                    UpdateProductOrderCommand updatedProductOrder = request.ProductOrders.FirstOrDefault(po => po.Id == productOrder.Id);
 
+                    //Se sim, edita o productOrder
                     if (updatedProductOrder != null)
                     {
-                        productOrder.VariationId = updatedProductOrder.VariationId;
-                        productOrder.Description = updatedProductOrder.Description;
+                        Variations variation = _variationsRepository.GetVariationById(updatedProductOrder.VariationId, request.RestaurantId);
+
+                        productOrder.VariationId = variation.Id;
+                        productOrder.Description = variation.Name;
                         productOrder.Quantity = updatedProductOrder.Quantity;
                         productOrder.UpdatedDate = DateTime.Now;
                     }
@@ -102,17 +111,20 @@ namespace StarFood.Application.Handlers
                     updatedProductsOrder.Add(productOrder);
                 }
 
-                foreach (var productOrder in request.ProductOrders)
+                foreach (UpdateProductOrderCommand productOrder in request.ProductOrders)
                 {
+                    //Verifica no banco, se existe o productOrder do request
                     ProductOrder existingProductOrder = productsOrder.FirstOrDefault(po => po.Id == productOrder.Id);
 
+                    //Se não, cria-se uma nova
                     if (existingProductOrder == null)
                     {
+                        Variations variation = _variationsRepository.GetVariationById(productOrder.VariationId, request.RestaurantId);
                         ProductOrder newProductOrder = new ProductOrder
                         {
-                            OrderId = productOrder.OrderId,
-                            VariationId = productOrder.VariationId,
-                            Description = productOrder.Description,
+                            OrderId = request.Id,
+                            VariationId = variation.Id,
+                            Description = variation.Name,
                             Quantity = productOrder.Quantity,
                             CreatedDate = DateTime.Now
                         };
@@ -126,6 +138,31 @@ namespace StarFood.Application.Handlers
                 await _unitOfWork.SaveChangesAsync(cancellationToken);
 
                 return new SuccessCommandResponse();
+            }
+            catch (Exception ex)
+            {
+                return new ErrorCommandResponse(ex);
+            }
+        }
+
+        public async Task<ICommandResponse> Handle(DeleteOrderCommand request, CancellationToken cancellationToken)
+        {
+            try
+            {
+                Orders? order = _ordersRepository.GetOrderById(request.Id, request.RestaurantId);
+
+                if (order == null)
+                {
+                    return new ErrorCommandResponse();
+                }
+
+                order.Deleted = request.Deleted;
+
+                _ordersRepository.Edit(order);
+
+                await _unitOfWork.SaveChangesAsync();
+
+                return new SuccessCommandResponse(order);
             }
             catch (Exception ex)
             {

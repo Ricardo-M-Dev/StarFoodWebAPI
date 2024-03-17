@@ -32,7 +32,7 @@ namespace StarFood.Domain.Commands
     public class UpdateVariationCommand : Command<ICommandResponse>
     {
         public int Id { get; set; }
-        public required string Name { get; set; }
+        public string Name { get; set; }
         public decimal Value { get; set; }
     }
 
@@ -45,6 +45,7 @@ namespace StarFood.Domain.Commands
 
     public class DeleteProductCommand : Command<ICommandResponse>
     {
+        [JsonIgnore]
         public int Id { get; set; }
         public bool Deleted { get; set; }
     }

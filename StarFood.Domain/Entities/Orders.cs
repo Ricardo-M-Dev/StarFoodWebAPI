@@ -16,7 +16,7 @@ namespace StarFood.Domain.Entities
         private DateTime _createdDate = DateTime.Now;
         private DateTime? _updatedDate = null;
         private DateTime? _deletedDate = null;
-        private bool _active = true;
+        private bool _deleted = true;
         private int _restaurantId = 0;
 
         public int Id
@@ -67,10 +67,10 @@ namespace StarFood.Domain.Entities
             set { _deletedDate = value; }
         }
 
-        public bool Active
+        public bool Deleted
         {
-            get { return _active; }
-            set { _active = value; }
+            get { return _deleted; }
+            set { _deleted = value; }
         }
 
         public int RestaurantId

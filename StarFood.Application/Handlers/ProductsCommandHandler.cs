@@ -83,7 +83,7 @@ namespace StarFood.Application.Handlers
         {
             try
             {
-                Products? product = _productRepository.GetProductById(request.RestaurantId, request.Id);
+                Products? product = _productRepository.GetProductById(request.Id, request.RestaurantId);
 
                 if (product == null)
                 {
@@ -101,7 +101,7 @@ namespace StarFood.Application.Handlers
                 List<Variations> updatedVariations = new List<Variations>();
 
                 //Busca no banco as Variações com o ProductId do request.
-                List<Variations>? variations = _variationsRepository.GetVariationsByProductId(request.RestaurantId, product.Id);
+                List<Variations>? variations = _variationsRepository.GetVariationsByProductId(product.Id, request.RestaurantId);
 
                 if (variations.Count == 0)
                 {
@@ -110,10 +110,10 @@ namespace StarFood.Application.Handlers
 
                 foreach (Variations variation in variations)
                 {
-                    //Verifica se existe alguma Variação do request no banco
+                    //Verifica no request, se existe a variação do banco
                     UpdateVariationCommand? updatedVariation = request.Variations.FirstOrDefault(v => v.Id == variation.Id);
 
-                    //Se sim, faz o edit
+                    //Se sim, edita a variação
                     if (updatedVariation != null)
                     {
                         variation.Name = updatedVariation.Name;
@@ -124,7 +124,7 @@ namespace StarFood.Application.Handlers
                     }
                     else
                     {
-                        //Se não, desativa
+                        //Se não, desativa a variação
                         variation.Status = false;
                     }
 
@@ -135,7 +135,7 @@ namespace StarFood.Application.Handlers
 
                 foreach (UpdateVariationCommand variation in request.Variations)
                 {
-                    //Verifica se a Variação do request existe no banco
+                    //Verifica no banco, se existe a variação do request
                     Variations? existingVariation = variations.FirstOrDefault(v => v.Id == variation.Id);
 
                     //Se não, cria-se uma nova
@@ -171,7 +171,7 @@ namespace StarFood.Application.Handlers
         {
             try
             {
-                Products? product = _productRepository.GetProductById(request.RestaurantId, request.Id);
+                Products? product = _productRepository.GetProductById( request.Id, request.RestaurantId);
 
                 if (product == null)
                 {

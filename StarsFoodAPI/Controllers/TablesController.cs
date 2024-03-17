@@ -205,4 +205,79 @@ public class TablesController : ControllerBase
             return BadRequest(ex.Message);
         }
     }
+
+    [HttpPut("{id}")]
+    public async Task<IActionResult> UpdateTable(
+        [FromRoute] int id,
+        [FromBody] UpdateTableCommand cmd,
+        [FromServices] IMediatorHandler mediator,
+        [FromServices] IHostApplicationLifetime appLifetime,
+        [FromServices] RequestState requestContext
+    )
+    {
+        try
+        {
+            Restaurants? restaurant = _restaurantRepository.GetRestaurantById(requestContext.RestaurantId);
+            int restaurantId = restaurant.RestaurantId;
+
+            if (restaurant == null)
+            {
+                return BadRequest(new DomainException($"Restaurant de ID {restaurantId} não pode ser encontrado."));
+            }
+
+            cmd.UpdateRequestInfo(requestContext, restaurant);
+            cmd.Id = id;
+            ICommandResponse result = await mediator.SendCommand(cmd, appLifetime.ApplicationStopping);
+
+            if (result.IsValid)
+            {
+                return NoContent();
+            }
+            else
+            {
+                return BadRequest(result.Exception.Message);
+            }
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteTable(
+        [FromRoute] int id,
+        [FromBody] DeleteTableCommand cmd,
+        [FromServices] IMediatorHandler mediator,
+        [FromServices] IHostApplicationLifetime appLifetime,
+        [FromServices] RequestState requestContext
+    )
+    {
+        try
+        {
+            Restaurants? restaurant = _restaurantRepository.GetRestaurantById(requestContext.RestaurantId);
+            int restaurantId = restaurant.RestaurantId;
+
+            if (restaurant == null)
+            {
+                return BadRequest(new DomainException($"Restaurant de ID {restaurantId} não pode ser encontrado."));
+            }
+
+            cmd.Id = id;
+            cmd.RestaurantId = restaurantId;
+
+            ICommandResponse result = await mediator.SendCommand(cmd, appLifetime.ApplicationStopping);
+
+            if (result.IsValid)
+            {
+                return NoContent();
+            }
+
+            return BadRequest(result.Exception.Message);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
 }

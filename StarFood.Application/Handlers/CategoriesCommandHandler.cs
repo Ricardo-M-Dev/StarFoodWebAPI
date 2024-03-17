@@ -56,7 +56,7 @@ namespace StarFood.Application.Handlers
         {
             try
             {
-                Categories? category = _categoriesRepository.GetCategoryById(request.RestaurantId, request.Id);
+                Categories? category = _categoriesRepository.GetCategoryById(request.Id, request.RestaurantId);
 
                 if (category == null)
                 {
@@ -83,7 +83,7 @@ namespace StarFood.Application.Handlers
         {
             try
             {
-                Categories? category = _categoriesRepository.GetCategoryById(request.RestaurantId, request.Id);
+                Categories? category = _categoriesRepository.GetCategoryById(request.Id, request.RestaurantId);
 
                 if (category == null)
                 {
@@ -110,7 +110,7 @@ namespace StarFood.Application.Handlers
         {
             try
             {
-                Categories? category = _categoriesRepository.GetCategoryById(request.RestaurantId, request.Id);
+                Categories? category = _categoriesRepository.GetCategoryById(request.Id, request.RestaurantId);
 
                 if (category == null)
                 {

@@ -10,6 +10,7 @@ namespace StarFood.Application.Handlers
 {
     public class TablesCommandHandler :
         IRequestHandler<CreateTableCommand, ICommandResponse>,
+        IRequestHandler<UpdateTableCommand, ICommandResponse>,
         IRequestHandler<StatusTableCommand, ICommandResponse>,
         IRequestHandler<DeleteTableCommand, ICommandResponse>
     {
@@ -90,7 +91,34 @@ namespace StarFood.Application.Handlers
 
                 table.Deleted = request.Deleted;
 
-                _tablesRepository.Add(table);
+                _tablesRepository.Edit(table);
+
+                await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+                return new SuccessCommandResponse(table);
+            }
+            catch (Exception ex)
+            {
+                return new ErrorCommandResponse(ex);
+            }
+        }
+
+        public async Task<ICommandResponse> Handle(UpdateTableCommand request, CancellationToken cancellationToken)
+        {
+            try
+            {
+                Tables? table = _tablesRepository.GetTableById(request.Id, request.RestaurantId);
+
+                if (table == null)
+                {
+                    return new ErrorCommandResponse();
+                }
+
+                table.Number = request.Number;
+                table.Barcode = request.Barcode;
+                table.UpdatedDate = DateTime.Now;
+
+                _tablesRepository.Edit(table);
 
                 await _unitOfWork.SaveChangesAsync(cancellationToken);
 

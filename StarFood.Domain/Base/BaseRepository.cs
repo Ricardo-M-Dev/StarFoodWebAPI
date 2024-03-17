@@ -8,18 +8,18 @@ namespace StarFood.Domain.Base
     {
         private DbContext _context { get; set; }
         protected DbSet<TEntity> DbSet;
-        protected DbSet<Restaurants> Stations;
+        protected DbSet<Restaurants> Restaurants;
 
         public BaseRepository(DbContext context)
         {
             _context = context;
             DbSet = _context.Set<TEntity>();
-            Stations = _context.Set<Restaurants>();
+            Restaurants = _context.Set<Restaurants>();
         }
 
-        public Restaurants? GetRestaurantById(int id)
+        public Restaurants GetRestaurantById(int id)
         {
-            return this.Stations.FirstOrDefault(x => x.RestaurantId == id);
+            return this.Restaurants.FirstOrDefault(x => x.RestaurantId == id);
         }
 
         public void Add(TEntity entity)

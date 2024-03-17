@@ -5,7 +5,8 @@ namespace StarFood.Application.Interfaces
 {
     public interface ICategoriesRepository : IBaseRepository<Categories>
     {
-        List<Categories> GetCategoriesByRestaurantId(Restaurants restaurant);
-        Categories GetCategoryById(Restaurants restaurant, int id);
+        List<Categories> GetCategoriesByRestaurantId(int restaurantId);
+        List<Categories> GetActiveCategoriesByRestaurantId(int restaurantId);
+        Categories GetCategoryById(int categoryId, int restaurantId);
     }
 }

@@ -1,8 +1,11 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using StarFood.Domain;
+using StarFood.Infrastructure.Auth;
 using StarFood.Infrastructure.Data;
 using System.Data;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace StarsFoodAPI.Services.HttpContext
 {
@@ -23,7 +26,11 @@ namespace StarsFoodAPI.Services.HttpContext
             {
                 using (var context = new StarFoodDbContext(_dbContextOptions))
                 {
-                    string? restaurantId = _accessor.HttpContext.Request.Headers["X-RestaurantId"].ToString();
+                    string jwt = _accessor.HttpContext.Request.Headers["Authorization"].ToString();
+
+                    string token = jwt.Split(" ")[1];
+
+                    string restaurantId = DecodeToken(token, "restaurantId");
 
                     if (int.TryParse(restaurantId, out var castInt))
                     {
@@ -41,6 +48,46 @@ namespace StarsFoodAPI.Services.HttpContext
 
                 return 0;
             }
+        }
+
+        public int NRestaurantId
+        {
+            get
+            {
+                using (var context = new StarFoodDbContext(_dbContextOptions))
+                {
+                    string jwt = _accessor.HttpContext.Request.Headers["Authorization"].ToString();
+
+                    string token = jwt.Split(" ")[1];
+
+                    string restaurantId = DecodeToken(token, "restaurantId");
+
+                    return Convert.ToInt32(restaurantId);
+                }
+            }
+        }
+
+        public int UserId
+        {
+            get
+            {
+                string jwt = _accessor.HttpContext.Request.Headers["Authorization"].ToString();
+
+                string token = jwt.Split(" ")[1];
+
+                string userId = DecodeToken(token, "userId");
+
+                return Convert.ToInt32(userId);
+            }
+        }
+
+        public string DecodeToken(string token, string type)
+        {
+            JwtSecurityTokenHandler handler = new JwtSecurityTokenHandler();
+
+            JwtSecurityToken decode = handler.ReadJwtToken(token);
+
+            return decode.Claims.First(claim => claim.Type == type).Value;
         }
     }
 }

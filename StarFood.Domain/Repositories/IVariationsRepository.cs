@@ -5,8 +5,9 @@ namespace StarFood.Domain.Repositories
 {
     public interface IVariationsRepository : IBaseRepository<Variations>
     {
-        List<Variations> GetVariationsByRestaurantId(Restaurants restaurant);
-        Variations GetVariationById(Restaurants restaurant, int id);
-        List<Variations> GetVariationsByProductId(Restaurants restaurant, int productId);
+        List<Variations> GetVariationsByRestaurantId(int restaurantId);
+        List<Variations> GetActiveVariationsByRestaurantId(int restaurantId);
+        Variations GetVariationById(int id, int restaurantId);
+        List<Variations> GetVariationsByProductId(int productId, int restaurantId);
     }
 }

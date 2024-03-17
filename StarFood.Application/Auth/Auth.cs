@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using StarFood.Application.DomainModel.Commands;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -15,22 +16,27 @@ namespace StarFood.Infrastructure.Auth
             _configuration = configuration;
         }
 
-        public string GenerateJwtToken(string restaurantId)
+        public string GenerateJwtToken(AuthCommand cmd)
         {
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("StarFoodJSONWebTokenKey"));
             var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
             var claims = new[]
             {
-                new Claim(JwtRegisteredClaimNames.Sub, restaurantId),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+                new Claim("userId", cmd.UserId.ToString()),
+                new Claim("email", cmd.Email),
+                new Claim("role", cmd.Role),
+                new Claim("name", cmd.Name),
+                new Claim("restaurantId", cmd.RestaurantId.ToString()),
             };
+
+            var expireAt = DateTime.Now.AddDays(1);
 
             var token = new JwtSecurityToken(
                 issuer: "https://localhost:7100",
                 audience: "StarsFoodInc",
                 claims: claims,
-                expires: DateTime.Now.AddHours(24),
+                expires: expireAt,
                 signingCredentials: credentials
             );
 

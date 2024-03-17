@@ -5,8 +5,10 @@ namespace StarFood.Application.Interfaces
 {
     public interface IProductsRepository : IBaseRepository<Products>
     {
-        List<Products> GetProductsByRestaurantId(Restaurants restaurant);
-        Products GetProductById(Restaurants restaurant, int id);
-        List<Products> GetProductByCategoryId(Restaurants restaurant, int categoryId);
+        List<Products> GetProductsByRestaurantId(int restaurantId);
+        List<Products> GetActiveProductsByRestaurantId(int restaurantId);
+        Products GetProductById(int id, int restaurantId);
+        List<Products> GetProductByCategoryId(int categoryId, int restaurantId);
+        Products GetProductByVariation (int productId, int restaurantId);
     }
 }

@@ -13,24 +13,11 @@ namespace StarFood.Infrastructure.Data.Repositories
 
         public Restaurants GetByRestaurantId(int restaurantId)
         {
-            var restaurant = base.DbSet
+            Restaurants? restaurant = base.DbSet
                 .Where(r => r.RestaurantId == restaurantId)
                 .FirstOrDefault();
 
             return restaurant;
-        }
-
-        public void SetStatus(int restaurantId, bool s)
-        {
-            var restaurant = base.DbSet
-                .Where(r => r.RestaurantId == restaurantId)
-                .FirstOrDefault();
-
-            if (restaurant != null)
-            {
-                restaurant.IsAvailable = s;
-                base.DbSet.Update(restaurant);
-            }
         }
     }
 }

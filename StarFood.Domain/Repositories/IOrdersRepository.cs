@@ -1,15 +1,13 @@
-﻿using StarFood.Domain.Entities;
+﻿using StarFood.Application.Base;
+using StarFood.Domain.Entities;
 
 namespace StarFood.Domain.Repositories
 {
-    public interface IOrdersRepository
+    public interface IOrdersRepository : IBaseRepository<Orders>
     {
-        Task<List<Orders>> GetAllAsync(int restaurantId);
-        Task<Orders> GetByIdAsync(int id);
-        Task<Orders> GetByTableAsync(int table);
-        Task<Orders> GetByWaiterNameAsync(string waiterName);
-        Task CreateAsync(Orders order);
-        Task UpdateAsync(int id, Orders updatedOrder);
-        Task DeleteAsync(int id);
+        List<Orders> GetOrdersByRestaurantId(int restaurantId);
+        Orders GetOrderById(int orderId, int restaurantId);
+        List<Orders> GetOrdersByTable(int tableId, int restaurantId);
+        List<Orders> GetOrdersByUserId(int userId, int restaurantId);
     }
 }

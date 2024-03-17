@@ -26,3 +26,4 @@ C:\Dev\Projects\StarFoodWebAPI\StarFood.Application\obj\Debug\net7.0\StarFood.Ap
 C:\Dev\Projects\StarFoodWebAPI\StarFood.Application\obj\Debug\net7.0\refint\StarFood.Application.dll
 C:\Dev\Projects\StarFoodWebAPI\StarFood.Application\obj\Debug\net7.0\StarFood.Application.pdb
 C:\Dev\Projects\StarFoodWebAPI\StarFood.Application\obj\Debug\net7.0\ref\StarFood.Application.dll
+C:\Dev\Projects\StarFoodWebAPI\StarFood.Application\obj\Debug\net7.0\StarFood.Application.sourcelink.json
